@@ -63,12 +63,13 @@ export default tseslint.config(
           },
         },
       ],
-      'import/first': 'warn',
-      'import/no-duplicates': 'warn',
-      'import/named': 'error',
-      'import/default': 'error',
-      'import/namespace': 'error',
-      'import/export': 'error', 
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: './tsconfig.json',
+        },
+      },
     },
   },
 )
