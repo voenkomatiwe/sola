@@ -1,0 +1,18 @@
+[toolchain]
+
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+sub_service = "ADU233uT8HgNtRrmn4twcHK6jbN8JpBA7oHuAeewVe8Z"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "/home/olha/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
