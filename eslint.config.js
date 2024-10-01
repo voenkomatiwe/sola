@@ -17,7 +17,7 @@ export default tseslint.config(
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 'latest',
       globals: globals.browser,
     },
     plugins: {
@@ -67,7 +67,7 @@ export default tseslint.config(
     settings: {
       'import/resolver': {
         typescript: {
-          project: './tsconfig.json',
+          project: ['./frontend/tsconfig.json'],
         },
       },
     },

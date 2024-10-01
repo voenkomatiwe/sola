@@ -12,10 +12,10 @@ export const DashboardByRole = () => {
 
 export const Dashboard = () => {
   return (
-    <div className="flex h-screen bg-gray-800">
+    <div className="flex h-screen bg-sidebar text-sidebar-foreground">
       <Sidebar />
-      <div className="flex-grow py-6 pr-6 h-ful">
-        <div className="bg-white rounded-3xl h-full p-3 pl-10">
+      <div className="flex-grow py-6 pr-6 h-ful text-foreground">
+        <div className="bg-card rounded-3xl h-full p-3 pl-10">
           <Outlet />
         </div>
       </div>

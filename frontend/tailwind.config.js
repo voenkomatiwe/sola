@@ -20,6 +20,10 @@ export default {
   		colors: {
 				background: 'var(--background)',
 				foreground: 'var(--foreground)',
+				sidebar: {
+					DEFAULT: 'var(--sidebar)',
+					foreground: 'var(--sidebar-foreground)',
+				},
 				card: {
 					DEFAULT: 'var(--card)',
 					foreground: 'var(--card-foreground)'

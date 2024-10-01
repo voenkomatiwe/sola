@@ -23,8 +23,15 @@ body {
   min-height: 100vh;
 }
 
+.wallet-adapter-button {
+  width: 100%;
+  justify-content: center;
+}
+
 @layer base {
   :root {
+    --sidebar: theme('colors.gray.800');
+    --sidebar-foreground: theme('colors.slate.300');
     --background: theme('colors.blue.50');
     --foreground: theme('colors.gray.900');
     --card: theme('colors.white');
@@ -53,6 +60,8 @@ body {
   }
 
   .dark {
+    --sidebar: theme('colors.slate.300');
+    --sidebar-foreground: theme('colors.gray.800');
     --background: theme('colors.gray.800');
     --foreground: theme('colors.slate.200');
     --card: theme('colors.gray.800');

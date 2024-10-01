@@ -8,12 +8,12 @@ export const APP_ROUTES = {
     TO_HOME: (role: Role) => `/dashboard/${role}`,
     WALLET: "wallet",
     MY_SUBSCRIPTIONS: "my-subscriptions",
-    SUBSCRIPTIONS: "subscriptions",
+    EXPLORE: "explore",
     get PROVIDER() {
       return (providerId: string) => this.MY_SUBSCRIPTIONS + `/${providerId}`;
     },
     get PROVIDER_SUBSCRIPTIONS() {
-      return (providerId: string) => this.SUBSCRIPTIONS + `/${providerId}`;
+      return (providerId: string) => this.EXPLORE + `/${providerId}`;
     },
   },
 

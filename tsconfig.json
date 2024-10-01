@@ -1,19 +1,14 @@
 {
-  "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
+      "path": "frontend"
     }
   ],
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
-  }
+  "include": [
+    "**/*.ts",
+    "**/*.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
