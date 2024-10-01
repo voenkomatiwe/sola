@@ -7,7 +7,9 @@ export function Home() {
   const navigate = useNavigate();
   return (
     <div>
-      <Button onClick={() => navigate(APP_ROUTES.DASHBOARD)}>
+      <Button
+        onClick={() => navigate(APP_ROUTES.DASHBOARD.TO_HOME("consumer"))}
+      >
         Open Dashboard
       </Button>
     </div>
