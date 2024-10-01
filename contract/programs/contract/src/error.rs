@@ -12,4 +12,8 @@ pub enum ProgramError {
     InvalidUUID,
     #[msg("Service can be removed only if it has no subscriptions")]
     PresentSubscriptions,
+    #[msg("Value overflow occurred")]
+    ValueOverflow,
+    #[msg("Untimely subscription payment")]
+    UntimelyPayment,
 }

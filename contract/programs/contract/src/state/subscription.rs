@@ -15,11 +15,14 @@ pub struct Subscription {
     /// User wallet address
     pub user: Pubkey,
 
-    /// Timestamp of the last payment
+    /// User wallet PDA address
+    pub is_active: bool,
+
+    /// Whether the subscription is active
     pub last_payment: i64,
 }
 
 impl Subscription {
-    pub const LEN: usize = DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 8);
+    pub const LEN: usize = DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 1 + 8);
     pub const VERSION: u16 = 1;
 }

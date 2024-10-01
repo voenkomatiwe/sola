@@ -3,7 +3,7 @@ use {
     anchor_spl::token::{Token, TokenAccount},
 };
 
-use super::utils::{transfer_tokens, withdraw_tokens};
+use super::utils::{transfer_pda_tokens, transfer_tokens};
 use crate::{error::ProgramError, id, state::user::User};
 
 // --------------------------- Context ----------------------------- //
@@ -110,7 +110,7 @@ impl<'info> WithdrawFromUserStorage<'info> {
     pub fn withdraw_from_storage(&mut self, amount: u64) -> Result<()> {
         let user = &mut self.user;
 
-        withdraw_tokens(
+        transfer_pda_tokens(
             user.get_seeds(),
             user.to_account_info(),
             &self.user_token_account.to_account_info(),

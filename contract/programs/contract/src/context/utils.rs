@@ -1,6 +1,7 @@
 use {anchor_lang::prelude::*, anchor_spl::token};
 
 pub const UUID_VERSION: usize = 4;
+pub const SUBSCRIPTION_PERIOD: i64 = 123;
 
 /// This method transfers tokens from user token account to program
 pub fn transfer_tokens<'info>(
@@ -23,7 +24,7 @@ pub fn transfer_tokens<'info>(
 }
 
 /// This method transfers tokens from program to user token account
-pub fn withdraw_tokens<'info>(
+pub fn transfer_pda_tokens<'info>(
     signer_seeds: Vec<Vec<u8>>,
     authority: AccountInfo<'info>,
     from: &AccountInfo<'info>,

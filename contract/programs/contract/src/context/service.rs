@@ -4,7 +4,7 @@ use {
 };
 
 use crate::{
-    context::utils::{withdraw_tokens, UUID_VERSION},
+    context::utils::{transfer_pda_tokens, UUID_VERSION},
     error::ProgramError,
     id,
     state::service::Service,
@@ -193,7 +193,7 @@ impl<'info> WithdrawFromServiceStorage<'info> {
     pub fn withdraw_from_storage(&mut self, amount: u64) -> Result<()> {
         let service = &mut self.service;
 
-        withdraw_tokens(
+        transfer_pda_tokens(
             service.get_seeds(),
             service.to_account_info(),
             &self.service_token_account.to_account_info(),

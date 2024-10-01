@@ -12,7 +12,8 @@ pub struct Service {
     /// Service UUID
     pub id: u128,
 
-    /// Service authority
+    // TODO: maybe make separate authorities for charging and withdraw?
+    /// Service withdraw authority
     pub authority: Pubkey,
 
     /// Subscription mint

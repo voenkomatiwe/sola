@@ -59,4 +59,16 @@ pub mod sub_service {
     ) -> Result<()> {
         ctx.accounts.withdraw_from_storage(amount)
     }
+
+    pub fn activate_subscription(ctx: Context<ActivateSubscription>, bump: u8) -> Result<()> {
+        ctx.accounts.activate_subscription(bump)
+    }
+
+    pub fn deactivate_subscription(ctx: Context<DeactivateSubscription>) -> Result<()> {
+        ctx.accounts.deactivate_subscription()
+    }
+
+    pub fn charge_subscription_payment(ctx: Context<ChargeSubscriptionPayment>) -> Result<()> {
+        ctx.accounts.charge_subscription_payment()
+    }
 }
