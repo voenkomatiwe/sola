@@ -16,10 +16,10 @@ pub struct Service {
     pub authority: Pubkey,
 
     /// Subscription mint
-    pub sub_mint: Pubkey,
+    pub mint: Pubkey,
 
     /// Subscription price
-    pub sub_price: Pubkey,
+    pub sub_price: u64,
 
     /// Amount of subscription
     pub subscribers_count: u64,
@@ -30,6 +30,10 @@ pub struct Service {
 
 impl Service {
     pub const LEN: usize =
-        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 32 + 32 + 8 + 8);
+        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 32 + 8 + 8 + 8);
     pub const VERSION: u16 = 1;
+
+    pub fn get_seeds(&self) -> Vec<Vec<u8>> {
+        vec![b"service".to_vec(), self.id.to_be_bytes().to_vec()]
+    }
 }

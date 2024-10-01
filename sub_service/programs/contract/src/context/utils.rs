@@ -1,4 +1,6 @@
-use {crate::state::user::User, anchor_lang::prelude::*, anchor_spl::token};
+use {anchor_lang::prelude::*, anchor_spl::token};
+
+pub const UUID_VERSION: usize = 4;
 
 /// This method transfers tokens from user token account to program
 pub fn transfer_tokens<'info>(
@@ -22,7 +24,8 @@ pub fn transfer_tokens<'info>(
 
 /// This method transfers tokens from program to user token account
 pub fn withdraw_tokens<'info>(
-    user: &Account<'info, User>,
+    signer_seeds: Vec<Vec<u8>>,
+    authority: AccountInfo<'info>,
     from: &AccountInfo<'info>,
     to: &AccountInfo<'info>,
     token_program: AccountInfo<'info>,
@@ -32,7 +35,6 @@ pub fn withdraw_tokens<'info>(
         return Ok(());
     }
 
-    let signer_seeds = user.get_seeds();
     let signer_seeds: Vec<&[u8]> = signer_seeds.iter().map(|s| s.as_slice()).collect();
     let seeds = &[signer_seeds.as_slice()];
 
@@ -41,7 +43,7 @@ pub fn withdraw_tokens<'info>(
         token::Transfer {
             from: from.clone(),
             to: to.clone(),
-            authority: user.to_account_info(),
+            authority,
         },
         seeds,
     );

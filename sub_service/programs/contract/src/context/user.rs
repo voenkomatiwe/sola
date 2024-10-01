@@ -12,7 +12,7 @@ use crate::{error::ProgramError, id, state::user::User};
 #[instruction(
     bump: u8,
 )]
-pub struct ReplenishStorage<'info> {
+pub struct ReplenishUserStorage<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
 
@@ -48,7 +48,7 @@ pub struct ReplenishStorage<'info> {
 #[instruction(
     bump: u8,
 )]
-pub struct WithdrawFromStorage<'info> {
+pub struct WithdrawFromUserStorage<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
 
@@ -78,7 +78,7 @@ pub struct WithdrawFromStorage<'info> {
 
 // ------------------------ Implementation ------------------------- //
 
-impl<'info> ReplenishStorage<'info> {
+impl<'info> ReplenishUserStorage<'info> {
     pub fn replenish_storage(&mut self, amount: u64, bump: u8) -> Result<()> {
         let user = &mut self.user;
 
@@ -106,12 +106,13 @@ impl<'info> ReplenishStorage<'info> {
     }
 }
 
-impl<'info> WithdrawFromStorage<'info> {
+impl<'info> WithdrawFromUserStorage<'info> {
     pub fn withdraw_from_storage(&mut self, amount: u64) -> Result<()> {
         let user = &mut self.user;
 
         withdraw_tokens(
-            user,
+            user.get_seeds(),
+            user.to_account_info(),
             &self.user_token_account.to_account_info(),
             &self.sender_token_account.to_account_info(),
             self.token_program.to_account_info(),

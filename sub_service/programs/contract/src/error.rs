@@ -8,4 +8,8 @@ pub enum ProgramError {
     IllegalOwner,
     #[msg("Invalid token account")]
     InvalidToken,
+    #[msg("Invalid UUID")]
+    InvalidUUID,
+    #[msg("Service can be removed only if it has no subscriptions")]
+    PresentSubscriptions,
 }
