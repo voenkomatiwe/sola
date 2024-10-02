@@ -110,7 +110,7 @@ pub struct ChargeSubscriptionPayment<'info> {
 
     #[account(
         seeds = [b"service".as_ref(), &service.id.to_be_bytes()],
-        constraint = service.authority == sender.key() @ ProgramError::AuthorityMismatch,
+        constraint = service.payment_delegate == sender.key() @ ProgramError::AuthorityMismatch,
         bump = service.bump,
     )]
     pub service: Account<'info, Service>,

@@ -110,6 +110,7 @@ impl<'info> CreateService<'info> {
         &mut self,
         service_id: u128,
         authority: Pubkey,
+        payment_delegate: Pubkey,
         sub_price: u64,
         bump: u8,
     ) -> Result<()> {
@@ -124,6 +125,7 @@ impl<'info> CreateService<'info> {
         service.bump = bump;
         service.id = service_id;
         service.authority = authority;
+        service.payment_delegate = payment_delegate;
         service.mint = self.mint.key();
         service.sub_price = sub_price;
         service.updated_at = Clock::get()?.unix_timestamp;
@@ -159,7 +161,19 @@ impl<'info> UpdateService<'info> {
         service.authority = authority;
         service.updated_at = Clock::get()?.unix_timestamp;
 
-        msg!("Service authority updated, id: {id}, authority: {authority}",);
+        msg!("Service withdraw authority updated, id: {id}, authority: {authority}",);
+
+        Ok(())
+    }
+
+    pub fn update_payment_delegate(&mut self, payment_delegate: Pubkey) -> Result<()> {
+        let service = &mut self.service;
+        let id = uuid::Uuid::from_u128(service.id);
+
+        service.payment_delegate = payment_delegate;
+        service.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!("Service payment delegate updated, id: {id}, authority: {payment_delegate}",);
 
         Ok(())
     }

@@ -117,6 +117,10 @@ export type SubService = {
           "type": "publicKey"
         },
         {
+          "name": "paymentDelegate",
+          "type": "publicKey"
+        },
+        {
           "name": "subPrice",
           "type": "u64"
         },
@@ -164,6 +168,27 @@ export type SubService = {
       "args": [
         {
           "name": "authority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateServicePaymentDelegate",
+      "accounts": [
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "paymentDelegate",
           "type": "publicKey"
         }
       ]
@@ -390,7 +415,14 @@ export type SubService = {
           {
             "name": "authority",
             "docs": [
-              "Service withdraw authority"
+              "Service authority"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "paymentDelegate",
+            "docs": [
+              "Service subscription charging delegate"
             ],
             "type": "publicKey"
           },
@@ -663,6 +695,10 @@ export const IDL: SubService = {
           "type": "publicKey"
         },
         {
+          "name": "paymentDelegate",
+          "type": "publicKey"
+        },
+        {
           "name": "subPrice",
           "type": "u64"
         },
@@ -710,6 +746,27 @@ export const IDL: SubService = {
       "args": [
         {
           "name": "authority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateServicePaymentDelegate",
+      "accounts": [
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "paymentDelegate",
           "type": "publicKey"
         }
       ]
@@ -936,7 +993,14 @@ export const IDL: SubService = {
           {
             "name": "authority",
             "docs": [
-              "Service withdraw authority"
+              "Service authority"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "paymentDelegate",
+            "docs": [
+              "Service subscription charging delegate"
             ],
             "type": "publicKey"
           },

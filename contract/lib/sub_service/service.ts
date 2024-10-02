@@ -25,6 +25,7 @@ export async function getAllServices() {
 export async function createService(
   id: string,
   authority: PublicKey,
+  paymentDelegate: PublicKey,
   mint: PublicKey,
   sub_price: BN,
   wallet?: Signer
@@ -34,7 +35,7 @@ export async function createService(
 
   return await this.sendSigned(
     this.program.methods
-      .createService(uuidToBn(id), authority, sub_price, bump)
+      .createService(uuidToBn(id), authority, paymentDelegate, sub_price, bump)
       .accounts({
         sender,
         service,
@@ -69,6 +70,23 @@ export async function updateServiceAuthority(
 
   return await this.sendSigned(
     this.program.methods.updateServiceAuthority(authority).accounts({
+      sender,
+      service,
+    }),
+    wallet
+  );
+}
+
+export async function updatePaymentDelegate(
+  id: string,
+  delegate: PublicKey,
+  wallet?: Signer
+) {
+  const [service] = this.findContractServiceAddress(id);
+  const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
+
+  return await this.sendSigned(
+    this.program.methods.updatePaymentDelegate(delegate).accounts({
       sender,
       service,
     }),

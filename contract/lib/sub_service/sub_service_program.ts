@@ -150,6 +150,7 @@ export class SubServiceProgram {
   public async createService(
     id: string,
     authority: PublicKey,
+    paymentDelegate: PublicKey,
     mint: PublicKey,
     sub_price: BN,
     wallet?: Signer
