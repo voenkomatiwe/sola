@@ -6,7 +6,9 @@
   ],
   "include": [
     "**/*.ts",
-    "**/*.json"
+    "**/*.json",
+    "frontend/src/constants/columns/mySubscriptions.tsx",
+    "frontend/src/constants/columns/explore.tsx"
   ],
   "exclude": [
     "node_modules"

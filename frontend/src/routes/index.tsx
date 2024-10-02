@@ -13,7 +13,9 @@ import { Providers } from "@/providers";
 
 import { APP_ROUTES } from "./constants";
 
-export const router = createBrowserRouter(
+//TODO
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const router: any = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<Providers />}>
       <Route path={APP_ROUTES.HOME} element={<Home />} />

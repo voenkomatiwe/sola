@@ -1,12 +1,12 @@
 export const InfoCard = ({
   title,
-  icon,
   value,
+  icon,
   className,
 }: {
   title: string;
-  icon: JSX.Element;
   value: string;
+  icon: JSX.Element;
   className?: string;
 }) => {
   return (
@@ -14,7 +14,7 @@ export const InfoCard = ({
       className={`rounded-xl border bg-card text-card-foreground shadow ${className}`}
     >
       <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-        <h3 className="tracking-tight text-sm font-medium">{title}</h3>
+        <h3 className="tracking-tight text-base font-medium">{title}</h3>
         {icon}
       </div>
       <div className="p-6 pt-0">

@@ -13,6 +13,7 @@ export type MySubscription = {
   id: number;
   name: string;
   amount: string;
+  token: string;
   startDate: string;
   endDate: string;
   status: "pending" | "processing" | "cancelled" | "ended";
@@ -26,6 +27,10 @@ export const columns: ColumnDef<MySubscription>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
+  },
+  {
+    accessorKey: "token",
+    header: "Token",
   },
   {
     accessorKey: "startDate",

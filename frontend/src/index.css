@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: Rubik, Rubik Mono One, Inter, system-ui, Avenir, sans-serif;
+  line-height: 1;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #111219;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,6 +21,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-family: "Rubik", sans-serif;
 }
 
 .wallet-adapter-button {
@@ -30,62 +31,59 @@ body {
 
 @layer base {
   :root {
-    --sidebar: theme('colors.gray.800');
-    --sidebar-foreground: theme('colors.slate.300');
-    --background: theme('colors.blue.50');
-    --foreground: theme('colors.gray.900');
-    --card: theme('colors.white');
-    --card-foreground: theme('colors.gray.900');
-    --popover: theme('colors.white');
-    --popover-foreground: theme('colors.gray.900');
-    --primary: theme('colors.blue.700');
-    --primary-foreground: theme('colors.white');
-    --secondary: theme('colors.blue.200');
-    --secondary-foreground: theme('colors.gray.800');
-    --muted: theme('colors.blue.200');
-    --muted-foreground: theme('colors.gray.600');
-    --accent: theme('colors.blue.200');
-    --accent-foreground: theme('colors.gray.800');
-    --destructive: theme('colors.red.500');
-    --destructive-foreground: theme('colors.white');
-    --border: theme('colors.gray.300');
-    --input: theme('colors.gray.300');
-    --ring: theme('colors.gray.900');
-    --chart-1: theme('colors.orange.500');
-    --chart-2: theme('colors.teal.600');
-    --chart-3: theme('colors.blue.800');
-    --chart-4: theme('colors.yellow.300');
-    --chart-5: theme('colors.green.300');
+    --background: #ffffff;
+    --foreground: #1c1b0b;
+    --card: rgba(255, 255, 255, 0.9);
+    --card-foreground: #1c1b0b;
+    --popover: #ffffff;
+    --popover-foreground: #1c1b0b;
+    --primary: #1e1e0d;
+    --primary-foreground: #f0faff;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #1e1e0d;
+    --muted: #f1f5f9;
+    --muted-foreground: #81828a;
+    --accent: #f1f5f9;
+    --accent-foreground: #1e1e0d;
+    --destructive: #ff6b6b;
+    --destructive-foreground: #f0faff;
+    --border: #dfe3ea;
+    --input: #dfe3ea;
+    --ring: #1c1b0b;
+    --chart-1: #ffa321;
+    --chart-2: #359e74;
+    --chart-3: #2b5866;
+    --chart-4: #a7d030;
+    --chart-5: #f47330;
     --radius: 0.5rem;
+    --red: #9E2423;
+    --main-foreground: #f1eee5;
+    --map: rgba(255, 255, 255, 0.5);
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: 'Burlesk';
+    font-style: normal;
+    font-display: swap;
+    src: url(./assets/fonts/Burlesk_Regular.ttf) format('truetype');
   }
 
-  .dark {
-    --sidebar: theme('colors.slate.300');
-    --sidebar-foreground: theme('colors.gray.800');
-    --background: theme('colors.gray.800');
-    --foreground: theme('colors.slate.200');
-    --card: theme('colors.gray.800');
-    --card-foreground: theme('colors.slate.300');
-    --popover: theme('colors.gray.800');
-    --popover-foreground: theme('colors.slate.200');
-    --primary: theme('colors.slate.200');
-    --primary-foreground: theme('colors.gray.700');
-    --secondary: theme('colors.gray.700');
-    --secondary-foreground: theme('colors.white');
-    --muted: theme('colors.gray.700');
-    --muted-foreground: theme('colors.slate.400');
-    --accent: theme('colors.gray.700');
-    --accent-foreground: theme('colors.white');
-    --destructive: theme('colors.red.400');
-    --destructive-foreground: theme('colors.white');
-    --border: theme('colors.gray.700');
-    --input: theme('colors.gray.700');
-    --ring: theme('colors.slate.300');
-    --chart-1: theme('colors.blue.400');
-    --chart-2: theme('colors.green.500');
-    --chart-3: theme('colors.yellow.400');
-    --chart-4: theme('colors.purple.400');
-    --chart-5: theme('colors.red.400');
+  @font-face {
+    font-family: 'JollyLodger';
+    font-style: normal;
+    font-display: swap;
+    src: url(./assets/fonts/JollyLodger_Regular.ttf) format('truetype'),
+      url(./assets/fonts/JollyLodger_Cyrillic.otf) format('opentype');
+  }
+
+  @font-face {
+    font-family: 'Pieces of Eight';
+    font-style: normal;
+    font-display: swap;
+    src: url(./assets/fonts/Pieces_of_Eight.ttf) format('truetype'),
+      url(./assets/fonts/Pieces_of_Eight_Alt.ttf) format('truetype');
   }
 }
 
@@ -95,6 +93,21 @@ body {
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+  }
+}
+
+@layer components {
+  .rubik-mono-one-regular {
+    font-family: "Rubik Mono One", monospace;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .dashboard {
+    color: var(--main-foreground);
+    background: #0F2027;
+    background: -webkit-linear-gradient(330deg, #2C5364, #203A43, #0F2027);
+    background: linear-gradient(330deg, #2C5364, #203A43, #0F2027);
   }
 }

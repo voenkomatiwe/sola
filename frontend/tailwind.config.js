@@ -20,10 +20,6 @@ export default {
   		colors: {
 				background: 'var(--background)',
 				foreground: 'var(--foreground)',
-				sidebar: {
-					DEFAULT: 'var(--sidebar)',
-					foreground: 'var(--sidebar-foreground)',
-				},
 				card: {
 					DEFAULT: 'var(--card)',
 					foreground: 'var(--card-foreground)'
@@ -61,7 +57,11 @@ export default {
 					'3': 'var(--chart-3)',
 					'4': 'var(--chart-4)',
 					'5': 'var(--chart-5)' 
-				}
+				},
+				main: {
+					foreground: 'var(--main-foreground)'
+				},
+				map: 'var(--map)'
 			}			
   	}
   },
