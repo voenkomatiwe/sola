@@ -45,9 +45,6 @@ pub struct ReplenishUserStorage<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(
-    bump: u8,
-)]
 pub struct WithdrawFromUserStorage<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,

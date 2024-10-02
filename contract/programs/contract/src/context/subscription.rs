@@ -25,7 +25,7 @@ pub struct ActivateSubscription<'info> {
         init_if_needed,
         payer = sender,
         owner = id(),
-        seeds = [b"user".as_ref(), sender.key.as_ref(), &service.id.to_be_bytes()],
+        seeds = [b"subscription".as_ref(), sender.key.as_ref(), &service.id.to_be_bytes()],
         bump,
         space = Subscription::LEN
     )]
@@ -69,14 +69,13 @@ pub struct ActivateSubscription<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction()]
 pub struct DeactivateSubscription<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
 
     #[account(
         mut,
-        seeds = [b"user".as_ref(), sender.key.as_ref()],
+        seeds = [b"subscription".as_ref(), sender.key.as_ref()],
         bump = subscription.bump,
         constraint = subscription.user == sender.key() @ ProgramError::AuthorityMismatch,
     )]
@@ -97,7 +96,7 @@ pub struct ChargeSubscriptionPayment<'info> {
 
     #[account(
         mut,
-        seeds = [b"user".as_ref(), sender.key.as_ref(), &service.id.to_be_bytes()],
+        seeds = [b"subscription".as_ref(), sender.key.as_ref(), &service.id.to_be_bytes()],
         bump = subscription.bump,
     )]
     pub subscription: Account<'info, Subscription>,
