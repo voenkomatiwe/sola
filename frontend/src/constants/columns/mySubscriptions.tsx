@@ -2,7 +2,9 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
 
-const statusColors = {
+import { tokens } from "./tokens";
+
+export const statusColors = {
   pending: "bg-yellow-200 text-yellow-800",
   processing: "bg-blue-200 text-blue-800",
   cancelled: "bg-red-200 text-red-800",
@@ -24,13 +26,28 @@ export const columns: ColumnDef<MySubscription>[] = [
     accessorKey: "name",
     header: "Name",
   },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-  },
+
   {
     accessorKey: "token",
-    header: "Token",
+    header: "Tokens (payment for one month)",
+    cell: ({ row }) => {
+      const { symbol, logoURI } = tokens[row.original.token];
+      return (
+        <div>
+          <p key={symbol} className="flex gap-2">
+            {row.original.amount}
+            <span className="flex gap-1">
+              <strong>{symbol}</strong>
+              <img
+                src={logoURI}
+                alt={symbol}
+                className="w-5 h-5 rounded-full"
+              />
+            </span>
+          </p>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "startDate",

@@ -11,6 +11,7 @@ import {
   useParams,
 } from "react-router-dom";
 
+import sola from "@/assets/icons/sola.svg";
 import { Button } from "@/components/ui/button";
 import { Role } from "@/interfaces";
 import { APP_ROUTES } from "@/routes/constants";
@@ -54,10 +55,14 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className="w-80 gap-14 flex flex-col justify-between">
-      <div className="flex items-center">
-        <h2 className="font-bold text-7xl font-Helvetica">Sola</h2>
+    <div className="max-w-80 min-w-80 gap-14 flex flex-col justify-between">
+      <div className="flex items-center gap-4">
+        <img src={sola} alt="sola" className="w-14 h-14" />
+        <h2 className="font-bold text-7xl font-Helvetica tracking-tighter">
+          Sola
+        </h2>
       </div>
+
       <div className="flex flex-col gap-4 flex-1">
         <NavLink
           to={APP_ROUTES.DASHBOARD.TO_HOME(role || "consumer")}
@@ -70,11 +75,15 @@ export const Sidebar = () => {
               to={APP_ROUTES.DASHBOARD.MY_SUBSCRIPTIONS}
               title="My Subscriptions"
             />
-            <NavLink to={APP_ROUTES.DASHBOARD.EXPLORE} title="Explore" />
+            <NavLink
+              to={APP_ROUTES.DASHBOARD.EXPLORE_PROVIDERS}
+              title="Explore Providers"
+            />
           </>
         )}
       </div>
-      <div className="flex flex-col gap-3 pr-6">
+      <div className="flex flex-col gap-3 pr-6 overflow-hidden">
+        {/* //TODO: fix overflow-hidden for WalletMultiButton */}
         <WalletMultiButton />
         <Button onClick={toggle} variant="ghost">
           Switch to {role === "consumer" ? "Provider" : "Consumer"}

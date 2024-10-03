@@ -5,6 +5,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 
 import {
   Table,
@@ -14,6 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Role } from "@/interfaces";
+import { APP_ROUTES } from "@/routes/constants";
 
 import { DataTablePagination } from "../Pagination";
 
@@ -21,12 +24,16 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   className?: string;
+  link?: string;
 }
+
+type TRowOriginal = { id: number };
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   className,
+  link,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -34,6 +41,20 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+  const { role } = useParams<{ role: Role }>();
+  const navigate = useNavigate();
+
+  const trClickHandler = (original: TRowOriginal) => {
+    const id = original.id;
+    if (!link || !id || !role) return;
+
+    navigate(
+      generatePath(APP_ROUTES.DASHBOARD.HOME + "/" + link, {
+        providerId: id,
+        role,
+      }),
+    );
+  };
 
   return (
     <>
@@ -60,7 +81,9 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                className="cursor-pointer"
                 key={row.id}
+                onClick={() => trClickHandler(row.original as TRowOriginal)}
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (

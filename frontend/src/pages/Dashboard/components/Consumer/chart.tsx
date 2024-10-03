@@ -7,42 +7,34 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "Rozetka", desktop: 186 },
-  { month: "Youtube", desktop: 305 },
-  { month: "Apple Music", desktop: 237 },
-  { month: "Discord", desktop: 73 },
-  { month: "Chat GPT", desktop: 4 },
-];
+import { useConsumer } from "@/hooks/store/useConsumer";
 
 const chartConfig = {
-  desktop: {
+  value: {
     label: "Money",
     color: "var(--chart-3)",
   },
 } satisfies ChartConfig;
 
 export const Chart = () => {
+  const totalExpenses = useConsumer((store) => store.totalExpenses);
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-3xl">
-          Most money is spent on subscriptions
-        </CardTitle>
+        <CardTitle className="text-3xl">Most Total Expenses</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={totalExpenses}
             margin={{
               top: 20,
             }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="provider"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -51,7 +43,8 @@ export const Chart = () => {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8}>
+            {/* //TODO: add fill */}
+            <Bar dataKey="value" radius={8}>
               <LabelList
                 position="top"
                 offset={12}
