@@ -452,7 +452,7 @@ describe("User attestation", () => {
       );
     });
 
-    xit("fail - invalid token balance", async () => {
+    it("fail - invalid token balance", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
       let newTestMint = new TestToken(provider);
@@ -511,41 +511,25 @@ describe("User attestation", () => {
       let senderBalanceBefore = await testMint.getBalance(user.publicKey);
       let userBalanceBefore = await testMint.getBalance(userAccount, true);
 
-      // await program.program.methods
-      //   .withdrawFromUserStorage(amount)
-      //   .accounts({
-      //     sender: user.publicKey,
-      //     user: userAccount,
-      //     senderTokenAccount: senderTokenAccount.address,
-      //     userTokenAccount: userTokenAccount.address,
-      //     tokenProgram: TOKEN_PROGRAM_ID,
-      //   })
-      //   .signers([user])
-      //   .rpc();
-
-      await expectThrowError(
-        () =>
-          program.program.methods
-            .withdrawFromUserStorage(amount)
-            .accounts({
-              sender: user.publicKey,
-              user: userAccount,
-              senderTokenAccount: senderTokenAccount.address,
-              userTokenAccount: userTokenAccount.address,
-              tokenProgram: TOKEN_PROGRAM_ID,
-            })
-            .signers([user])
-            .rpc(),
-        /Error processing Instruction 0: custom program error: 0x1/
-      );
+      await program.program.methods
+        .withdrawFromUserStorage(amount)
+        .accounts({
+          sender: user.publicKey,
+          user: userAccount,
+          senderTokenAccount: senderTokenAccount.address,
+          userTokenAccount: userTokenAccount.address,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([user])
+        .rpc();
 
       let senderBalanceAfter = await testMint.getBalance(user.publicKey);
       let userBalanceAfter = await testMint.getBalance(userAccount, true);
 
       expect(
-        senderBalanceAfter.eq(senderBalanceBefore.sub(amount))
+        senderBalanceAfter.eq(senderBalanceBefore.add(amount))
       ).toBeTruthy();
-      expect(userBalanceAfter.eq(userBalanceBefore.add(amount))).toBeTruthy();
+      expect(userBalanceAfter.eq(userBalanceBefore.sub(amount))).toBeTruthy();
     });
   });
 });

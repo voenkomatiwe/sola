@@ -37,6 +37,10 @@ impl Service {
     pub const VERSION: u16 = 1;
 
     pub fn get_seeds(&self) -> Vec<Vec<u8>> {
-        vec![b"service".to_vec(), self.id.to_be_bytes().to_vec()]
+        vec![
+            b"service".to_vec(),
+            self.id.to_be_bytes().to_vec(),
+            [self.bump].to_vec(),
+        ]
     }
 }

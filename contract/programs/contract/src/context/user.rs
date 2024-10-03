@@ -31,13 +31,13 @@ pub struct ReplenishUserStorage<'info> {
         constraint = sender_token_account.owner == sender.key() @ ProgramError::IllegalOwner,
         constraint = sender_token_account.mint == user_token_account.mint @ ProgramError::InvalidToken
     )]
-    pub sender_token_account: Box<Account<'info, TokenAccount>>,
+    pub sender_token_account: Account<'info, TokenAccount>,
 
     #[account(
         mut,
         constraint = user_token_account.owner == user.key() @ ProgramError::IllegalOwner
     )]
-    pub user_token_account: Box<Account<'info, TokenAccount>>,
+    pub user_token_account: Account<'info, TokenAccount>,
 
     #[account(address = Token::id())]
     pub token_program: Program<'info, Token>,
@@ -47,7 +47,6 @@ pub struct ReplenishUserStorage<'info> {
 
 #[derive(Accounts)]
 pub struct WithdrawFromUserStorage<'info> {
-    #[account(mut)]
     pub sender: Signer<'info>,
 
     #[account(
