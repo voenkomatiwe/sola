@@ -148,9 +148,10 @@ export const useConsumer = create<Store & Actions>()(
     providers: providers,
     totalExpenses: totalExpenses,
 
-    setMySubscriptions: (subscriptions) =>
+    setMySubscriptions: (subscriptions) => {
       set((state) => {
         state.mySubscriptions = subscriptions;
-      }),
+      });
+    },
   })),
 );
