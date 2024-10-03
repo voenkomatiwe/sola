@@ -5,15 +5,15 @@ import { parse as uuidParse } from "uuid";
 
 import { bufferFromString, uuidToBn } from "..";
 
-export function findContractServiceAddress(id: string): [PublicKey, number] {
+export function findServiceAddress(id: string): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [bufferFromString("service"), uuidParse(id)],
     this.programId
   );
 }
 
-export async function getContractServiceData(id: string) {
-  const [service] = this.getContractServiceData(id);
+export async function getServiceData(id: string) {
+  const [service] = this.findServiceAddress(id);
 
   return await this.program.account.service.fetch(service);
 }
@@ -30,7 +30,7 @@ export async function createService(
   sub_price: BN,
   wallet?: Signer
 ) {
-  const [service, bump] = this.findContractServiceAddress(id);
+  const [service, bump] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -47,7 +47,7 @@ export async function createService(
 }
 
 export async function removeService(id: string, wallet?: Signer) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -65,7 +65,7 @@ export async function updateServiceAuthority(
   authority: PublicKey,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -82,7 +82,7 @@ export async function updatePaymentDelegate(
   delegate: PublicKey,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -99,7 +99,7 @@ export async function updateServiceMint(
   mint: PublicKey,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -116,7 +116,7 @@ export async function updateServicePrice(
   price: BN,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -133,9 +133,9 @@ export async function withdrawFromServiceStorage(
   amount: BN,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
-  const data = await this.getContractServiceData(id);
+  const data = await this.getServiceData(id);
 
   const senderTokenAccount = await this.checkOrCreateATA(data.mint, sender);
   const serviceTokenAccount = await getAssociatedTokenAddress(

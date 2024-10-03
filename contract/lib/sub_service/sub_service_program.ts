@@ -53,9 +53,8 @@ export class SubServiceProgram {
   }
 
   setMethods() {
-    this.findContractServiceAddress =
-      service.findContractServiceAddress.bind(this);
-    this.getContractServiceData = service.getContractServiceData.bind(this);
+    this.findServiceAddress = service.findServiceAddress.bind(this);
+    this.getServiceData = service.getServiceData.bind(this);
     this.getAllServices = service.getAllServices.bind(this);
     this.createService = service.createService.bind(this);
     this.removeService = service.removeService.bind(this);
@@ -156,8 +155,8 @@ export class SubServiceProgram {
     );
   }
 
-  public findContractServiceAddress(id: string): any {}
-  public async getContractServiceData(id: string): Promise<any> {}
+  public findServiceAddress(id: string): any {}
+  public async getServiceData(id: string): Promise<any> {}
   public async getAllServices(): Promise<any> {}
   public async createService(
     id: string,

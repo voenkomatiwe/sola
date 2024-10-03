@@ -20,7 +20,7 @@ import { airdrop } from "./util/setup";
 import { ACCOUNT_SIZE, SubServiceProgram } from "../lib";
 import { SubService } from "../lib/idl/sub_service";
 
-describe("User attestation", () => {
+describe("User", () => {
   const provider = AnchorProvider.env();
   setProvider(provider);
 
@@ -43,20 +43,6 @@ describe("User attestation", () => {
     await airdrop(provider.connection, authority.publicKey);
     await airdrop(provider.connection, user.publicKey);
     await airdrop(provider.connection, nobody.publicKey);
-
-    await createAssociatedTokenAccount(
-      provider.connection,
-      authority,
-      testMint.token,
-      authority.publicKey
-    );
-
-    await createAssociatedTokenAccount(
-      provider.connection,
-      user,
-      testMint.token,
-      user.publicKey
-    );
   });
 
   describe("replenish_user_storage", () => {

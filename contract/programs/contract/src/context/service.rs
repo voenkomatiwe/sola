@@ -95,7 +95,7 @@ pub struct WithdrawFromServiceStorage<'info> {
     #[account(
         mut,
         constraint = service_token_account.owner == service.key() @ ProgramError::IllegalOwner,
-        constraint = sender_token_account.mint == service.mint @ ProgramError::InvalidToken
+        constraint = service_token_account.mint == service.mint @ ProgramError::InvalidToken
     )]
     pub service_token_account: Box<Account<'info, TokenAccount>>,
 
