@@ -18,6 +18,6 @@ impl User {
     pub const VERSION: u16 = 1;
 
     pub fn get_seeds(&self) -> Vec<Vec<u8>> {
-        vec![b"user".to_vec(), self.address.as_ref().to_vec()]
+        vec![b"user".to_vec()]
     }
 }

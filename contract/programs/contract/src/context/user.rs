@@ -28,7 +28,8 @@ pub struct ReplenishUserStorage<'info> {
 
     #[account(
         mut,
-        constraint = sender_token_account.owner == sender.key() @ ProgramError::IllegalOwner
+        constraint = sender_token_account.owner == sender.key() @ ProgramError::IllegalOwner,
+        constraint = sender_token_account.mint == user_token_account.mint @ ProgramError::InvalidToken
     )]
     pub sender_token_account: Box<Account<'info, TokenAccount>>,
 
@@ -59,15 +60,16 @@ pub struct WithdrawFromUserStorage<'info> {
 
     #[account(
         mut,
-        constraint = sender_token_account.owner == sender.key() @ ProgramError::IllegalOwner
+        constraint = sender_token_account.owner == sender.key() @ ProgramError::IllegalOwner,
+        constraint = sender_token_account.mint == user_token_account.mint @ ProgramError::InvalidToken
     )]
-    pub sender_token_account: Box<Account<'info, TokenAccount>>,
+    pub sender_token_account: Account<'info, TokenAccount>,
 
     #[account(
         mut,
         constraint = user_token_account.owner == user.key() @ ProgramError::IllegalOwner
     )]
-    pub user_token_account: Box<Account<'info, TokenAccount>>,
+    pub user_token_account: Account<'info, TokenAccount>,
 
     #[account(address = Token::id())]
     pub token_program: Program<'info, Token>,
@@ -108,11 +110,11 @@ impl<'info> WithdrawFromUserStorage<'info> {
         let user = &mut self.user;
 
         transfer_pda_tokens(
-            user.get_seeds(),
-            user.to_account_info(),
+            &user.get_seeds(),
+            &user.to_account_info(),
             &self.user_token_account.to_account_info(),
             &self.sender_token_account.to_account_info(),
-            self.token_program.to_account_info(),
+            &self.token_program.to_account_info(),
             amount,
         )?;
 

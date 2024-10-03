@@ -208,11 +208,11 @@ impl<'info> WithdrawFromServiceStorage<'info> {
         let service = &mut self.service;
 
         transfer_pda_tokens(
-            service.get_seeds(),
-            service.to_account_info(),
+            &service.get_seeds(),
+            &service.to_account_info(),
             &self.service_token_account.to_account_info(),
             &self.sender_token_account.to_account_info(),
-            self.token_program.to_account_info(),
+            &self.token_program.to_account_info(),
             amount,
         )?;
 

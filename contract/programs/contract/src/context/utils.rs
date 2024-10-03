@@ -25,11 +25,11 @@ pub fn transfer_tokens<'info>(
 
 /// This method transfers tokens from program to user token account
 pub fn transfer_pda_tokens<'info>(
-    signer_seeds: Vec<Vec<u8>>,
-    authority: AccountInfo<'info>,
+    signer_seeds: &[Vec<u8>],
+    signer_info: &AccountInfo<'info>,
     from: &AccountInfo<'info>,
     to: &AccountInfo<'info>,
-    token_program: AccountInfo<'info>,
+    token_program: &AccountInfo<'info>,
     amount: u64,
 ) -> Result<()> {
     if amount == 0 {
@@ -40,11 +40,11 @@ pub fn transfer_pda_tokens<'info>(
     let seeds = &[signer_seeds.as_slice()];
 
     let cpi_ctx = CpiContext::new_with_signer(
-        token_program,
+        token_program.clone(),
         token::Transfer {
             from: from.clone(),
             to: to.clone(),
-            authority,
+            authority: signer_info.clone(),
         },
         seeds,
     );

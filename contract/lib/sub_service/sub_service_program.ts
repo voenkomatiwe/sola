@@ -28,19 +28,31 @@ export class SubServiceProgram {
   computeUnitPrice: number;
 
   constructor(
-    SubServiceProgramId: string | PublicKey,
+    program?: Program<SubService>,
+    subServiceProgramId?: string | PublicKey,
     provider?: AnchorProvider,
     computeUnitPrice?: number
   ) {
-    this.programId =
-      typeof SubServiceProgramId === "string"
-        ? new PublicKey(SubServiceProgramId)
-        : SubServiceProgramId;
+    if (program) {
+      this.program = program;
+      this.programId = program.programId;
+    } else if (subServiceProgramId) {
+      this.programId =
+        typeof subServiceProgramId === "string"
+          ? new PublicKey(subServiceProgramId)
+          : subServiceProgramId;
 
-    this.program = new Program(IDL, this.programId, provider);
+      this.program = new Program(IDL, this.programId, provider);
+    } else {
+      throw new Error("Program ID or Program instance is required");
+    }
+
     // Default compute unit price is 10,000 microlamports
     this.computeUnitPrice = computeUnitPrice || 10000;
+    this.setMethods();
+  }
 
+  setMethods() {
     this.findContractServiceAddress =
       service.findContractServiceAddress.bind(this);
     this.getContractServiceData = service.getContractServiceData.bind(this);

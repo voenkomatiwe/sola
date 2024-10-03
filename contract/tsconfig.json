@@ -1,11 +1,30 @@
 {
-            "compilerOptions": {
-              "types": ["mocha", "chai"],
-              "typeRoots": ["./node_modules/@types"],
-              "lib": ["es2015"],
-              "module": "commonjs",
-              "target": "es6",
-              "esModuleInterop": true
-            }
-          }
-          
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "types": [
+      "jest"
+    ],
+    "lib": [
+      "es2017"
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "outDir": "out-tsc",
+    "rootDir": "./"
+  },
+  "exclude": [
+    "node_modules",
+    "out-tsc",
+    "tests",
+    "programs/",
+    "migrations/",
+    "dist"
+  ]
+}

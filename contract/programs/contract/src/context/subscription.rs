@@ -144,11 +144,11 @@ impl<'info> ActivateSubscription<'info> {
         let user = &self.user;
 
         transfer_pda_tokens(
-            user.get_seeds(),
-            user.to_account_info(),
+            &user.get_seeds(),
+            &user.to_account_info(),
             &self.user_token_account.to_account_info(),
             &self.service_token_account.to_account_info(),
-            self.token_program.to_account_info(),
+            &self.token_program.to_account_info(),
             service.sub_price,
         )?;
 
@@ -210,11 +210,11 @@ impl<'info> ChargeSubscriptionPayment<'info> {
         );
 
         transfer_pda_tokens(
-            user.get_seeds(),
-            user.to_account_info(),
+            &user.get_seeds(),
+            &user.to_account_info(),
             &self.user_token_account.to_account_info(),
             &self.service_token_account.to_account_info(),
-            self.token_program.to_account_info(),
+            &self.token_program.to_account_info(),
             service.sub_price,
         )?;
 
