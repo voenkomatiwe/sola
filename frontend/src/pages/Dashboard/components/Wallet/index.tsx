@@ -2,16 +2,20 @@ import { useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Role } from "@/interfaces";
 
-export const Wallet = () => {
-  const { role } = useParams<{ role: string }>();
+const ProviderWallet = () => {
+  return <>ProviderWallet</>;
+};
+
+const ConsumerWallet = () => {
   const balance = 133;
   const lockedTokens = 100;
 
   return (
     <div>
       <Card className="flex flex-col gap-4 p-4 shadow border rounded-lg bg-card">
-        <h2 className="text-lg font-semibold">Balance {role}</h2>
+        <h2 className="text-lg font-semibold">Balance</h2>
         <div className="">
           <p className="text-gray-700">
             <strong>Balance on Contract:</strong> {balance} SOL
@@ -27,4 +31,9 @@ export const Wallet = () => {
       </Card>
     </div>
   );
+};
+
+export const Wallet = () => {
+  const { role } = useParams<{ role: Role }>();
+  return role === "consumer" ? <ConsumerWallet /> : <ProviderWallet />;
 };

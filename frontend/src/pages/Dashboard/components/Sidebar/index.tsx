@@ -1,9 +1,5 @@
-import {
-  DiscordLogoIcon,
-  GitHubLogoIcon,
-  LinkedInLogoIcon,
-} from "@radix-ui/react-icons";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect, useMemo } from "react";
 import {
   NavLinkProps,
   NavLink as RouterNavLink,
@@ -41,18 +37,27 @@ export const Sidebar = () => {
   const { role } = useParams<{ role: Role }>();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   document.documentElement.classList.toggle("dark", role === "provider");
-  // }, [role]);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", role !== "provider");
+  }, [role]);
 
   const toggle = () => {
-    // document.documentElement.classList.toggle("dark", role === "provider");
+    document.documentElement.classList.toggle("dark", role !== "provider");
     navigate(
       APP_ROUTES.DASHBOARD.TO_HOME(
         role === "provider" ? "consumer" : "provider",
       ),
     );
   };
+
+  const { disconnect, publicKey } = useWallet();
+  const formattedPublicKey = useMemo(() => {
+    return publicKey
+      ? publicKey.toBase58().slice(0, 4) +
+          "..." +
+          publicKey.toBase58().slice(-4)
+      : null;
+  }, [publicKey]);
 
   return (
     <div className="max-w-80 min-w-80 gap-14 flex flex-col justify-between">
@@ -82,17 +87,13 @@ export const Sidebar = () => {
           </>
         )}
       </div>
-      <div className="flex flex-col gap-3 pr-6 overflow-hidden">
-        {/* //TODO: fix overflow-hidden for WalletMultiButton */}
-        <WalletMultiButton />
+      <div className="flex flex-col gap-3 pr-6">
         <Button onClick={toggle} variant="ghost">
           Switch to {role === "consumer" ? "Provider" : "Consumer"}
         </Button>
-        <div className="flex gap-4">
-          <GitHubLogoIcon className="w-8 h-8" />
-          <DiscordLogoIcon className="w-8 h-8" />
-          <LinkedInLogoIcon className="w-8 h-8" />
-        </div>
+        <Button variant="destructive" onClick={disconnect}>
+          Disconnect {formattedPublicKey}
+        </Button>
       </div>
     </div>
   );

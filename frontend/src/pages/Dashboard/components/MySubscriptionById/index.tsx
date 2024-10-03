@@ -4,7 +4,7 @@ import {
   LinkedInLogoIcon,
 } from "@radix-ui/react-icons";
 import { ExternalLinkIcon } from "lucide-react";
-import { generatePath, useParams } from "react-router-dom";
+import { Link, generatePath, useParams } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -62,9 +62,8 @@ export const MySubscriptionById = () => {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink
-              className="text-secondary-foreground"
-              href={generatePath(
+            <Link
+              to={generatePath(
                 APP_ROUTES.DASHBOARD.HOME +
                   "/" +
                   APP_ROUTES.DASHBOARD.MY_SUBSCRIPTIONS,
@@ -73,8 +72,10 @@ export const MySubscriptionById = () => {
                 },
               )}
             >
-              My Subscriptions
-            </BreadcrumbLink>
+              <BreadcrumbLink className="text-secondary-foreground">
+                My Subscriptions
+              </BreadcrumbLink>
+            </Link>
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-secondary-foreground" />
           <BreadcrumbItem>

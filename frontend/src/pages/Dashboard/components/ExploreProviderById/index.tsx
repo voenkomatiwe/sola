@@ -7,7 +7,7 @@ import {
 import { ExternalLinkIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { generatePath, useParams } from "react-router-dom";
+import { Link, generatePath, useParams } from "react-router-dom";
 import { z } from "zod";
 
 import {
@@ -107,9 +107,8 @@ export function ExploreProviderById() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink
-              className="text-secondary-foreground"
-              href={generatePath(
+            <Link
+              to={generatePath(
                 APP_ROUTES.DASHBOARD.HOME +
                   "/" +
                   APP_ROUTES.DASHBOARD.EXPLORE_PROVIDERS,
@@ -118,8 +117,10 @@ export function ExploreProviderById() {
                 },
               )}
             >
-              Explore Providers
-            </BreadcrumbLink>
+              <BreadcrumbLink className="text-secondary-foreground">
+                Explore Providers
+              </BreadcrumbLink>
+            </Link>
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-secondary-foreground" />
           <BreadcrumbItem>
