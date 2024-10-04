@@ -50,6 +50,9 @@ export function Home() {
           <WalletMultiButton className="btn-wallet-connect" />
         </div>
       )}
+      <Button variant="link" onClick={() => navigate(APP_ROUTES.THINK_FORGE)}>
+        Think Forge
+      </Button>
     </div>
   );
 }

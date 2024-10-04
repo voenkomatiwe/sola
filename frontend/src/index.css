@@ -108,6 +108,10 @@ body {
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply text-foreground;
   }
@@ -119,6 +123,7 @@ body {
     font-weight: 400;
     font-style: normal;
   }
+
   .rubik-one {
     font-family: 'Rubik', sans-serif;
     font-optical-sizing: auto;
@@ -131,5 +136,13 @@ body {
     background: #0f2027;
     background: -webkit-linear-gradient(var(--dashboard-web));
     background: linear-gradient(var(--dashboard));
+  }
+
+  .thinkforge-radial-bg {
+    background: radial-gradient(127.84% 127.84% at 50% -27.84%, #6A68D2 0%, #1D1C28 100%);
+  }
+
+  .thinkforge-bg {
+    background: #1D1C28;
   }
 }

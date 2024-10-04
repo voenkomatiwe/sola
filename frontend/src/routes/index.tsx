@@ -16,6 +16,7 @@ import ProtectedRoute from "@/pages/Dashboard/components/ProtectedRoute";
 import { Wallet } from "@/pages/Dashboard/components/Wallet";
 import { loaderDashboard } from "@/pages/Dashboard/loaders";
 import { Home } from "@/pages/Home";
+import { ThinkForge } from "@/pages/ThinkForge";
 import { Providers } from "@/providers";
 import { APP_ROUTES } from "@/routes/constants";
 console.log("router");
@@ -24,6 +25,7 @@ export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<Providers />}>
       <Route path={APP_ROUTES.HOME} element={<Home />} />
+      <Route path={APP_ROUTES.THINK_FORGE} element={<ThinkForge />} />
 
       <Route
         path={APP_ROUTES.DASHBOARD.HOME}
