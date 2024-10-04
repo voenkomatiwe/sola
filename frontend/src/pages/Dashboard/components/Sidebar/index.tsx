@@ -63,7 +63,7 @@ export const Sidebar = () => {
     <div className="max-w-80 min-w-80 gap-14 flex flex-col justify-between">
       <div className="flex items-center gap-4">
         <img src={sola} alt="sola" className="w-14 h-14" />
-        <h2 className="font-bold text-7xl font-Helvetica tracking-tighter">
+        <h2 className="font-extrabold text-7xl tracking-tighter  rubik-one">
           Sola
         </h2>
       </div>

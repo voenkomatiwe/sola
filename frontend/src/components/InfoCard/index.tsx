@@ -11,15 +11,13 @@ export const InfoCard = ({
 }) => {
   return (
     <div
-      className={`rounded-xl border bg-card text-card-foreground shadow ${className}`}
+      className={`p-6 rounded-xl flex flex-row border bg-card text-card-foreground items-center justify-between shadow ${className}`}
     >
-      <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-        <h3 className="tracking-tight text-base font-medium">{title}</h3>
-        {icon}
+      <div className="flex flex-col justify-between space-y-0">
+        <div className="text-2xl text-slate-700">{value}</div>
+        <h4 className="text-slate-400 tracking-tight text-sm">{title}</h4>
       </div>
-      <div className="p-6 pt-0">
-        <div className="text-2xl font-bold">{value}</div>
-      </div>
+      {icon}
     </div>
   );
 };

@@ -1,9 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  DiscordLogoIcon,
-  GitHubLogoIcon,
-  LinkedInLogoIcon,
-} from "@radix-ui/react-icons";
 import { ExternalLinkIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -228,12 +223,7 @@ export function ExploreProviderById() {
         </Form>
       </Card>
       <div className="flex justify-between items-end mt-auto">
-        <div className="flex gap-4">
-          <GitHubLogoIcon className="w-8 h-8 text-gray-600" />
-          <DiscordLogoIcon className="w-8 h-8 text-gray-600" />
-          <LinkedInLogoIcon className="w-8 h-8 text-gray-600" />
-        </div>
-        <a className="flex gap-2 items-center text-blue-600 hover:underline">
+        <a className="flex gap-2 items-end text-blue-600 hover:underline">
           {provider.name} <ExternalLinkIcon />
         </a>
       </div>
