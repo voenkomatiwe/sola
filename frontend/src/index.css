@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 :root {
-  font-family: Rubik, Rubik Mono One, Inter, system-ui, Avenir, sans-serif;
+  font-family:
+    Rubik,
+    Rubik Mono One,
+    Inter,
+    system-ui,
+    Avenir,
+    sans-serif;
   line-height: 1;
   font-weight: 400;
 
@@ -21,7 +27,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .wallet-adapter-button {
@@ -56,18 +62,17 @@ body {
     --chart-4: #a7d030;
     --chart-5: #f47330;
     --radius: 0.5rem;
-    --red: #9E2423;
+    --red: #9e2423;
     --main-foreground: #f1eee5;
     --map: rgba(255, 255, 255, 0.5);
 
-
-    --dashboard: 135deg, #5B3B8A 0%, #4A7B9D 50%, #E4E4E4 100%;
-    --dashboard-web: 135deg, #5B3B8A 0%, #4A7B9D 50%, #E4E4E4 100%;
+    --dashboard: 135deg, #5b3b8a 0%, #4a7b9d 50%, #e4e4e4 100%;
+    --dashboard-web: 135deg, #5b3b8a 0%, #4a7b9d 50%, #e4e4e4 100%;
   }
 
   .dark {
-    --dashboard: 135deg, #003B5C 0%, #005B77 50%, #D9D9D9 100%;
-    --dashboard-web: 135deg, #003B5C 0%, #005B77 50%, #D9D9D9 100%;
+    --dashboard: 135deg, #003b5c 0%, #005b77 50%, #d9d9d9 100%;
+    --dashboard-web: 135deg, #003b5c 0%, #005b77 50%, #d9d9d9 100%;
   }
 }
 
@@ -83,7 +88,8 @@ body {
     font-family: 'JollyLodger';
     font-style: normal;
     font-display: swap;
-    src: url(./assets/fonts/JollyLodger_Regular.ttf) format('truetype'),
+    src:
+      url(./assets/fonts/JollyLodger_Regular.ttf) format('truetype'),
       url(./assets/fonts/JollyLodger_Cyrillic.otf) format('opentype');
   }
 
@@ -91,7 +97,8 @@ body {
     font-family: 'Pieces of Eight';
     font-style: normal;
     font-display: swap;
-    src: url(./assets/fonts/Pieces_of_Eight.ttf) format('truetype'),
+    src:
+      url(./assets/fonts/Pieces_of_Eight.ttf) format('truetype'),
       url(./assets/fonts/Pieces_of_Eight_Alt.ttf) format('truetype');
   }
 }
@@ -108,14 +115,20 @@ body {
 
 @layer components {
   .rubik-mono-one-regular {
-    font-family: "Rubik Mono One", monospace;
+    font-family: 'Rubik Mono One', monospace;
     font-weight: 400;
+    font-style: normal;
+  }
+  .rubik-one {
+    font-family: 'Rubik', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
     font-style: normal;
   }
 
   .dashboard {
     color: var(--main-foreground);
-    background: #0F2027;
+    background: #0f2027;
     background: -webkit-linear-gradient(var(--dashboard-web));
     background: linear-gradient(var(--dashboard));
   }

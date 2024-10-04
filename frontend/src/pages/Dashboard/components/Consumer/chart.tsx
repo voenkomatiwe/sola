@@ -21,7 +21,9 @@ export const Chart = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-3xl">Most Total Expenses</CardTitle>
+        <CardTitle className="text-2xl text-slate-700">
+          Subscriptions overview
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
