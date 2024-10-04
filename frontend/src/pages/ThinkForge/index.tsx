@@ -9,6 +9,8 @@ import solutionIcon from "@/assets/solution.svg";
 import thinkForgeIcon from "@/assets/thinkforge-icon.svg";
 import { Button } from "@/components/ui/button";
 
+import { SubscriptionForm } from "./SubscriptionForm";
+
 const APP_ROUTES = {
   HOME: "/",
   SOLUTION: "#solution",
@@ -174,12 +176,12 @@ export const ThinkForge = () => {
           </div>
           <div
             id="subscribe"
-            className="flex flex-col max-w-[40.75rem] gap-8 self-center"
+            className="flex w-[40.75rem] flex-col gap-8 self-center"
           >
             <p className="text-white text-center text-[2rem] lg:text-5xl not-italic font-light leading-[normal] uppercase">
               Subscribe
             </p>
-            //TODO
+            <SubscriptionForm />
           </div>
         </div>
       </div>
