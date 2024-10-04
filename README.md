@@ -1,7 +1,7 @@
-## H2 SOLA - Hackathon project that aims to do subscription on Solana easy and secure.
+## SOLA - Hackathon project that aims to do subscription on Solana easy and secure.
 
 
-### H3 Structure
+### Structure
   1. contracts
   2. frontend
 

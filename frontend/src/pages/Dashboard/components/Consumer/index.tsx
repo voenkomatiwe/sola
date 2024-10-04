@@ -1,3 +1,4 @@
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { CalendarClock, LucideDollarSign, Users } from "lucide-react";
@@ -21,11 +22,8 @@ export const Consumer = () => {
 
   const getAccountAddress = async () => {
     if (publicKey) {
-      const splTokenProgramId = new PublicKey(
-        "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-      );
       const tokens = await connection.getParsedTokenAccountsByOwner(publicKey, {
-        programId: splTokenProgramId,
+        programId: TOKEN_PROGRAM_ID,
       });
 
       const info = await connection.getTokenAccountBalance(
