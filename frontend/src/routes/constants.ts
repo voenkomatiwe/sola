@@ -19,6 +19,8 @@ export const PROVIDER_PAGE = {
 export const APP_ROUTES = {
   HOME: "/",
 
+  THINK_FORGE: "/think-forge",
+
   DASHBOARD: {
     HOME: "/dashboard/:role",
     TO_HOME: (role: string) => `/dashboard/${role}`,
