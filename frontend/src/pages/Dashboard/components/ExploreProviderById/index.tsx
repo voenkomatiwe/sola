@@ -25,7 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { tokens } from "@/constants/columns/tokens";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { useToast } from "@/hooks/use-toast";
@@ -127,39 +127,39 @@ export function ExploreProviderById() {
         <h2 className="text-xl font-semibold text-center">{provider.name}</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-6">
               <FormField
                 control={form.control}
                 name="token"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Select a Payment Token</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        className="flex flex-col space-y-1"
-                      >
-                        {paymentTokens.map((token) => (
-                          <FormItem
-                            key={token.address}
-                            className="flex items-center space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <RadioGroupItem value={token.address} />
-                            </FormControl>
-                            <FormLabel className="font-normal flex items-center gap-2">
+                  <FormItem>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Select a Payment Token</FormLabel>
+                      <FormControl>
+                        <ToggleGroup
+                          variant="outline"
+                          type="single"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          {paymentTokens.map((token) => (
+                            <ToggleGroupItem
+                              key={token.address}
+                              value={token.address}
+                              className="flex gap-2"
+                            >
                               <img
                                 src={token.icon}
                                 alt={token.name}
-                                className="w-5 h-5"
+                                className="w-5 h-5 rounded-full"
                               />
                               {token.name}
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
+                            </ToggleGroupItem>
+                          ))}
+                        </ToggleGroup>
+                      </FormControl>
+                    </div>
+                    <FormMessage className="text-right" />
                   </FormItem>
                 )}
               />
@@ -167,29 +167,28 @@ export function ExploreProviderById() {
                 control={form.control}
                 name="period"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Select Period</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        className="flex flex-col space-y-1"
-                      >
-                        {provider.periods.map((period) => (
-                          <FormItem
-                            key={period}
-                            className="flex items-center space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <RadioGroupItem value={period.toString()} />
-                            </FormControl>
-                            <FormLabel className="font-normal">
+                  <FormItem>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Choose Period</FormLabel>
+                      <FormControl>
+                        <ToggleGroup
+                          variant="outline"
+                          type="single"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          {provider.periods.map((period) => (
+                            <ToggleGroupItem
+                              key={period}
+                              value={period.toString()}
+                            >
                               {period} month(s)
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
+                            </ToggleGroupItem>
+                          ))}
+                        </ToggleGroup>
+                      </FormControl>
+                    </div>
+                    <FormMessage className="text-right" />
                   </FormItem>
                 )}
               />
