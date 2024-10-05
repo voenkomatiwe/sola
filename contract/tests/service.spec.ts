@@ -1,11 +1,4 @@
-import {
-  web3,
-  BN,
-  AnchorProvider,
-  workspace,
-  setProvider,
-  Program,
-} from "@coral-xyz/anchor";
+import { web3, BN, AnchorProvider, setProvider } from "@coral-xyz/anchor";
 import {
   createAssociatedTokenAccount,
   getOrCreateAssociatedTokenAccount,
@@ -15,7 +8,7 @@ import { v1 as uuidv1, v4 as uuidv4 } from "uuid";
 import { expectThrowError } from "./util/console";
 import { programError } from "./util/error";
 import { TestToken } from "./util/token";
-import { airdrop, DEFAULT_SUBSCRIPTION_PERIOD } from "./util/setup";
+import { airdrop, DEFAULT_SUBSCRIPTION_PERIOD, TEST_ID } from "./util/setup";
 
 import {
   ACCOUNT_SIZE,
@@ -23,15 +16,12 @@ import {
   SubServiceProgram,
   uuidToBn,
 } from "../lib";
-import { SubService } from "../lib/idl/sub_service";
 
 describe("Service", () => {
   const provider = AnchorProvider.env();
   setProvider(provider);
 
-  const program = new SubServiceProgram(
-    workspace.SubService as Program<SubService>
-  );
+  const program = new SubServiceProgram(TEST_ID);
 
   const authority = web3.Keypair.generate();
   const user = web3.Keypair.generate();

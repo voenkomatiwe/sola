@@ -169,8 +169,8 @@ export class SubServiceProgram {
     );
   }
 
-  public findContractStateAddress(id: string): any {}
-  public async getContractStateData(id: string): Promise<any> {}
+  public findContractStateAddress(): any {}
+  public async getContractStateData(): Promise<any> {}
   public async initializeContractState(
     stateAuthority: PublicKey,
     withdrawDelegate: PublicKey,

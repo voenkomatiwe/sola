@@ -27,6 +27,6 @@ pub struct State {
 
 impl State {
     pub const LEN: usize =
-        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (1 + 1 + 32 + 32 + 32 + 8);
+        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (1 + 1 + 32 + 32 + 32 + 8 + 8);
     pub const VERSION: u8 = 1;
 }

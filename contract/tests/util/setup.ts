@@ -3,6 +3,9 @@ import { PublicKey } from "@solana/web3.js";
 import { BN } from "bn.js";
 
 export const DEFAULT_SUBSCRIPTION_PERIOD = new BN(2_629_743);
+export const TEST_ID = new PublicKey(
+  "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz"
+);
 
 export async function airdrop(
   connection: web3.Connection,

@@ -28,22 +28,25 @@ pub mod sub_service {
         )
     }
 
-    pub fn set_state_authority(ctx: Context<UpdateContractState>, authority: Pubkey) {
+    pub fn set_state_authority(ctx: Context<UpdateContractState>, authority: Pubkey) -> Result<()> {
         ctx.accounts.set_authority(authority)
     }
 
     pub fn set_state_withdraw_delegate(
         ctx: Context<UpdateContractState>,
         withdraw_delegate: Pubkey,
-    ) {
+    ) -> Result<()> {
         ctx.accounts.set_withdraw_delegate(withdraw_delegate)
     }
 
-    pub fn set_state_commission_owner(ctx: Context<UpdateContractState>, commission_owner: Pubkey) {
+    pub fn set_state_commission_owner(
+        ctx: Context<UpdateContractState>,
+        commission_owner: Pubkey,
+    ) -> Result<()> {
         ctx.accounts.set_commission_owner(commission_owner)
     }
 
-    pub fn set_state_commission(ctx: Context<UpdateContractState>, commission: u64) {
+    pub fn set_state_commission(ctx: Context<UpdateContractState>, commission: u64) -> Result<()> {
         ctx.accounts.set_commission(commission)
     }
 

@@ -3,6 +3,142 @@ export type SubService = {
   "name": "sub_service",
   "instructions": [
     {
+      "name": "initializeContractState",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programData",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "authority",
+          "type": "publicKey"
+        },
+        {
+          "name": "withdrawDelegate",
+          "type": "publicKey"
+        },
+        {
+          "name": "commissionOwner",
+          "type": "publicKey"
+        },
+        {
+          "name": "commission",
+          "type": "u64"
+        },
+        {
+          "name": "bump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "setStateAuthority",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "authority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setStateWithdrawDelegate",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "withdrawDelegate",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setStateCommissionOwner",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "commissionOwner",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setStateCommission",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "commission",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "replenishUserStorage",
       "accounts": [
         {
@@ -659,6 +795,142 @@ export const IDL: SubService = {
   "version": "0.1.0",
   "name": "sub_service",
   "instructions": [
+    {
+      "name": "initializeContractState",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programData",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "authority",
+          "type": "publicKey"
+        },
+        {
+          "name": "withdrawDelegate",
+          "type": "publicKey"
+        },
+        {
+          "name": "commissionOwner",
+          "type": "publicKey"
+        },
+        {
+          "name": "commission",
+          "type": "u64"
+        },
+        {
+          "name": "bump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "setStateAuthority",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "authority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setStateWithdrawDelegate",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "withdrawDelegate",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setStateCommissionOwner",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "commissionOwner",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setStateCommission",
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "commission",
+          "type": "u64"
+        }
+      ]
+    },
     {
       "name": "replenishUserStorage",
       "accounts": [
