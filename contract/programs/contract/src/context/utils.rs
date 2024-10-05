@@ -1,7 +1,7 @@
 use {anchor_lang::prelude::*, anchor_spl::token};
 
 pub const UUID_VERSION: usize = 4;
-pub const SUBSCRIPTION_PERIOD: i64 = 123;
+pub const DEFAULT_SUBSCRIPTION_PERIOD: i64 = 2_629_743;
 
 /// This method transfers tokens from user token account to program
 pub fn transfer_tokens<'info>(

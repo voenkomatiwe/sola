@@ -15,11 +15,11 @@ pub struct Service {
     /// Service authority
     pub authority: Pubkey,
 
-    /// Service subscription charging delegate
-    pub payment_delegate: Pubkey,
-
     /// Subscription mint
     pub mint: Pubkey,
+
+    /// Subscription price
+    pub subscription_period: i64,
 
     /// Subscription price
     pub sub_price: u64,
@@ -33,7 +33,7 @@ pub struct Service {
 
 impl Service {
     pub const LEN: usize =
-        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 32 + 32 + 8 + 8 + 8);
+        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 32 + 8 + 8 + 8 + 8);
     pub const VERSION: u16 = 1;
 
     pub fn get_seeds(&self) -> Vec<Vec<u8>> {

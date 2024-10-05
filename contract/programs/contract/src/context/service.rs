@@ -4,7 +4,7 @@ use {
 };
 
 use crate::{
-    context::utils::{transfer_pda_tokens, UUID_VERSION},
+    context::utils::{transfer_pda_tokens, DEFAULT_SUBSCRIPTION_PERIOD, UUID_VERSION},
     error::ProgramError,
     id,
     state::service::Service,
@@ -109,7 +109,7 @@ impl<'info> CreateService<'info> {
         &mut self,
         service_id: u128,
         authority: Pubkey,
-        payment_delegate: Pubkey,
+        subscription_period: Option<i64>,
         sub_price: u64,
         bump: u8,
     ) -> Result<()> {
@@ -124,7 +124,7 @@ impl<'info> CreateService<'info> {
         service.bump = bump;
         service.id = service_id;
         service.authority = authority;
-        service.payment_delegate = payment_delegate;
+        service.subscription_period = subscription_period.unwrap_or(DEFAULT_SUBSCRIPTION_PERIOD);
         service.mint = self.mint.key();
         service.sub_price = sub_price;
         service.updated_at = Clock::get()?.unix_timestamp;
@@ -165,14 +165,14 @@ impl<'info> UpdateService<'info> {
         Ok(())
     }
 
-    pub fn update_payment_delegate(&mut self, payment_delegate: Pubkey) -> Result<()> {
+    pub fn update_subscription_period(&mut self, subscription_period: i64) -> Result<()> {
         let service = &mut self.service;
         let id = uuid::Uuid::from_u128(service.id);
 
-        service.payment_delegate = payment_delegate;
+        service.subscription_period = subscription_period;
         service.updated_at = Clock::get()?.unix_timestamp;
 
-        msg!("Service payment delegate updated, id: {id}, authority: {payment_delegate}",);
+        msg!("Service subscription period updated, id: {id}, period: {subscription_period}",);
 
         Ok(())
     }

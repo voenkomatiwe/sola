@@ -117,8 +117,10 @@ export type SubService = {
           "type": "publicKey"
         },
         {
-          "name": "paymentDelegate",
-          "type": "publicKey"
+          "name": "subscriptionPeriod",
+          "type": {
+            "option": "i64"
+          }
         },
         {
           "name": "subPrice",
@@ -173,7 +175,7 @@ export type SubService = {
       ]
     },
     {
-      "name": "updateServicePaymentDelegate",
+      "name": "updateServiceSubscriptionPeriod",
       "accounts": [
         {
           "name": "sender",
@@ -188,8 +190,8 @@ export type SubService = {
       ],
       "args": [
         {
-          "name": "paymentDelegate",
-          "type": "publicKey"
+          "name": "subscriptionPeriod",
+          "type": "i64"
         }
       ]
     },
@@ -387,6 +389,63 @@ export type SubService = {
   ],
   "accounts": [
     {
+      "name": "state",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "docs": [
+              "Account version"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Seed bump for PDA"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "Contract authority"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "withdrawDelegate",
+            "docs": [
+              "Public key of the delegate wallet that can be used for charging subscription payments"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "commissionOwner",
+            "docs": [
+              "Public key of the commission wallet"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "commission",
+            "docs": [
+              "Sub service commission"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "updatedAt",
+            "docs": [
+              "Timestamp when the state was last updated"
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
       "name": "service",
       "type": {
         "kind": "struct",
@@ -420,18 +479,18 @@ export type SubService = {
             "type": "publicKey"
           },
           {
-            "name": "paymentDelegate",
-            "docs": [
-              "Service subscription charging delegate"
-            ],
-            "type": "publicKey"
-          },
-          {
             "name": "mint",
             "docs": [
               "Subscription mint"
             ],
             "type": "publicKey"
+          },
+          {
+            "name": "subscriptionPeriod",
+            "docs": [
+              "Subscription price"
+            ],
+            "type": "i64"
           },
           {
             "name": "subPrice",
@@ -545,33 +604,53 @@ export type SubService = {
     },
     {
       "code": 6001,
+      "name": "InvalidProgramData",
+      "msg": "Invalid program data account"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidProgramAccount",
+      "msg": "Invalid program account"
+    },
+    {
+      "code": 6003,
       "name": "IllegalOwner",
       "msg": "Account has illegal owner"
     },
     {
-      "code": 6002,
+      "code": 6004,
       "name": "InvalidToken",
       "msg": "Invalid token account"
     },
     {
-      "code": 6003,
+      "code": 6005,
       "name": "InvalidUUID",
       "msg": "Invalid UUID"
     },
     {
-      "code": 6004,
+      "code": 6006,
       "name": "PresentSubscriptions",
       "msg": "Service can be removed only if it has no subscriptions"
     },
     {
-      "code": 6005,
+      "code": 6007,
       "name": "ValueOverflow",
       "msg": "Value overflow occurred"
     },
     {
-      "code": 6006,
+      "code": 6008,
       "name": "UntimelyPayment",
       "msg": "Untimely subscription payment"
+    },
+    {
+      "code": 6009,
+      "name": "SubscriptionAlreadyActive",
+      "msg": "Subscription already active"
+    },
+    {
+      "code": 6010,
+      "name": "SubscriptionInactive",
+      "msg": "Subscription already inactive"
     }
   ]
 };
@@ -695,8 +774,10 @@ export const IDL: SubService = {
           "type": "publicKey"
         },
         {
-          "name": "paymentDelegate",
-          "type": "publicKey"
+          "name": "subscriptionPeriod",
+          "type": {
+            "option": "i64"
+          }
         },
         {
           "name": "subPrice",
@@ -751,7 +832,7 @@ export const IDL: SubService = {
       ]
     },
     {
-      "name": "updateServicePaymentDelegate",
+      "name": "updateServiceSubscriptionPeriod",
       "accounts": [
         {
           "name": "sender",
@@ -766,8 +847,8 @@ export const IDL: SubService = {
       ],
       "args": [
         {
-          "name": "paymentDelegate",
-          "type": "publicKey"
+          "name": "subscriptionPeriod",
+          "type": "i64"
         }
       ]
     },
@@ -965,6 +1046,63 @@ export const IDL: SubService = {
   ],
   "accounts": [
     {
+      "name": "state",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "docs": [
+              "Account version"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Seed bump for PDA"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "Contract authority"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "withdrawDelegate",
+            "docs": [
+              "Public key of the delegate wallet that can be used for charging subscription payments"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "commissionOwner",
+            "docs": [
+              "Public key of the commission wallet"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "commission",
+            "docs": [
+              "Sub service commission"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "updatedAt",
+            "docs": [
+              "Timestamp when the state was last updated"
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
       "name": "service",
       "type": {
         "kind": "struct",
@@ -998,18 +1136,18 @@ export const IDL: SubService = {
             "type": "publicKey"
           },
           {
-            "name": "paymentDelegate",
-            "docs": [
-              "Service subscription charging delegate"
-            ],
-            "type": "publicKey"
-          },
-          {
             "name": "mint",
             "docs": [
               "Subscription mint"
             ],
             "type": "publicKey"
+          },
+          {
+            "name": "subscriptionPeriod",
+            "docs": [
+              "Subscription price"
+            ],
+            "type": "i64"
           },
           {
             "name": "subPrice",
@@ -1123,33 +1261,53 @@ export const IDL: SubService = {
     },
     {
       "code": 6001,
+      "name": "InvalidProgramData",
+      "msg": "Invalid program data account"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidProgramAccount",
+      "msg": "Invalid program account"
+    },
+    {
+      "code": 6003,
       "name": "IllegalOwner",
       "msg": "Account has illegal owner"
     },
     {
-      "code": 6002,
+      "code": 6004,
       "name": "InvalidToken",
       "msg": "Invalid token account"
     },
     {
-      "code": 6003,
+      "code": 6005,
       "name": "InvalidUUID",
       "msg": "Invalid UUID"
     },
     {
-      "code": 6004,
+      "code": 6006,
       "name": "PresentSubscriptions",
       "msg": "Service can be removed only if it has no subscriptions"
     },
     {
-      "code": 6005,
+      "code": 6007,
       "name": "ValueOverflow",
       "msg": "Value overflow occurred"
     },
     {
-      "code": 6006,
+      "code": 6008,
       "name": "UntimelyPayment",
       "msg": "Untimely subscription payment"
+    },
+    {
+      "code": 6009,
+      "name": "SubscriptionAlreadyActive",
+      "msg": "Subscription already active"
+    },
+    {
+      "code": 6010,
+      "name": "SubscriptionInactive",
+      "msg": "Subscription already inactive"
     }
   ]
 };

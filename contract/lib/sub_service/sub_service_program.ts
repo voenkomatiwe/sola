@@ -61,6 +61,8 @@ export class SubServiceProgram {
     this.updateServiceAuthority = service.updateServiceAuthority.bind(this);
     this.updateServiceMint = service.updateServiceMint.bind(this);
     this.updateServicePrice = service.updateServicePrice.bind(this);
+    this.updateServiceSubscriptionPeriod =
+      service.updateServiceSubscriptionPeriod.bind(this);
     this.withdrawFromServiceStorage =
       service.withdrawFromServiceStorage.bind(this);
 
@@ -163,9 +165,9 @@ export class SubServiceProgram {
   public async createService(
     id: string,
     authority: PublicKey,
-    paymentDelegate: PublicKey,
     mint: PublicKey,
     sub_price: BN,
+    subscriptionPeriod?: BN,
     wallet?: Signer
   ): Promise<any> {}
   public async removeService(id: string, wallet?: Signer): Promise<any> {}
@@ -177,6 +179,11 @@ export class SubServiceProgram {
   public async updateServiceMint(
     id: string,
     mint: PublicKey,
+    wallet?: Signer
+  ): Promise<any> {}
+  public async updateServiceSubscriptionPeriod(
+    id: string,
+    period: BN,
     wallet?: Signer
   ): Promise<any> {}
   public async updateServicePrice(

@@ -39,8 +39,8 @@ export async function activateSubscription(
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [subscription, bump] = this.findSubscriptionAddress(sender, service_id);
   const [user] = this.findUserAddress(sender);
-  const [service] = this.findContractServiceAddress(service_id);
-  const data = await this.getContractServiceData(service_id);
+  const [service] = this.findServiceAddress(service_id);
+  const data = await this.getServiceData(service_id);
 
   const userTokenAccount = await getAssociatedTokenAddress(
     data.mint,
@@ -49,7 +49,7 @@ export async function activateSubscription(
   );
   const serviceTokenAccount = await getAssociatedTokenAddress(
     data.mint,
-    sender,
+    service,
     true
   );
 
@@ -74,7 +74,7 @@ export async function deactivateSubscription(
 ) {
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [subscription] = this.findSubscriptionAddress(sender, service_id);
-  const [service] = this.findContractServiceAddress(service_id);
+  const [service] = this.findServiceAddress(service_id);
 
   return await this.sendSigned(
     this.program.methods.deactivateSubscription().accounts({
@@ -94,8 +94,8 @@ export async function chargeSubscriptionPayment(
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [subscription] = this.findSubscriptionAddress(userWallet, service_id);
   const [user] = this.findUserAddress(userWallet);
-  const [service] = this.findContractServiceAddress(service_id);
-  const data = await this.getContractServiceData(service_id);
+  const [service] = this.findServiceAddress(service_id);
+  const data = await this.getServiceData(service_id);
 
   const userTokenAccount = await getAssociatedTokenAddress(
     data.mint,

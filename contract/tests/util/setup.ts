@@ -1,6 +1,8 @@
-import { BN, web3 } from "@coral-xyz/anchor";
+import { web3 } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import * as crypto from "crypto";
+import { BN } from "bn.js";
+
+export const DEFAULT_SUBSCRIPTION_PERIOD = new BN(2_629_743);
 
 export async function airdrop(
   connection: web3.Connection,

@@ -1,3 +1,4 @@
+pub(crate) mod contract_state;
 pub(crate) mod service;
 pub(crate) mod subscription;
 pub(crate) mod user;

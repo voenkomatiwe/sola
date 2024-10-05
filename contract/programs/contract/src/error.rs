@@ -4,6 +4,10 @@ use anchor_lang::prelude::*;
 pub enum ProgramError {
     #[msg("Authority mismatched")]
     AuthorityMismatch,
+    #[msg("Invalid program data account")]
+    InvalidProgramData,
+    #[msg("Invalid program account")]
+    InvalidProgramAccount,
     #[msg("Account has illegal owner")]
     IllegalOwner,
     #[msg("Invalid token account")]

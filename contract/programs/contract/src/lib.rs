@@ -30,12 +30,12 @@ pub mod sub_service {
         ctx: Context<CreateService>,
         service_id: u128,
         authority: Pubkey,
-        payment_delegate: Pubkey,
+        subscription_period: Option<i64>,
         sub_price: u64,
         bump: u8,
     ) -> Result<()> {
         ctx.accounts
-            .create_service(service_id, authority, payment_delegate, sub_price, bump)
+            .create_service(service_id, authority, subscription_period, sub_price, bump)
     }
 
     pub fn remove_service(ctx: Context<RemoveService>) -> Result<()> {
@@ -46,11 +46,11 @@ pub mod sub_service {
         ctx.accounts.update_authority(authority)
     }
 
-    pub fn update_service_payment_delegate(
+    pub fn update_service_subscription_period(
         ctx: Context<UpdateService>,
-        payment_delegate: Pubkey,
+        subscription_period: i64,
     ) -> Result<()> {
-        ctx.accounts.update_payment_delegate(payment_delegate)
+        ctx.accounts.update_subscription_period(subscription_period)
     }
 
     pub fn update_service_mint(ctx: Context<UpdateService>, mint: Pubkey) -> Result<()> {

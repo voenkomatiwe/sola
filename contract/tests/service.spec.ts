@@ -7,7 +7,6 @@ import {
   Program,
 } from "@coral-xyz/anchor";
 import {
-  TOKEN_PROGRAM_ID,
   createAssociatedTokenAccount,
   getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
@@ -16,7 +15,7 @@ import { v1 as uuidv1, v4 as uuidv4 } from "uuid";
 import { expectThrowError } from "./util/console";
 import { programError } from "./util/error";
 import { TestToken } from "./util/token";
-import { airdrop } from "./util/setup";
+import { airdrop, DEFAULT_SUBSCRIPTION_PERIOD } from "./util/setup";
 
 import {
   ACCOUNT_SIZE,
@@ -38,15 +37,19 @@ describe("Service", () => {
   const user = web3.Keypair.generate();
   const another_authority = web3.Keypair.generate();
 
-  const amount = new BN(100);
+  let amount = new BN(100);
   const id = uuidv4();
   const serviceId = uuidToBn(id);
 
   let testMint: TestToken;
+  let newTestMint: TestToken;
 
   beforeAll(async () => {
     testMint = new TestToken(provider);
     await testMint.mint(1_000_000_000);
+
+    newTestMint = new TestToken(provider);
+    await newTestMint.mint(1_000_000_000);
 
     await airdrop(provider.connection, authority.publicKey);
     await airdrop(provider.connection, user.publicKey);
@@ -67,7 +70,7 @@ describe("Service", () => {
             .createService(
               new BN(invalidId, "be"),
               authority.publicKey,
-              authority.publicKey,
+              null,
               amount,
               bump
             )
@@ -93,7 +96,7 @@ describe("Service", () => {
             .createService(
               uuidToBn(invalidId),
               authority.publicKey,
-              authority.publicKey,
+              null,
               amount,
               bump
             )
@@ -113,13 +116,7 @@ describe("Service", () => {
       const [serviceAccount, bump] = program.findServiceAddress(id);
 
       await program.program.methods
-        .createService(
-          serviceId,
-          authority.publicKey,
-          authority.publicKey,
-          amount,
-          bump
-        )
+        .createService(serviceId, authority.publicKey, null, amount, bump)
         .accounts({
           sender: user.publicKey,
           service: serviceAccount,
@@ -133,9 +130,9 @@ describe("Service", () => {
 
       expect((fetchedServiceAccount.id as BN).eq(serviceId)).toBeTruthy();
       expect(fetchedServiceAccount.authority).toEqual(authority.publicKey);
-      expect(fetchedServiceAccount.paymentDelegate).toEqual(
-        authority.publicKey
-      );
+      expect(
+        fetchedServiceAccount.subscriptionPeriod.eq(DEFAULT_SUBSCRIPTION_PERIOD)
+      ).toBeTruthy();
       expect(fetchedServiceAccount.mint).toEqual(testMint.token);
       expect(fetchedServiceAccount.subPrice.eq(amount)).toBeTruthy();
       expect(fetchedServiceAccount.subscribersCount.isZero()).toBeTruthy();
@@ -196,9 +193,6 @@ describe("Service", () => {
         true
       );
 
-      let newTestMint = new TestToken(provider);
-      await newTestMint.mint(1);
-
       let senderTokenAccount = await createAssociatedTokenAccount(
         provider.connection,
         user,
@@ -258,9 +252,6 @@ describe("Service", () => {
 
     it("fail - invalid service token account mint", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
-
-      let newTestMint = new TestToken(provider);
-      await newTestMint.mint(1);
 
       let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -327,7 +318,7 @@ describe("Service", () => {
       );
     });
 
-    xit("success", async () => {
+    it("success", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
 
       await testMint.transfer(null, serviceAccount, amount.toNumber(), true);
@@ -347,7 +338,7 @@ describe("Service", () => {
         authority.publicKey
       );
 
-      let senderBalanceBefore = await testMint.getBalance(user.publicKey);
+      let senderBalanceBefore = await testMint.getBalance(authority.publicKey);
       let serviceBalanceBefore = await testMint.getBalance(
         serviceAccount,
         true
@@ -364,7 +355,7 @@ describe("Service", () => {
         .signers([authority])
         .rpc();
 
-      let senderBalanceAfter = await testMint.getBalance(user.publicKey);
+      let senderBalanceAfter = await testMint.getBalance(authority.publicKey);
       let serviceBalanceAfter = await testMint.getBalance(serviceAccount, true);
 
       expect(
@@ -394,30 +385,8 @@ describe("Service", () => {
       );
     });
 
-    it("success - update payment delegate", async () => {
-      const [serviceAccount] = program.findServiceAddress(id);
-
-      await program.program.methods
-        .updateServicePaymentDelegate(another_authority.publicKey)
-        .accounts({
-          sender: authority.publicKey,
-          service: serviceAccount,
-        })
-        .signers([authority])
-        .rpc();
-
-      const fetchedServiceAccount = await program.getServiceData(id);
-
-      expect(fetchedServiceAccount.paymentDelegate).toEqual(
-        another_authority.publicKey
-      );
-    });
-
     it("success - update service mint", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
-
-      let newTestMint = new TestToken(provider);
-      await newTestMint.mint(1);
 
       await program.program.methods
         .updateServiceMint(newTestMint.token)
@@ -436,10 +405,10 @@ describe("Service", () => {
     it("success - update service price", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
 
-      const newPrice = amount.addn(100);
+      amount = amount.addn(100);
 
       await program.program.methods
-        .updateServicePrice(newPrice)
+        .updateServicePrice(amount)
         .accounts({
           sender: authority.publicKey,
           service: serviceAccount,
@@ -449,7 +418,25 @@ describe("Service", () => {
 
       const fetchedServiceAccount = await program.getServiceData(id);
 
-      expect(fetchedServiceAccount.subPrice.eq(newPrice)).toBeTruthy();
+      expect(fetchedServiceAccount.subPrice.eq(amount)).toBeTruthy();
+    });
+
+    it("success - update subscription period", async () => {
+      const [serviceAccount] = program.findServiceAddress(id);
+      const period = new BN(12345);
+
+      await program.program.methods
+        .updateServiceSubscriptionPeriod(period)
+        .accounts({
+          sender: authority.publicKey,
+          service: serviceAccount,
+        })
+        .signers([authority])
+        .rpc();
+
+      const fetchedServiceAccount = await program.getServiceData(id);
+
+      expect(fetchedServiceAccount.subscriptionPeriod.eq(period)).toBeTruthy();
     });
 
     it("success - update service authority", async () => {
@@ -491,9 +478,12 @@ describe("Service", () => {
       );
     });
 
-    // TODO: implement
-    xit("fail - service has subscribers", async () => {
+    it("fail - service has subscribers", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+
+      await newTestMint.transfer(null, user.publicKey, amount.toNumber());
+      await program.replenishUserStorage(newTestMint.token, amount, user);
+      await program.activateSubscription(id, user);
 
       await expectThrowError(
         () =>
@@ -506,8 +496,10 @@ describe("Service", () => {
             })
             .signers([another_authority])
             .rpc(),
-        /AnchorError caused by account: service. Error Code: ConstraintSeeds/
+        programError("PresentSubscriptions")
       );
+
+      await program.deactivateSubscription(id, user);
     });
 
     it("success", async () => {
