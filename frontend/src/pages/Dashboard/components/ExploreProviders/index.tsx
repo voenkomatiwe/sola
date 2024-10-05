@@ -1,10 +1,39 @@
+import { useEffect } from "react";
+
 import { DataTable } from "@/components/DataTable";
 import { columns } from "@/constants/columns/explore";
+import { useAdaptors } from "@/hooks/store/useAdaptors";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const ExploreProviders = () => {
   const providers = useConsumer((store) => store.providers);
+  const service = useAdaptors((store) => store.service);
+
+  useEffect(() => {
+    const func = async () => {
+      try {
+        if (!service) return;
+        const result = await service.getAllServices();
+
+        const parsedServices = result.map((service) => ({
+          id: service.account.id.toString(),
+          authority: service.account.authority.toString(),
+          paymentDelegate: service.account.paymentDelegate.toString(),
+          mint: service.account.mint.toString(),
+          subPrice: service.account.subPrice.toNumber(),
+          updatedAt: service.account.updatedAt.toNumber(),
+          version: service.account.version.toString(),
+        }));
+        console.log("result", parsedServices);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+
+    func();
+  }, [service]);
+
   return (
     <div className="flex flex-col gap-4 h-full text-primary">
       <DataTable

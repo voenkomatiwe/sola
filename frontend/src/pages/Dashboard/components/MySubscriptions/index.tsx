@@ -5,6 +5,7 @@ import { APP_ROUTES } from "@/routes/constants";
 
 export const MySubscriptions = () => {
   const mySubscriptions = useConsumer((store) => store.mySubscriptions);
+
   return (
     <div className="flex flex-col gap-4 h-full text-primary">
       <DataTable

@@ -20,12 +20,13 @@ import { parse, v4 } from "uuid";
 
 import { InfoCard } from "@/components/InfoCard";
 import { Calendar } from "@/components/ui/calendar";
+import { contractAddress, tokenAccount, tokenAddress } from "@/config";
 import { useConsumer } from "@/hooks/store/useConsumer";
-import { IDL } from "@/providers/solana-provider/idl";
+import { IDL } from "@/lib/contract/idl";
 
 import { Chart } from "./chart";
 
-export function padBuffer(buffer: Buffer | Uint8Array, targetSize: number) {
+function padBuffer(buffer: Buffer | Uint8Array, targetSize: number) {
   if (!(buffer instanceof Buffer)) {
     buffer = Buffer.from(buffer);
   }
@@ -40,7 +41,7 @@ export function padBuffer(buffer: Buffer | Uint8Array, targetSize: number) {
   );
 }
 
-export function bufferFromString(str: string, bufferSize?: number) {
+function bufferFromString(str: string, bufferSize?: number) {
   const utf = utils.bytes.utf8.encode(str);
 
   if (!bufferSize || utf.byteLength === bufferSize) {
@@ -53,11 +54,8 @@ export function bufferFromString(str: string, bufferSize?: number) {
 
   return padBuffer(utf, bufferSize);
 }
-const DEVNET_TOKEN_ACCOUNT = "4r1YezyMmxBTG9gukMPzubVUZUAV4JYTutNVzChHSQZv";
-const DEVNET_TOKEN_ADDRESS = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
-const CONTRACT_ADDRESS = "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz";
 
-export function findContractServiceAddress(
+function findContractServiceAddress(
   id: string,
   programId: PublicKey,
 ): [PublicKey, number] {
@@ -67,7 +65,7 @@ export function findContractServiceAddress(
   );
 }
 
-export async function createService(
+async function createService(
   id: string,
   authority: PublicKey,
   paymentDelegate: PublicKey,
@@ -80,13 +78,13 @@ export async function createService(
 ) {
   const [service, bump] = findContractServiceAddress(
     id,
-    new PublicKey(CONTRACT_ADDRESS),
+    new PublicKey(contractAddress),
   );
   const provider = new AnchorProvider(connection, wallet, {
     commitment: "confirmed",
   });
 
-  const program = new Program(IDL, new PublicKey(CONTRACT_ADDRESS), provider);
+  const program = new Program(IDL, new PublicKey(contractAddress), provider);
   const allServices = await program.account.service.all();
   console.log(allServices, "allServices");
   const createServiceInstruction = await program.methods
@@ -141,7 +139,7 @@ export const Consumer = () => {
         programId: TOKEN_PROGRAM_ID,
       });
       const info = await connection.getTokenAccountBalance(
-        new PublicKey(DEVNET_TOKEN_ACCOUNT),
+        new PublicKey(tokenAccount),
       );
 
       console.log("here we are", info, tokens);
@@ -153,7 +151,7 @@ export const Consumer = () => {
         v4(),
         publicKey,
         publicKey,
-        new PublicKey(DEVNET_TOKEN_ADDRESS),
+        new PublicKey(tokenAddress),
         new BN("333"),
         publicKey,
         connection,
