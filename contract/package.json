@@ -27,12 +27,14 @@
     "build": "tsc && rollup -c",
     "prepublishOnly": "npm run build",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "initialize-state": "ts-node scripts/initialize-state"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.29.0",
     "@solana/spl-token": "^0.4.0",
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
