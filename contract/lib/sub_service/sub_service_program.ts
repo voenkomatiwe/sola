@@ -18,6 +18,7 @@ import {
 import { MethodsBuilder } from "@coral-xyz/anchor/dist/cjs/program/namespace/methods";
 import { IDL, SubService } from "../idl/sub_service";
 
+import * as state from "./state";
 import * as service from "./service";
 import * as user from "./user";
 import * as subscription from "./subscription";
@@ -28,24 +29,16 @@ export class SubServiceProgram {
   computeUnitPrice: number;
 
   constructor(
-    program?: Program<SubService>,
     subServiceProgramId?: string | PublicKey,
     provider?: AnchorProvider,
     computeUnitPrice?: number
   ) {
-    if (program) {
-      this.program = program;
-      this.programId = program.programId;
-    } else if (subServiceProgramId) {
-      this.programId =
-        typeof subServiceProgramId === "string"
-          ? new PublicKey(subServiceProgramId)
-          : subServiceProgramId;
+    this.programId =
+      typeof subServiceProgramId === "string"
+        ? new PublicKey(subServiceProgramId)
+        : subServiceProgramId;
 
-      this.program = new Program(IDL, this.programId, provider);
-    } else {
-      throw new Error("Program ID or Program instance is required");
-    }
+    this.program = new Program(IDL, this.programId, provider);
 
     // Default compute unit price is 10,000 microlamports
     this.computeUnitPrice = computeUnitPrice || 10000;
@@ -53,6 +46,16 @@ export class SubServiceProgram {
   }
 
   setMethods() {
+    this.findContractStateAddress = state.findContractStateAddress.bind(this);
+    this.getContractStateData = state.getContractStateData.bind(this);
+    this.initializeContractState = state.initializeContractState.bind(this);
+    this.updateStateAuthority = state.updateStateAuthority.bind(this);
+    this.updateStateWithdrawDelegate =
+      state.updateStateWithdrawDelegate.bind(this);
+    this.updateStateCommissionOwner =
+      state.updateStateCommissionOwner.bind(this);
+    this.updateStateCommission = state.updateStateCommission.bind(this);
+
     this.findServiceAddress = service.findServiceAddress.bind(this);
     this.getServiceData = service.getServiceData.bind(this);
     this.getAllServices = service.getAllServices.bind(this);
@@ -81,6 +84,13 @@ export class SubServiceProgram {
       subscription.deactivateSubscription.bind(this);
     this.chargeSubscriptionPayment =
       subscription.chargeSubscriptionPayment.bind(this);
+  }
+
+  public findProgramDataAddress() {
+    return PublicKey.findProgramAddressSync(
+      [this.programId.toBytes()],
+      new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111")
+    );
   }
 
   public async checkOrCreateATA(
@@ -158,6 +168,32 @@ export class SubServiceProgram {
       "confirmed"
     );
   }
+
+  public findContractStateAddress(id: string): any {}
+  public async getContractStateData(id: string): Promise<any> {}
+  public async initializeContractState(
+    stateAuthority: PublicKey,
+    withdrawDelegate: PublicKey,
+    commissionOwner: PublicKey,
+    commission: BN,
+    wallet?: Signer
+  ): Promise<any> {}
+  public async updateStateAuthority(
+    stateAuthority: PublicKey,
+    wallet?: Signer
+  ): Promise<any> {}
+  public async updateStateWithdrawDelegate(
+    withdrawDelegate: PublicKey,
+    wallet?: Signer
+  ): Promise<any> {}
+  public async updateStateCommissionOwner(
+    commissionOwner: PublicKey,
+    wallet?: Signer
+  ): Promise<any> {}
+  public async updateStateCommission(
+    commission: BN,
+    wallet?: Signer
+  ): Promise<any> {}
 
   public findServiceAddress(id: string): any {}
   public async getServiceData(id: string): Promise<any> {}

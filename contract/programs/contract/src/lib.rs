@@ -11,6 +11,42 @@ declare_id!("2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz");
 pub mod sub_service {
     use super::*;
 
+    pub fn initialize_contract_state(
+        ctx: Context<InitializeContractState>,
+        authority: Pubkey,
+        withdraw_delegate: Pubkey,
+        commission_owner: Pubkey,
+        commission: u64,
+        bump: u8,
+    ) -> Result<()> {
+        ctx.accounts.initialize_contract_state(
+            authority,
+            withdraw_delegate,
+            commission_owner,
+            commission,
+            bump,
+        )
+    }
+
+    pub fn set_state_authority(ctx: Context<UpdateContractState>, authority: Pubkey) {
+        ctx.accounts.set_authority(authority)
+    }
+
+    pub fn set_state_withdraw_delegate(
+        ctx: Context<UpdateContractState>,
+        withdraw_delegate: Pubkey,
+    ) {
+        ctx.accounts.set_withdraw_delegate(withdraw_delegate)
+    }
+
+    pub fn set_state_commission_owner(ctx: Context<UpdateContractState>, commission_owner: Pubkey) {
+        ctx.accounts.set_commission_owner(commission_owner)
+    }
+
+    pub fn set_state_commission(ctx: Context<UpdateContractState>, commission: u64) {
+        ctx.accounts.set_commission(commission)
+    }
+
     pub fn replenish_user_storage(
         ctx: Context<ReplenishUserStorage>,
         amount: u64,
