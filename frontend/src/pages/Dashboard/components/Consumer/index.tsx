@@ -1,6 +1,8 @@
+import { Program, Provider, web3 } from "@coral-xyz/anchor";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { SignerWalletAdapterProps } from "@solana/wallet-adapter-base";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, Signer } from "@solana/web3.js";
+import { PublicKey, Signer, Transaction } from "@solana/web3.js";
 import BN from "bn.js";
 import { CalendarClock, LucideDollarSign, Users } from "lucide-react";
 import { useEffect } from "react";
@@ -9,6 +11,7 @@ import { parse } from "uuid";
 import { InfoCard } from "@/components/InfoCard";
 import { Calendar } from "@/components/ui/calendar";
 import { useConsumer } from "@/hooks/store/useConsumer";
+import { IDL } from "@/providers/solana-provider/idl";
 
 import { Chart } from "./chart";
 
@@ -32,33 +35,39 @@ export async function createService(
   mint: PublicKey,
   sub_price: BN,
   wallet: Signer,
+  provider: Provider,
+  connection: web3.Connection,
+  signTransaction: SignerWalletAdapterProps["signTransaction"],
 ) {
   const [service, bump] = findContractServiceAddress(
     id,
     new PublicKey(CONTRACT_ADDRESS),
   );
   const sender = wallet.publicKey;
-  return {
-    sender,
-    id,
-    authority,
-    paymentDelegate,
-    mint,
-    sub_price,
-    service,
-    bump,
-  };
-  // return await this.sendSigned(
-  //   this.program.methods
-  //     .createService(new BN(id), authority, paymentDelegate, sub_price, bump)
-  //     .accounts({
-  //       sender,
-  //       service,
-  //       mint,
-  //       systemProgram: web3.SystemProgram.programId,
-  //     }),
-  //   wallet,
-  // );
+  const program = new Program(IDL, new PublicKey(CONTRACT_ADDRESS), provider);
+  const createServiceInstruction = await program.methods
+    .createService(new BN(id), authority, paymentDelegate, sub_price, bump)
+    .accounts({
+      sender,
+      service,
+      mint,
+      systemProgram: web3.SystemProgram.programId,
+    })
+    .instruction();
+
+  const blockHash = await connection.getLatestBlockhash();
+  const transferTransaction = new Transaction().add(createServiceInstruction);
+
+  transferTransaction.feePayer = new PublicKey(CONTRACT_ADDRESS);
+  transferTransaction.recentBlockhash = blockHash.blockhash;
+
+  const signedTransaction = await signTransaction(transferTransaction);
+
+  const signedTransactions = await connection.sendRawTransaction(
+    signedTransaction.serialize(),
+  );
+
+  return signedTransactions[0];
 }
 
 export const Consumer = () => {
@@ -74,7 +83,6 @@ export const Consumer = () => {
       const tokens = await connection.getParsedTokenAccountsByOwner(publicKey, {
         programId: TOKEN_PROGRAM_ID,
       });
-
       const info = await connection.getTokenAccountBalance(
         new PublicKey(DEVNET_TOKEN_ACCOUNT),
       );
