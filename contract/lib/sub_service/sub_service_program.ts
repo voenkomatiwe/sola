@@ -1,26 +1,25 @@
-import { Program, AnchorProvider, BN } from "@coral-xyz/anchor";
+import { AnchorProvider, BN, Program } from "@coral-xyz/anchor";
+import { MethodsBuilder } from "@coral-xyz/anchor/dist/cjs/program/namespace/methods";
 import {
-  PublicKey,
-  Signer,
-  ComputeBudgetProgram,
-  Transaction,
-} from "@solana/web3.js";
-import {
-  getAccount,
-  TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  getAssociatedTokenAddressSync,
-  createAssociatedTokenAccountInstruction,
+  TOKEN_PROGRAM_ID,
   TokenAccountNotFoundError,
   TokenInvalidAccountOwnerError,
+  createAssociatedTokenAccountInstruction,
+  getAccount,
+  getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-
-import { MethodsBuilder } from "@coral-xyz/anchor/dist/cjs/program/namespace/methods";
-import { IDL, SubService } from "../idl/sub_service";
+import {
+  ComputeBudgetProgram,
+  PublicKey,
+  Signer,
+  Transaction,
+} from "@solana/web3.js";
 
 import * as service from "./service";
-import * as user from "./user";
 import * as subscription from "./subscription";
+import * as user from "./user";
+import { IDL, SubService } from "../idl/sub_service";
 
 export class SubServiceProgram {
   program: Program<SubService>;
@@ -31,7 +30,7 @@ export class SubServiceProgram {
     program?: Program<SubService>,
     subServiceProgramId?: string | PublicKey,
     provider?: AnchorProvider,
-    computeUnitPrice?: number
+    computeUnitPrice?: number,
   ) {
     if (program) {
       this.program = program;
@@ -85,14 +84,14 @@ export class SubServiceProgram {
   public async checkOrCreateATA(
     mint: PublicKey,
     owner: PublicKey,
-    allowOwnerOffCurve = false
+    allowOwnerOffCurve = false,
   ): Promise<PublicKey> {
     const associatedToken = getAssociatedTokenAddressSync(
       mint,
       owner,
       allowOwnerOffCurve,
       TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID
+      ASSOCIATED_TOKEN_PROGRAM_ID,
     );
 
     const computeBudgetTx = ComputeBudgetProgram.setComputeUnitPrice({
@@ -115,17 +114,16 @@ export class SubServiceProgram {
               owner,
               mint,
               TOKEN_PROGRAM_ID,
-              ASSOCIATED_TOKEN_PROGRAM_ID
-            )
+              ASSOCIATED_TOKEN_PROGRAM_ID,
+            ),
           );
 
-        const txSignature = await this.program.provider.sendAndConfirm(
-          transaction
-        );
+        const txSignature =
+          await this.program.provider.sendAndConfirm(transaction);
 
         await this.program.provider.connection.confirmTransaction(
           txSignature,
-          "confirmed"
+          "confirmed",
         );
       } else {
         throw error;
@@ -147,12 +145,12 @@ export class SubServiceProgram {
 
     const txSignature = await this.program.provider.sendAndConfirm(
       transaction,
-      signers
+      signers,
     );
 
     return await this.program.provider.connection.confirmTransaction(
       txSignature,
-      "confirmed"
+      "confirmed",
     );
   }
 
@@ -165,28 +163,28 @@ export class SubServiceProgram {
     paymentDelegate: PublicKey,
     mint: PublicKey,
     sub_price: BN,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async removeService(id: string, wallet?: Signer): Promise<any> {}
   public async updateServiceAuthority(
     id: string,
     authority: PublicKey,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async updateServiceMint(
     id: string,
     mint: PublicKey,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async updateServicePrice(
     id: string,
     price: BN,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async withdrawFromServiceStorage(
     id: string,
     amount: BN,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
 
   public findUserAddress(address: PublicKey): any {}
@@ -195,33 +193,33 @@ export class SubServiceProgram {
   public async replenishUserStorage(
     mint: PublicKey,
     amount: BN,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async withdrawFromUserStorage(
     mint: PublicKey,
     amount: BN,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
 
   public async findSubscriptionAddress(
     user_address: PublicKey,
-    service_id: string
+    service_id: string,
   ): Promise<any> {}
   public async getSubscriptionData(
     user_address: PublicKey,
-    service_id: string
+    service_id: string,
   ): Promise<any> {}
   public async getAllSubscriptions(): Promise<any> {}
   public async activateSubscription(
     service_id: string,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async deactivateSubscription(
     service_id: string,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
   public async chargeSubscriptionPayment(
     service_id: string,
-    wallet?: Signer
+    wallet?: Signer,
   ): Promise<any> {}
 }

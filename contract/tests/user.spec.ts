@@ -1,10 +1,10 @@
 import {
-  web3,
-  BN,
   AnchorProvider,
-  workspace,
-  setProvider,
+  BN,
   Program,
+  setProvider,
+  web3,
+  workspace,
 } from "@coral-xyz/anchor";
 import {
   TOKEN_PROGRAM_ID,
@@ -12,12 +12,11 @@ import {
   getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
 
+import { ACCOUNT_SIZE, SubServiceProgram } from "../lib";
 import { expectThrowError } from "./util/console";
 import { programError } from "./util/error";
-import { TestToken } from "./util/token";
 import { airdrop } from "./util/setup";
-
-import { ACCOUNT_SIZE, SubServiceProgram } from "../lib";
+import { TestToken } from "./util/token";
 import { SubService } from "../lib/idl/sub_service";
 
 describe("User attestation", () => {
@@ -25,7 +24,7 @@ describe("User attestation", () => {
   setProvider(provider);
 
   const program = new SubServiceProgram(
-    workspace.SubService as Program<SubService>
+    workspace.SubService as Program<SubService>,
   );
 
   const authority = web3.Keypair.generate();
@@ -48,14 +47,14 @@ describe("User attestation", () => {
       provider.connection,
       authority,
       testMint.token,
-      authority.publicKey
+      authority.publicKey,
     );
 
     await createAssociatedTokenAccount(
       provider.connection,
       user,
       testMint.token,
-      user.publicKey
+      user.publicKey,
     );
   });
 
@@ -63,22 +62,22 @@ describe("User attestation", () => {
     it("fail - invalid sender token account mint", async () => {
       const [userAccount, bump] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let newTestMint = new TestToken(provider);
+      const newTestMint = new TestToken(provider);
       await newTestMint.mint(1);
 
-      let senderTokenAccount = await createAssociatedTokenAccount(
+      const senderTokenAccount = await createAssociatedTokenAccount(
         provider.connection,
         user,
         newTestMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -94,26 +93,26 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        programError("InvalidToken")
+        programError("InvalidToken"),
       );
     });
 
     it("fail - invalid sender token account owner", async () => {
       const [userAccount, bump] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         nobody,
         testMint.token,
-        nobody.publicKey
+        nobody.publicKey,
       );
 
       await expectThrowError(
@@ -129,29 +128,29 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        programError("IllegalOwner")
+        programError("IllegalOwner"),
       );
     });
 
     it("fail - invalid user token account mint", async () => {
       const [userAccount, bump] = program.findUserAddress(user.publicKey);
 
-      let newTestMint = new TestToken(provider);
+      const newTestMint = new TestToken(provider);
       await newTestMint.mint(1);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         newTestMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -167,26 +166,26 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        programError("InvalidToken")
+        programError("InvalidToken"),
       );
     });
 
     it("fail - invalid token balance", async () => {
       const [userAccount, bump] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -202,7 +201,7 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        /Error processing Instruction 0: custom program error: 0x1/
+        /Error processing Instruction 0: custom program error: 0x1/,
       );
     });
 
@@ -211,23 +210,23 @@ describe("User attestation", () => {
 
       await testMint.transfer(null, user.publicKey, amount.toNumber());
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
-      let senderBalanceBefore = await testMint.getBalance(user.publicKey);
-      let userBalanceBefore = await testMint.getBalance(userAccount, true);
+      const senderBalanceBefore = await testMint.getBalance(user.publicKey);
+      const userBalanceBefore = await testMint.getBalance(userAccount, true);
 
       await program.program.methods
         .replenishUserStorage(amount, bump)
@@ -246,18 +245,17 @@ describe("User attestation", () => {
       expect(fetchedUserAccount.address).toEqual(user.publicKey);
       expect(fetchedUserAccount.bump).toEqual(bump);
 
-      const userInfo = await provider.connection.getAccountInfoAndContext(
-        userAccount
-      );
+      const userInfo =
+        await provider.connection.getAccountInfoAndContext(userAccount);
 
       expect(userInfo.value.owner).toEqual(program.programId);
       expect(userInfo.value.data.length).toEqual(ACCOUNT_SIZE.user);
 
-      let senderBalanceAfter = await testMint.getBalance(user.publicKey);
-      let userBalanceAfter = await testMint.getBalance(userAccount, true);
+      const senderBalanceAfter = await testMint.getBalance(user.publicKey);
+      const userBalanceAfter = await testMint.getBalance(userAccount, true);
 
       expect(
-        senderBalanceAfter.eq(senderBalanceBefore.sub(amount))
+        senderBalanceAfter.eq(senderBalanceBefore.sub(amount)),
       ).toBeTruthy();
       expect(userBalanceAfter.eq(userBalanceBefore.add(amount))).toBeTruthy();
     });
@@ -267,23 +265,23 @@ describe("User attestation", () => {
 
       await testMint.transfer(null, user.publicKey, amount.toNumber());
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
-      let senderBalanceBefore = await testMint.getBalance(user.publicKey);
-      let userBalanceBefore = await testMint.getBalance(userAccount, true);
+      const senderBalanceBefore = await testMint.getBalance(user.publicKey);
+      const userBalanceBefore = await testMint.getBalance(userAccount, true);
 
       await program.program.methods
         .replenishUserStorage(amount, bump)
@@ -297,11 +295,11 @@ describe("User attestation", () => {
         .signers([user])
         .rpc();
 
-      let senderBalanceAfter = await testMint.getBalance(user.publicKey);
-      let userBalanceAfter = await testMint.getBalance(userAccount, true);
+      const senderBalanceAfter = await testMint.getBalance(user.publicKey);
+      const userBalanceAfter = await testMint.getBalance(userAccount, true);
 
       expect(
-        senderBalanceAfter.eq(senderBalanceBefore.sub(amount))
+        senderBalanceAfter.eq(senderBalanceBefore.sub(amount)),
       ).toBeTruthy();
       expect(userBalanceAfter.eq(userBalanceBefore.add(amount))).toBeTruthy();
     });
@@ -311,19 +309,19 @@ describe("User attestation", () => {
     it("fail - authority mismatch", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -338,29 +336,29 @@ describe("User attestation", () => {
             })
             .signers([nobody])
             .rpc(),
-        /AnchorError caused by account: user. Error Code: ConstraintSeeds/
+        /AnchorError caused by account: user. Error Code: ConstraintSeeds/,
       );
     });
 
     it("fail - invalid sender token account mint", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let newTestMint = new TestToken(provider);
+      const newTestMint = new TestToken(provider);
       await newTestMint.mint(1);
 
-      let senderTokenAccount = await createAssociatedTokenAccount(
+      const senderTokenAccount = await createAssociatedTokenAccount(
         provider.connection,
         user,
         newTestMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -375,26 +373,26 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        programError("InvalidToken")
+        programError("InvalidToken"),
       );
     });
 
     it("fail - invalid sender token account owner", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         nobody,
         testMint.token,
-        nobody.publicKey
+        nobody.publicKey,
       );
 
       await expectThrowError(
@@ -410,29 +408,29 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        programError("IllegalOwner")
+        programError("IllegalOwner"),
       );
     });
 
     it("fail - invalid user token account mint", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
-      let newTestMint = new TestToken(provider);
+      const newTestMint = new TestToken(provider);
       await newTestMint.mint(1);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         newTestMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -448,29 +446,29 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        programError("InvalidToken")
+        programError("InvalidToken"),
       );
     });
 
     it("fail - invalid token balance", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
-      let newTestMint = new TestToken(provider);
+      const newTestMint = new TestToken(provider);
       await newTestMint.mint(1);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         newTestMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         newTestMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
       await expectThrowError(
@@ -486,30 +484,30 @@ describe("User attestation", () => {
             })
             .signers([user])
             .rpc(),
-        /Error processing Instruction 0: custom program error: 0x1/
+        /Error processing Instruction 0: custom program error: 0x1/,
       );
     });
 
     it("success", async () => {
       const [userAccount] = program.findUserAddress(user.publicKey);
 
-      let userTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const userTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
         userAccount,
-        true
+        true,
       );
 
-      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
         user,
         testMint.token,
-        user.publicKey
+        user.publicKey,
       );
 
-      let senderBalanceBefore = await testMint.getBalance(user.publicKey);
-      let userBalanceBefore = await testMint.getBalance(userAccount, true);
+      const senderBalanceBefore = await testMint.getBalance(user.publicKey);
+      const userBalanceBefore = await testMint.getBalance(userAccount, true);
 
       await program.program.methods
         .withdrawFromUserStorage(amount)
@@ -523,11 +521,11 @@ describe("User attestation", () => {
         .signers([user])
         .rpc();
 
-      let senderBalanceAfter = await testMint.getBalance(user.publicKey);
-      let userBalanceAfter = await testMint.getBalance(userAccount, true);
+      const senderBalanceAfter = await testMint.getBalance(user.publicKey);
+      const userBalanceAfter = await testMint.getBalance(userAccount, true);
 
       expect(
-        senderBalanceAfter.eq(senderBalanceBefore.add(amount))
+        senderBalanceAfter.eq(senderBalanceBefore.add(amount)),
       ).toBeTruthy();
       expect(userBalanceAfter.eq(userBalanceBefore.sub(amount))).toBeTruthy();
     });

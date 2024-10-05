@@ -7,7 +7,7 @@ import { bufferFromString, uuidToBn } from "..";
 
 export function findContractServiceAddress(id: string): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [bufferFromString("service"), uuidParse(id)],
+    [Buffer.from("service"), uuidParse(id)],
     this.programId
   );
 }
