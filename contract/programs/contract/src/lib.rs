@@ -5,7 +5,7 @@ mod context;
 mod error;
 mod state;
 
-declare_id!("ADU233uT8HgNtRrmn4twcHK6jbN8JpBA7oHuAeewVe8Z");
+declare_id!("2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz");
 
 #[program]
 pub mod sub_service {

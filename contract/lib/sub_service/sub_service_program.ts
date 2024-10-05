@@ -84,6 +84,7 @@ export class SubServiceProgram {
   public async checkOrCreateATA(
     mint: PublicKey,
     owner: PublicKey,
+    wallet: Signer,
     allowOwnerOffCurve = false
   ): Promise<PublicKey> {
     const associatedToken = getAssociatedTokenAddressSync(
@@ -109,7 +110,7 @@ export class SubServiceProgram {
           .add(computeBudgetTx)
           .add(
             createAssociatedTokenAccountInstruction(
-              owner,
+              wallet.publicKey,
               associatedToken,
               owner,
               mint,
@@ -119,7 +120,8 @@ export class SubServiceProgram {
           );
 
         const txSignature = await this.program.provider.sendAndConfirm(
-          transaction
+          transaction,
+          [wallet]
         );
 
         await this.program.provider.connection.confirmTransaction(
@@ -202,10 +204,10 @@ export class SubServiceProgram {
     wallet?: Signer
   ): Promise<any> {}
 
-  public async findSubscriptionAddress(
+  public findSubscriptionAddress(
     user_address: PublicKey,
     service_id: string
-  ): Promise<any> {}
+  ): any {}
   public async getSubscriptionData(
     user_address: PublicKey,
     service_id: string

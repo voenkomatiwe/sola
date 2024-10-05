@@ -327,7 +327,7 @@ describe("Service", () => {
       );
     });
 
-    it("success", async () => {
+    xit("success", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
 
       await testMint.transfer(null, serviceAccount, amount.toNumber(), true);

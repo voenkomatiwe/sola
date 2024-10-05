@@ -16,4 +16,8 @@ pub enum ProgramError {
     ValueOverflow,
     #[msg("Untimely subscription payment")]
     UntimelyPayment,
+    #[msg("Subscription already active")]
+    SubscriptionAlreadyActive,
+    #[msg("Subscription already inactive")]
+    SubscriptionInactive,
 }

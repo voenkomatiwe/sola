@@ -25,7 +25,7 @@ pub struct ActivateSubscription<'info> {
         init_if_needed,
         payer = sender,
         owner = id(),
-        seeds = [b"subscription".as_ref(), sender.key.as_ref(), &service.id.to_be_bytes()],
+        seeds = [b"subscription".as_ref(), user.address.as_ref(), &service.id.to_be_bytes()],
         bump,
         space = Subscription::LEN
     )]
@@ -56,7 +56,7 @@ pub struct ActivateSubscription<'info> {
 
     #[account(
         mut,
-        constraint = service_token_account.owner == user.key() @ ProgramError::IllegalOwner,
+        constraint = service_token_account.owner == service.key() @ ProgramError::IllegalOwner,
         constraint = service_token_account.mint == service.mint @ ProgramError::InvalidToken
 
     )]
@@ -75,7 +75,7 @@ pub struct DeactivateSubscription<'info> {
 
     #[account(
         mut,
-        seeds = [b"subscription".as_ref(), sender.key.as_ref()],
+        seeds = [b"subscription".as_ref(), sender.key().as_ref(), &service.id.to_be_bytes()],
         bump = subscription.bump,
         constraint = subscription.user == sender.key() @ ProgramError::AuthorityMismatch,
     )]
@@ -125,7 +125,7 @@ pub struct ChargeSubscriptionPayment<'info> {
 
     #[account(
         mut,
-        constraint = service_token_account.owner == user.key() @ ProgramError::IllegalOwner,
+        constraint = service_token_account.owner == service.key() @ ProgramError::IllegalOwner,
         constraint = service_token_account.mint == service.mint @ ProgramError::InvalidToken
 
     )]
@@ -142,6 +142,11 @@ impl<'info> ActivateSubscription<'info> {
         let subscription = &mut self.subscription;
         let service = &mut self.service;
         let user = &self.user;
+
+        require!(
+            !subscription.is_active,
+            ProgramError::SubscriptionAlreadyActive
+        );
 
         transfer_pda_tokens(
             &user.get_seeds(),
@@ -161,7 +166,7 @@ impl<'info> ActivateSubscription<'info> {
 
         subscription.last_payment = Clock::get()?.unix_timestamp;
         subscription.is_active = true;
-        service
+        service.subscribers_count = service
             .subscribers_count
             .checked_add(1)
             .ok_or(ProgramError::ValueOverflow)?;
@@ -181,8 +186,10 @@ impl<'info> DeactivateSubscription<'info> {
         let subscription = &mut self.subscription;
         let service = &mut self.service;
 
+        require!(subscription.is_active, ProgramError::SubscriptionInactive);
+
         subscription.is_active = false;
-        service
+        service.subscribers_count = service
             .subscribers_count
             .checked_sub(1)
             .ok_or(ProgramError::ValueOverflow)?;
@@ -204,6 +211,7 @@ impl<'info> ChargeSubscriptionPayment<'info> {
         let user = &self.user;
         let now = Clock::get()?.unix_timestamp;
 
+        require!(subscription.is_active, ProgramError::SubscriptionInactive);
         require!(
             subscription.last_payment < now - SUBSCRIPTION_PERIOD,
             ProgramError::UntimelyPayment

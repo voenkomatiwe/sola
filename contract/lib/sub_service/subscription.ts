@@ -10,7 +10,11 @@ export function findSubscriptionAddress(
   service_id: string
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [bufferFromString("user"), user_address.toBytes(), uuidParse(service_id)],
+    [
+      bufferFromString("subscription"),
+      user_address.toBytes(),
+      uuidParse(service_id),
+    ],
     this.programId
   );
 }
@@ -21,7 +25,7 @@ export async function getSubscriptionData(
 ) {
   const [subscription] = this.findSubscriptionAddress(user_address, service_id);
 
-  return await this.program.account.user.fetch(subscription);
+  return await this.program.account.subscription.fetch(subscription);
 }
 
 export async function getAllSubscriptions() {

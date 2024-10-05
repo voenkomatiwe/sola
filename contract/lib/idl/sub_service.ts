@@ -52,7 +52,7 @@ export type SubService = {
       "accounts": [
         {
           "name": "sender",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -240,7 +240,7 @@ export type SubService = {
       "accounts": [
         {
           "name": "sender",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -630,7 +630,7 @@ export const IDL: SubService = {
       "accounts": [
         {
           "name": "sender",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -818,7 +818,7 @@ export const IDL: SubService = {
       "accounts": [
         {
           "name": "sender",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {

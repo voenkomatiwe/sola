@@ -1,6 +1,10 @@
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey, Signer } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
+import {
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
+} from "@solana/spl-token";
 
 import { bufferFromString } from "..";
 
@@ -24,12 +28,19 @@ export async function getAllUsers() {
 export async function replenishUserStorage(
   mint: PublicKey,
   amount: BN,
-  wallet?: Signer
+  wallet: Signer
 ) {
-  const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
+  const sender = wallet.publicKey;
   const [user, bump] = this.findUserAddress(sender);
 
-  const userTokenAccount = await this.checkOrCreateATA(mint, user, true);
+  const userTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
+    mint,
+    user,
+    true
+  );
+
   const senderTokenAccount = await getAssociatedTokenAddress(mint, sender);
 
   return await this.sendSigned(
@@ -37,7 +48,7 @@ export async function replenishUserStorage(
       sender,
       user,
       senderTokenAccount,
-      userTokenAccount,
+      userTokenAccount: userTokenAccount.address,
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: web3.SystemProgram.programId,
     }),
