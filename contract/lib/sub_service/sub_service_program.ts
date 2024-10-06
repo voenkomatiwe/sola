@@ -200,6 +200,8 @@ export class SubServiceProgram {
   public async getAllServices(): Promise<any> {}
   public async createService(
     id: string,
+    name: string,
+    url: string,
     authority: PublicKey,
     mint: PublicKey,
     sub_price: BN,

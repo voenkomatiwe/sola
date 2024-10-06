@@ -41,6 +41,9 @@ describe("Service", () => {
   let testMint: TestToken;
   let newTestMint: TestToken;
 
+  const name = Array.from(bufferFromString("Test service", 32));
+  const url = Array.from(bufferFromString("my-service.com.ua", 32));
+
   beforeAll(async () => {
     testMint = new TestToken(provider);
     await testMint.mint(1_000_000_000);
@@ -57,7 +60,7 @@ describe("Service", () => {
         authority.publicKey,
         authority.publicKey,
         commission_owner.publicKey,
-        amount
+        commission
       );
     } catch (e) {
       await program.updateStateCommissionOwner(commission_owner.publicKey);
@@ -78,6 +81,8 @@ describe("Service", () => {
           program.program.methods
             .createService(
               new BN(invalidId, "be"),
+              name,
+              url,
               authority.publicKey,
               null,
               amount,
@@ -104,6 +109,8 @@ describe("Service", () => {
           program.program.methods
             .createService(
               uuidToBn(invalidId),
+              name,
+              url,
               authority.publicKey,
               null,
               amount,
@@ -125,7 +132,15 @@ describe("Service", () => {
       const [serviceAccount, bump] = program.findServiceAddress(id);
 
       await program.program.methods
-        .createService(serviceId, authority.publicKey, null, amount, bump)
+        .createService(
+          serviceId,
+          name,
+          url,
+          authority.publicKey,
+          null,
+          amount,
+          bump
+        )
         .accounts({
           sender: user.publicKey,
           service: serviceAccount,
@@ -138,6 +153,8 @@ describe("Service", () => {
       const fetchedServiceAccount = await program.getServiceData(id);
 
       expect((fetchedServiceAccount.id as BN).eq(serviceId)).toBeTruthy();
+      expect(fetchedServiceAccount.name).toEqual(name);
+      expect(fetchedServiceAccount.url).toEqual(url);
       expect(fetchedServiceAccount.authority).toEqual(authority.publicKey);
       expect(
         fetchedServiceAccount.subscriptionPeriod.eq(DEFAULT_SUBSCRIPTION_PERIOD)

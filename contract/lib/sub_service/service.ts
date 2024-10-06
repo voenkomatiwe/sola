@@ -28,6 +28,8 @@ export async function getAllServices() {
 
 export async function createService(
   id: string,
+  name: string,
+  url: string,
   authority: PublicKey,
   mint: PublicKey,
   sub_price: BN,
@@ -38,9 +40,20 @@ export async function createService(
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const period = subscriptionPeriod || null;
 
+  const nameBuffer = Array.from(bufferFromString(name, 32));
+  const urlBuffer = Array.from(bufferFromString(url, 32));
+
   return await this.sendSigned(
     this.program.methods
-      .createService(uuidToBn(id), authority, period, sub_price, bump)
+      .createService(
+        uuidToBn(id),
+        nameBuffer,
+        urlBuffer,
+        authority,
+        period,
+        sub_price,
+        bump
+      )
       .accounts({
         sender,
         service,

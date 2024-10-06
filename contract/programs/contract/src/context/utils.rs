@@ -5,6 +5,8 @@ use {
     std::ops::{Div, Mul},
 };
 
+use crate::error::ProgramError;
+
 pub const UUID_VERSION: usize = 4;
 pub const DEFAULT_SUBSCRIPTION_PERIOD: i64 = 2_629_743;
 pub const FULL_CAPACITY: u64 = 10_000;
@@ -64,4 +66,11 @@ pub fn calculate_commission_amount(amount: u64, commission: u64) -> u64 {
         .mul(U256::from(commission))
         .div(U256::from(FULL_CAPACITY))
         .as_u64()
+}
+
+/// This method converts bytes to string
+pub fn bytes_to_string(arr: &[u8]) -> Result<String> {
+    let null_index = arr.iter().position(|&ch| ch == b'\0').unwrap_or(arr.len());
+
+    String::from_utf8(arr[0..null_index].to_vec()).map_err(|_| ProgramError::InvalidData.into())
 }

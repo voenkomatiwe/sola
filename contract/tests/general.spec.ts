@@ -24,6 +24,9 @@ describe("Sub Contract General Test", () => {
   const period = new BN(0);
   const id = uuidv4();
 
+  const name = "Test service";
+  const url = "my-service.com.ua";
+
   let testMint: TestToken;
 
   beforeAll(async () => {
@@ -74,6 +77,8 @@ describe("Sub Contract General Test", () => {
   it("create service", async () => {
     await program.createService(
       id,
+      name,
+      url,
       another_authority.publicKey,
       testMint.token,
       amount

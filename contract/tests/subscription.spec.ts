@@ -26,6 +26,9 @@ describe("Subscription", () => {
   const amount = new BN(100);
   const id = uuidv4();
 
+  const name = "Test service";
+  const url = "my-service.com.ua";
+
   let testMint: TestToken;
 
   beforeAll(async () => {
@@ -41,6 +44,8 @@ describe("Subscription", () => {
 
     await program.createService(
       id,
+      name,
+      url,
       authority.publicKey,
       testMint.token,
       amount
