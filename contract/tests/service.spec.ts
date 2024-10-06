@@ -53,6 +53,8 @@ describe("Service", () => {
     await airdrop(provider.connection, another_authority.publicKey);
 
     try {
+      console.log("AND IM HERE");
+
       await program.initializeContractState(
         authority.publicKey,
         authority.publicKey,
@@ -60,9 +62,20 @@ describe("Service", () => {
         amount
       );
     } catch (e) {
+      console.log("IM HERE");
       await program.updateStateCommissionOwner(commission_owner.publicKey);
       await program.updateStateCommission(commission);
     }
+
+    let stateData = await program.getContractStateData();
+    console.log(
+      "!!!!!!!!commission_owner",
+      commission_owner.publicKey.toString()
+    );
+    console.log(
+      "stateData.commissionOwner",
+      stateData.commissionOwner.toString()
+    );
   });
 
   describe("create_service", () => {
