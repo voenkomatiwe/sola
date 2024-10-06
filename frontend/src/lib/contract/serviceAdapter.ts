@@ -1,9 +1,8 @@
 import { BN, Wallet, web3 } from "@coral-xyz/anchor";
 import { PublicKey, Signer, Transaction } from "@solana/web3.js";
-import { parse, parse as uuidParse } from "uuid";
+import { parse } from "uuid";
 
 import { ContractBase } from "./baseAdapter";
-import { bufferFromString } from "./utils";
 
 export class ServiceAdapter extends ContractBase {
   constructor(
@@ -12,13 +11,6 @@ export class ServiceAdapter extends ContractBase {
     contractAddress: string,
   ) {
     super(connection, wallet, contractAddress);
-  }
-
-  public findContractServiceAddress(id: string): [PublicKey, number] {
-    return PublicKey.findProgramAddressSync(
-      [bufferFromString("service"), uuidParse(id)],
-      this.program.programId,
-    );
   }
 
   public async getContractServiceData(id: string) {

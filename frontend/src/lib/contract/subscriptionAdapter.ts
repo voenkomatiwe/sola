@@ -1,8 +1,12 @@
 import { Wallet, web3 } from "@coral-xyz/anchor";
-import { PublicKey, Signer } from "@solana/web3.js";
+import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
+import { PublicKey, Signer, Transaction } from "@solana/web3.js";
 import { parse as uuidParse } from "uuid";
 
+import { contractAddress } from "@/config";
+
 import { ContractBase } from "./baseAdapter";
+import { ServiceAdapter } from "./serviceAdapter";
 import { bufferFromString } from "./utils";
 
 export class SubscriptionAdapter extends ContractBase {
@@ -37,8 +41,54 @@ export class SubscriptionAdapter extends ContractBase {
     return await this.program.account.subscription.all();
   }
 
+  public async activateSubscription(serviceId: string) {
+    const sender = this.program.provider.publicKey;
+    if (!sender) return;
+
+    const [subscription, bump] = this.findSubscriptionAddress(
+      sender,
+      serviceId,
+    );
+    const [user] = this.findUserAddress(sender);
+    const [service] = this.findContractServiceAddress(serviceId);
+
+    const serviceAdapter = new ServiceAdapter(
+      this.program.provider.connection,
+      this.wallet,
+      contractAddress,
+    );
+    const data = await serviceAdapter.getContractServiceData(serviceId);
+
+    const userTokenAccount = await getAssociatedTokenAddress(
+      data.mint,
+      user,
+      true,
+    );
+    const serviceTokenAccount = await getAssociatedTokenAddress(
+      data.mint,
+      sender,
+      true,
+    );
+
+    const instructions = await this.program.methods
+      .activateSubscription(bump)
+      .accounts({
+        sender,
+        subscription,
+        user,
+        service,
+        serviceTokenAccount,
+        userTokenAccount,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: web3.SystemProgram.programId,
+      })
+      .instruction();
+    const subscribeTransaction = new Transaction().add(instructions);
+    subscribeTransaction.feePayer = sender;
+    if (!this.program.provider.sendAndConfirm) return;
+    return await this.program.provider.sendAndConfirm(subscribeTransaction);
+  }
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  public async activateSubscription(serviceId: string, wallet?: Signer) {}
 
   public async deactivateSubscription(serviceId: string, wallet?: Signer) {}
 
