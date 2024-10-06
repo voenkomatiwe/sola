@@ -25,87 +25,85 @@ export const SubscriptionForm = () => {
 
     setTransactionSignature("sola");
   };
-
   if (transactionSignature) {
     return (
-      <div className="flex flex-col gap4">
-        <div className="flex items-center px-4 justify-between text-lg text-white">
-          <p className="font-semibold mb-2">Transaction Successful!</p>
-          <Button
-            variant="link"
-            className="text-white"
-            onClick={() =>
-              window.open(
-                `https://explorer.solana.com/tx/${transactionSignature}?cluster=${WalletAdapterNetwork.Devnet}`,
-                "_blank",
-                "noopener noreferrer",
-              )
-            }
-          >
-            View Transaction on Solana Explorer
-          </Button>
-        </div>
-        <div className="flex dashboard p-4 rounded-2xl items-center justify-between">
-          <div className="flex items-center text-5xl gap-2">
+      <form onSubmit={handleSubmit} className="space-y-4 w-full text-white">
+        <div className="flex flex-col dashboard p-4 rounded-2xl items-center justify-between">
+          <div className="flex items-start justify-start w-full text-5xl gap-2 rubik-one">
             <img src={sola} alt="sola" className="w-10 h-10" />
             Sola
           </div>
-          <Button>Dashboard</Button>
+
+          <div className="flex flex-col items-center p-4 px-4 justify-between text-lg text-white">
+            <p className="font-bold text-2xl">Transaction Successful!</p>
+            <Button
+              variant="link"
+              className="text-white"
+              onClick={() =>
+                window.open(
+                  `https://explorer.solana.com/tx/${transactionSignature}?cluster=${WalletAdapterNetwork.Devnet}`,
+                  "_blank",
+                  "noopener noreferrer",
+                )
+              }
+            >
+              View Transaction on Solana Explorer
+            </Button>
+            <p className="text-base mb-2">or</p>
+            <Button>Dashboard</Button>
+          </div>
         </div>
-      </div>
+      </form>
     );
   }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full text-white">
-      <div className="flex items-center text-5xl gap-2 justify-center">
-        <img src={sola} alt="sola" className="w-10 h-10" />
-        Sola
-      </div>
-      {connected && publicKey && (
-        <div className="mb-4 flex justify-between">
-          <p className="text-sm font-medium">Connected Account</p>
-          <p>{publicKey.toBase58()}</p>
+      <div className="flex flex-col dashboard p-4 rounded-2xl items-center justify-between">
+        <div className="flex items-start justify-start w-full text-5xl gap-2 rubik-one">
+          <img src={sola} alt="sola" className="w-10 h-10" />
+          Sola
         </div>
-      )}
-
-      <div className="mb-4 flex flex-col gap-3">
-        <p className="block text-sm font-medium text-center">Period</p>
-        <ToggleGroup
-          variant="outline"
-          type="single"
-          value={period}
-          onValueChange={(e) => setPeriod(e)}
-        >
-          <ToggleGroupItem value="1">1</ToggleGroupItem>
-          <ToggleGroupItem value="3">3</ToggleGroupItem>
-          <ToggleGroupItem value="6">6</ToggleGroupItem>
-          <ToggleGroupItem value="12">12</ToggleGroupItem>
-        </ToggleGroup>
-      </div>
-
-      <div className="mb-4 flex justify-between">
-        <p className="text-sm font-medium">Price</p>
-        <p className="font-semibold">
-          {Number(pricePerMonth) * Number(period)} SOL
-        </p>
-      </div>
-
-      {connected ? (
-        <Button
-          type="submit"
-          variant="outline"
-          className="w-full text-foreground"
-        >
-          Subscribe
-        </Button>
-      ) : (
-        <div className="flex flex-col items-center">
-          <p className="text-lg mb-4">
-            Please connect your Solana wallet to continue
-          </p>
-          <WalletMultiButton className="btn-wallet-connect" />
+        {connected && publicKey && !transactionSignature && (
+          <div className="p-6 w-full">
+            <div className="mb-4 flex justify-between w-full">
+              <p className="text-sm font-medium">Connected Account</p>
+              <p>
+                {publicKey.toBase58().slice(0, 5)}...
+                {publicKey.toBase58().slice(-5)}
+              </p>
+            </div>
+            <div className="mb-4 flex flex-row gap-3 items-end w-full justify-between">
+              <p className="block text-sm font-medium text-center">Period</p>
+              <ToggleGroup
+                variant="outline"
+                type="single"
+                value={period}
+                onValueChange={(e) => setPeriod(e)}
+              >
+                <ToggleGroupItem value="1">1 month</ToggleGroupItem>
+                <ToggleGroupItem value="3">3 months</ToggleGroupItem>
+                <ToggleGroupItem value="6">6 months</ToggleGroupItem>
+                <ToggleGroupItem value="12">12 months</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          </div>
+        )}
+        <div>
+          {connected ? (
+            <Button type="submit">
+              Subscribe for {Number(pricePerMonth) * Number(period)} SOL
+            </Button>
+          ) : (
+            <div className="flex flex-col items-center">
+              <p className="text-lg mb-4">
+                Please connect your Solana wallet to continue
+              </p>
+              <WalletMultiButton className="btn-wallet-connect" />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </form>
   );
 };
