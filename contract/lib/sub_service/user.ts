@@ -1,13 +1,13 @@
 import { BN, web3 } from "@coral-xyz/anchor";
-import { PublicKey, Signer } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
+import { PublicKey, Signer } from "@solana/web3.js";
 
 import { bufferFromString } from "..";
 
 export function findUserAddress(address: PublicKey): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [bufferFromString("user"), address.toBytes()],
-    this.programId
+    this.programId,
   );
 }
 
@@ -24,7 +24,7 @@ export async function getAllUsers() {
 export async function replenishUserStorage(
   mint: PublicKey,
   amount: BN,
-  wallet?: Signer
+  wallet?: Signer,
 ) {
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [user, bump] = this.findUserAddress(sender);
@@ -41,14 +41,14 @@ export async function replenishUserStorage(
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: web3.SystemProgram.programId,
     }),
-    wallet
+    wallet,
   );
 }
 
 export async function withdrawFromUserStorage(
   mint: PublicKey,
   amount: BN,
-  wallet?: Signer
+  wallet?: Signer,
 ) {
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [user] = this.findUserAddress(sender);
@@ -65,6 +65,6 @@ export async function withdrawFromUserStorage(
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: web3.SystemProgram.programId,
     }),
-    wallet
+    wallet,
   );
 }

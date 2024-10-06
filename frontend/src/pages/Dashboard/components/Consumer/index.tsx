@@ -5,16 +5,15 @@ import {
   useConnection,
   useWallet,
 } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
 import { CalendarClock, LucideDollarSign, Users } from "lucide-react";
 import { useEffect } from "react";
 import { v4 } from "uuid";
 
 import { InfoCard } from "@/components/InfoCard";
 import { Calendar } from "@/components/ui/calendar";
-import { contractAddress, tokenAccount, tokenAddress } from "@/config";
+import { contractAddress } from "@/config";
 import { useConsumer } from "@/hooks/store/useConsumer";
-import { ServiceAdapter } from "@/lib/contract";
+import { ServiceAdapter, SubscriptionAdapter } from "@/lib/contract";
 
 import { Chart } from "./chart";
 
@@ -31,28 +30,37 @@ export const Consumer = () => {
       const tokens = await connection.getParsedTokenAccountsByOwner(publicKey, {
         programId: TOKEN_PROGRAM_ID,
       });
-      const info = await connection.getTokenAccountBalance(
-        new PublicKey(tokenAccount),
-      );
 
-      console.log("here we are", info, tokens);
-    }
-  };
-  const createSubscription = async () => {
-    if (publicKey && wallet) {
       const serviceAdapter = new ServiceAdapter(
         connection,
         wallet as Wallet,
         contractAddress,
       );
-      console.log(publicKey, "original");
-      await serviceAdapter.createService(
-        v4(),
-        publicKey,
-        publicKey,
-        new PublicKey(tokenAddress),
-        new BN("333"),
+      const allServices = await serviceAdapter.getAllServices();
+
+      console.log(
+        "here we are",
+        new BN(allServices[0].account.id).toString(),
+        tokens,
       );
+    }
+  };
+  const createSubscription = async () => {
+    if (publicKey && wallet) {
+      const serviceAdapter = new SubscriptionAdapter(
+        connection,
+        wallet as Wallet,
+        contractAddress,
+      );
+
+      const tx = await serviceAdapter.activateSubscription(
+        v4({
+          random: new BN("25678803394171214316969406190047143781").toArray(
+            "be",
+          ),
+        }),
+      );
+      console.log(tx);
     }
   };
 
