@@ -12,13 +12,13 @@ const provider = anchor.AnchorProvider.env();
 anchor.setProvider(provider);
 
 async function main() {
-  const [AUTHORITY, WITHDRAW_DELEGATE, COMMISSION_OWNER, COMMISSION] =
+  const [AUTHORITY, payment_delegate, COMMISSION_OWNER, COMMISSION] =
     process.argv.slice(2);
   const programId = process.env.SUB_PROGRAM_ID;
 
-  if (!AUTHORITY || !WITHDRAW_DELEGATE || !COMMISSION_OWNER || !COMMISSION) {
+  if (!AUTHORITY || !payment_delegate || !COMMISSION_OWNER || !COMMISSION) {
     throw new Error(
-      `Usage: npm run initialize-state <AUTHORITY> <WITHDRAW_DELEGATE> <COMMISSION_OWNER> <COMMISSION>`
+      `Usage: npm run initialize-state <AUTHORITY> <payment_delegate> <COMMISSION_OWNER> <COMMISSION>`
     );
   }
 
@@ -30,13 +30,13 @@ async function main() {
 
   logVar(`Initializing contract state`, programId);
   logVar(`Authority`, AUTHORITY);
-  logVar(`Withdraw delegate`, WITHDRAW_DELEGATE);
+  logVar(`Withdraw delegate`, payment_delegate);
   logVar(`Commission owner`, COMMISSION_OWNER);
   logVar(`Commission`, COMMISSION);
 
   return await pitchTalk.initializeContractState(
     new PublicKey(AUTHORITY),
-    new PublicKey(WITHDRAW_DELEGATE),
+    new PublicKey(payment_delegate),
     new PublicKey(COMMISSION_OWNER),
     new BN(COMMISSION)
   );

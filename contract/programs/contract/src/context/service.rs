@@ -4,10 +4,12 @@ use {
 };
 
 use crate::{
-    context::utils::{transfer_pda_tokens, DEFAULT_SUBSCRIPTION_PERIOD, UUID_VERSION},
+    context::utils::{
+        calculate_commission_amount, transfer_pda_tokens, DEFAULT_SUBSCRIPTION_PERIOD, UUID_VERSION,
+    },
     error::ProgramError,
     id,
-    state::service::Service,
+    state::{contract_state::State, service::Service},
 };
 
 // --------------------------- Context ----------------------------- //
@@ -86,6 +88,13 @@ pub struct WithdrawFromServiceStorage<'info> {
 
     #[account(
         mut,
+        seeds = [b"state".as_ref()],
+        bump = state.bump,
+    )]
+    pub state: Account<'info, State>,
+
+    #[account(
+        mut,
         constraint = sender_token_account.owner == sender.key() @ ProgramError::IllegalOwner,
         constraint = sender_token_account.mint == service.mint @ ProgramError::InvalidToken
     )]
@@ -97,6 +106,13 @@ pub struct WithdrawFromServiceStorage<'info> {
         constraint = service_token_account.mint == service.mint @ ProgramError::InvalidToken
     )]
     pub service_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        constraint = commission_owner_token_account.owner == state.commission_owner @ ProgramError::IllegalOwner,
+        constraint = commission_owner_token_account.mint == service.mint @ ProgramError::InvalidToken
+    )]
+    pub commission_owner_token_account: Account<'info, TokenAccount>,
 
     #[account(address = Token::id())]
     pub token_program: Program<'info, Token>,
@@ -206,13 +222,24 @@ impl<'info> WithdrawFromServiceStorage<'info> {
     pub fn withdraw_from_storage(&mut self, amount: u64) -> Result<()> {
         let service = &mut self.service;
 
+        let commission_amount = calculate_commission_amount(amount, self.state.commission);
+
+        transfer_pda_tokens(
+            &service.get_seeds(),
+            &service.to_account_info(),
+            &self.service_token_account.to_account_info(),
+            &self.commission_owner_token_account.to_account_info(),
+            &self.token_program.to_account_info(),
+            commission_amount,
+        )?;
+
         transfer_pda_tokens(
             &service.get_seeds(),
             &service.to_account_info(),
             &self.service_token_account.to_account_info(),
             &self.sender_token_account.to_account_info(),
             &self.token_program.to_account_info(),
-            amount,
+            amount - commission_amount,
         )?;
 
         msg!(

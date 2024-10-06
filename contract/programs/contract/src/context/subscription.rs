@@ -7,7 +7,7 @@ use super::utils::transfer_pda_tokens;
 use crate::{
     error::ProgramError,
     id,
-    state::{service::Service, subscription::Subscription, user::User},
+    state::{contract_state::State, service::Service, subscription::Subscription, user::User},
 };
 
 // --------------------------- Context ----------------------------- //
@@ -107,13 +107,19 @@ pub struct ChargeSubscriptionPayment<'info> {
     )]
     pub user: Account<'info, User>,
 
-    // TODO: fix this
     #[account(
         seeds = [b"service".as_ref(), &service.id.to_be_bytes()],
-        // constraint = service.payment_delegate == sender.key() @ ProgramError::AuthorityMismatch,
         bump = service.bump,
     )]
     pub service: Account<'info, Service>,
+
+    #[account(
+        mut,
+        seeds = [b"state".as_ref()],
+        constraint = state.payment_delegate == sender.key() @ ProgramError::AuthorityMismatch,
+        bump = state.bump,
+    )]
+    pub state: Account<'info, State>,
 
     #[account(
         mut,
@@ -212,10 +218,10 @@ impl<'info> ChargeSubscriptionPayment<'info> {
         let now = Clock::get()?.unix_timestamp;
 
         require!(subscription.is_active, ProgramError::SubscriptionInactive);
-        // require!(
-        //     subscription.last_payment < now - SUBSCRIPTION_PERIOD,
-        //     ProgramError::UntimelyPayment
-        // );
+        require!(
+            subscription.last_payment < now - service.subscription_period,
+            ProgramError::UntimelyPayment
+        );
 
         transfer_pda_tokens(
             &user.get_seeds(),

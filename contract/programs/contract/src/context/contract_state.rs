@@ -1,6 +1,9 @@
 use anchor_lang::prelude::*;
 
-use crate::{error::ProgramError, id, program::SubService, state::contract_state::State};
+use crate::{
+    context::utils::FULL_CAPACITY, error::ProgramError, id, program::SubService,
+    state::contract_state::State,
+};
 
 // --------------------------- Context ----------------------------- //
 
@@ -56,16 +59,18 @@ impl<'info> InitializeContractState<'info> {
     pub fn initialize_contract_state(
         &mut self,
         authority: Pubkey,
-        withdraw_delegate: Pubkey,
+        payment_delegate: Pubkey,
         commission_owner: Pubkey,
         commission: u64,
         bump: u8,
     ) -> Result<()> {
         let state = &mut self.state;
 
+        require!(commission <= FULL_CAPACITY, ProgramError::InvalidFee);
+
         state.bump = bump;
         state.authority = authority;
-        state.withdraw_delegate = withdraw_delegate;
+        state.payment_delegate = payment_delegate;
         state.commission_owner = commission_owner;
         state.commission = commission;
         state.version = State::VERSION;
@@ -88,13 +93,13 @@ impl<'info> UpdateContractState<'info> {
         Ok(())
     }
 
-    pub fn set_withdraw_delegate(&mut self, withdraw_delegate: Pubkey) -> Result<()> {
+    pub fn set_payment_delegate(&mut self, payment_delegate: Pubkey) -> Result<()> {
         let state = &mut self.state;
 
-        state.withdraw_delegate = withdraw_delegate;
+        state.payment_delegate = payment_delegate;
         state.updated_at = Clock::get()?.unix_timestamp;
 
-        msg!("Contract state updated: withdraw delegate set to {withdraw_delegate}",);
+        msg!("Contract state updated: withdraw delegate set to {payment_delegate}",);
 
         Ok(())
     }
@@ -112,6 +117,8 @@ impl<'info> UpdateContractState<'info> {
 
     pub fn set_commission(&mut self, commission: u64) -> Result<()> {
         let state = &mut self.state;
+
+        require!(commission <= FULL_CAPACITY, ProgramError::InvalidFee);
 
         state.commission = commission;
         state.updated_at = Clock::get()?.unix_timestamp;

@@ -13,9 +13,9 @@ describe("State", () => {
   const program = new SubServiceProgram(TEST_ID);
 
   const commission = new BN(1000);
-  const authority = web3.Keypair.generate();
+  const authority = provider.wallet;
   const another_authority = web3.Keypair.generate();
-  const withdraw_delegate = web3.Keypair.generate();
+  const payment_delegate = web3.Keypair.generate();
   const commission_owner = web3.Keypair.generate();
 
   let testMint: TestToken;
@@ -24,7 +24,6 @@ describe("State", () => {
     testMint = new TestToken(provider);
     await testMint.mint(1_000_000_000);
 
-    await airdrop(provider.connection, authority.publicKey);
     await airdrop(provider.connection, another_authority.publicKey);
   });
 
@@ -38,7 +37,7 @@ describe("State", () => {
           program.program.methods
             .initializeContractState(
               authority.publicKey,
-              withdraw_delegate.publicKey,
+              payment_delegate.publicKey,
               commission_owner.publicKey,
               commission,
               bump
@@ -63,7 +62,7 @@ describe("State", () => {
       await program.program.methods
         .initializeContractState(
           authority.publicKey,
-          withdraw_delegate.publicKey,
+          payment_delegate.publicKey,
           commission_owner.publicKey,
           commission,
           bump
@@ -80,8 +79,8 @@ describe("State", () => {
       const fetchedStateAccount = await program.getContractStateData();
 
       expect(fetchedStateAccount.authority).toEqual(authority.publicKey);
-      expect(fetchedStateAccount.withdrawDelegate).toEqual(
-        withdraw_delegate.publicKey
+      expect(fetchedStateAccount.paymentDelegate).toEqual(
+        payment_delegate.publicKey
       );
       expect(fetchedStateAccount.commissionOwner).toEqual(
         commission_owner.publicKey
@@ -104,7 +103,7 @@ describe("State", () => {
           program.program.methods
             .initializeContractState(
               authority.publicKey,
-              withdraw_delegate.publicKey,
+              payment_delegate.publicKey,
               commission_owner.publicKey,
               commission,
               bump
@@ -129,7 +128,7 @@ describe("State", () => {
       await expectThrowError(
         () =>
           program.program.methods
-            .setStateWithdrawDelegate(another_authority.publicKey)
+            .setStatePaymentDelegate(another_authority.publicKey)
             .accounts({
               authority: another_authority.publicKey,
               state,
@@ -144,17 +143,16 @@ describe("State", () => {
       const [state] = program.findContractStateAddress();
 
       await program.program.methods
-        .setStateWithdrawDelegate(another_authority.publicKey)
+        .setStatePaymentDelegate(another_authority.publicKey)
         .accounts({
           authority: authority.publicKey,
           state,
         })
-        .signers([authority])
         .rpc();
 
       const fetchedStateAccount = await program.getContractStateData();
 
-      expect(fetchedStateAccount.withdrawDelegate).toEqual(
+      expect(fetchedStateAccount.paymentDelegate).toEqual(
         another_authority.publicKey
       );
     });
@@ -168,7 +166,6 @@ describe("State", () => {
           authority: authority.publicKey,
           state,
         })
-        .signers([authority])
         .rpc();
 
       const fetchedStateAccount = await program.getContractStateData();
@@ -180,7 +177,7 @@ describe("State", () => {
 
     it("success - update commission", async () => {
       const [state] = program.findContractStateAddress();
-      const newCommission = new BN(123456);
+      const newCommission = new BN(500);
 
       await program.program.methods
         .setStateCommission(newCommission)
@@ -188,7 +185,6 @@ describe("State", () => {
           authority: authority.publicKey,
           state,
         })
-        .signers([authority])
         .rpc();
 
       const fetchedStateAccount = await program.getContractStateData();
@@ -205,7 +201,6 @@ describe("State", () => {
           authority: authority.publicKey,
           state,
         })
-        .signers([authority])
         .rpc();
 
       const fetchedStateAccount = await program.getContractStateData();

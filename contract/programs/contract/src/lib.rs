@@ -14,14 +14,14 @@ pub mod sub_service {
     pub fn initialize_contract_state(
         ctx: Context<InitializeContractState>,
         authority: Pubkey,
-        withdraw_delegate: Pubkey,
+        payment_delegate: Pubkey,
         commission_owner: Pubkey,
         commission: u64,
         bump: u8,
     ) -> Result<()> {
         ctx.accounts.initialize_contract_state(
             authority,
-            withdraw_delegate,
+            payment_delegate,
             commission_owner,
             commission,
             bump,
@@ -32,11 +32,11 @@ pub mod sub_service {
         ctx.accounts.set_authority(authority)
     }
 
-    pub fn set_state_withdraw_delegate(
+    pub fn set_state_payment_delegate(
         ctx: Context<UpdateContractState>,
-        withdraw_delegate: Pubkey,
+        payment_delegate: Pubkey,
     ) -> Result<()> {
-        ctx.accounts.set_withdraw_delegate(withdraw_delegate)
+        ctx.accounts.set_payment_delegate(payment_delegate)
     }
 
     pub fn set_state_commission_owner(

@@ -17,7 +17,7 @@ export async function getContractStateData() {
 
 export async function initializeContractState(
   stateAuthority: PublicKey,
-  withdrawDelegate: PublicKey,
+  paymentDelegate: PublicKey,
   commissionOwner: PublicKey,
   commission: BN,
   wallet?: Signer
@@ -30,7 +30,7 @@ export async function initializeContractState(
     this.program.methods
       .initializeContractState(
         stateAuthority,
-        withdrawDelegate,
+        paymentDelegate,
         commissionOwner,
         commission,
         bump
@@ -55,7 +55,7 @@ export async function updateStateAuthority(
   const authority = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
-    this.program.methods.updateServiceAuthority(stateAuthority).accounts({
+    this.program.methods.setServiceAuthority(stateAuthority).accounts({
       authority,
       state,
       programAccount: this.program.programId,
@@ -65,7 +65,7 @@ export async function updateStateAuthority(
   );
 }
 
-export async function updateStateWithdrawDelegate(
+export async function updateStatePaymentDelegate(
   delegate: PublicKey,
   wallet?: Signer
 ) {
@@ -74,7 +74,7 @@ export async function updateStateWithdrawDelegate(
   const authority = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
-    this.program.methods.updateStateWithdrawDelegate(delegate).accounts({
+    this.program.methods.setStatePaymentDelegate(delegate).accounts({
       authority,
       state,
       programAccount: this.program.programId,
@@ -93,7 +93,7 @@ export async function updateStateCommissionOwner(
   const authority = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
-    this.program.methods.updateStateCommissionOwner(owner).accounts({
+    this.program.methods.setStateCommissionOwner(owner).accounts({
       authority,
       state,
       programAccount: this.program.programId,
@@ -109,7 +109,7 @@ export async function updateStateCommission(commission: BN, wallet?: Signer) {
   const authority = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
-    this.program.methods.updateStateCommission(commission).accounts({
+    this.program.methods.setStateCommission(commission).accounts({
       authority,
       state,
       programAccount: this.program.programId,

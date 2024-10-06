@@ -92,6 +92,7 @@ export async function chargeSubscriptionPayment(
   wallet?: Signer
 ) {
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
+  const [state] = this.findContractStateAddress();
   const [subscription] = this.findSubscriptionAddress(userWallet, service_id);
   const [user] = this.findUserAddress(userWallet);
   const [service] = this.findServiceAddress(service_id);
@@ -114,6 +115,7 @@ export async function chargeSubscriptionPayment(
       subscription,
       user,
       service,
+      state,
       serviceTokenAccount,
       userTokenAccount,
       tokenProgram: TOKEN_PROGRAM_ID,

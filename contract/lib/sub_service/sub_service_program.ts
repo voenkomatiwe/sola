@@ -50,8 +50,8 @@ export class SubServiceProgram {
     this.getContractStateData = state.getContractStateData.bind(this);
     this.initializeContractState = state.initializeContractState.bind(this);
     this.updateStateAuthority = state.updateStateAuthority.bind(this);
-    this.updateStateWithdrawDelegate =
-      state.updateStateWithdrawDelegate.bind(this);
+    this.updateStatePaymentDelegate =
+      state.updateStatePaymentDelegate.bind(this);
     this.updateStateCommissionOwner =
       state.updateStateCommissionOwner.bind(this);
     this.updateStateCommission = state.updateStateCommission.bind(this);
@@ -173,7 +173,7 @@ export class SubServiceProgram {
   public async getContractStateData(): Promise<any> {}
   public async initializeContractState(
     stateAuthority: PublicKey,
-    withdrawDelegate: PublicKey,
+    paymentDelegate: PublicKey,
     commissionOwner: PublicKey,
     commission: BN,
     wallet?: Signer
@@ -182,8 +182,8 @@ export class SubServiceProgram {
     stateAuthority: PublicKey,
     wallet?: Signer
   ): Promise<any> {}
-  public async updateStateWithdrawDelegate(
-    withdrawDelegate: PublicKey,
+  public async updateStatePaymentDelegate(
+    paymentDelegate: PublicKey,
     wallet?: Signer
   ): Promise<any> {}
   public async updateStateCommissionOwner(

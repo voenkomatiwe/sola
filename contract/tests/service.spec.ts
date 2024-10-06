@@ -8,7 +8,12 @@ import { v1 as uuidv1, v4 as uuidv4 } from "uuid";
 import { expectThrowError } from "./util/console";
 import { programError } from "./util/error";
 import { TestToken } from "./util/token";
-import { airdrop, DEFAULT_SUBSCRIPTION_PERIOD, TEST_ID } from "./util/setup";
+import {
+  airdrop,
+  calculateFeeAmount,
+  DEFAULT_SUBSCRIPTION_PERIOD,
+  TEST_ID,
+} from "./util/setup";
 
 import {
   ACCOUNT_SIZE,
@@ -26,8 +31,10 @@ describe("Service", () => {
   const authority = web3.Keypair.generate();
   const user = web3.Keypair.generate();
   const another_authority = web3.Keypair.generate();
+  const commission_owner = web3.Keypair.generate();
 
   let amount = new BN(100);
+  const commission = new BN(500);
   const id = uuidv4();
   const serviceId = uuidToBn(id);
 
@@ -44,6 +51,18 @@ describe("Service", () => {
     await airdrop(provider.connection, authority.publicKey);
     await airdrop(provider.connection, user.publicKey);
     await airdrop(provider.connection, another_authority.publicKey);
+
+    try {
+      await program.initializeContractState(
+        authority.publicKey,
+        authority.publicKey,
+        commission_owner.publicKey,
+        amount
+      );
+    } catch (e) {
+      await program.updateStateCommissionOwner(commission_owner.publicKey);
+      await program.updateStateCommission(commission);
+    }
   });
 
   describe("create_service", () => {
@@ -140,6 +159,7 @@ describe("Service", () => {
   describe("withdraw_from_service_storage", () => {
     it("fail - authority mismatch", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
 
       let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -156,6 +176,13 @@ describe("Service", () => {
         authority.publicKey
       );
 
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        commission_owner.publicKey
+      );
+
       await expectThrowError(
         () =>
           program.program.methods
@@ -163,8 +190,10 @@ describe("Service", () => {
             .accounts({
               sender: another_authority.publicKey,
               service: serviceAccount,
+              state,
               senderTokenAccount: senderTokenAccount.address,
               serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
             })
             .signers([another_authority])
             .rpc(),
@@ -174,6 +203,7 @@ describe("Service", () => {
 
     it("fail - invalid sender token account mint", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
 
       let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -190,6 +220,13 @@ describe("Service", () => {
         authority.publicKey
       );
 
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        commission_owner.publicKey
+      );
+
       await expectThrowError(
         () =>
           program.program.methods
@@ -197,8 +234,10 @@ describe("Service", () => {
             .accounts({
               sender: authority.publicKey,
               service: serviceAccount,
+              state,
               senderTokenAccount: senderTokenAccount,
               serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
             })
             .signers([authority])
             .rpc(),
@@ -208,6 +247,7 @@ describe("Service", () => {
 
     it("fail - invalid sender token account owner", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
 
       let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -224,6 +264,13 @@ describe("Service", () => {
         user.publicKey
       );
 
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        commission_owner.publicKey
+      );
+
       await expectThrowError(
         () =>
           program.program.methods
@@ -231,8 +278,10 @@ describe("Service", () => {
             .accounts({
               sender: authority.publicKey,
               service: serviceAccount,
+              state,
               senderTokenAccount: senderTokenAccount.address,
               serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
             })
             .signers([authority])
             .rpc(),
@@ -242,6 +291,7 @@ describe("Service", () => {
 
     it("fail - invalid service token account mint", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
 
       let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -258,6 +308,13 @@ describe("Service", () => {
         authority.publicKey
       );
 
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        commission_owner.publicKey
+      );
+
       await expectThrowError(
         () =>
           program.program.methods
@@ -265,8 +322,10 @@ describe("Service", () => {
             .accounts({
               sender: authority.publicKey,
               service: serviceAccount,
+              state,
               senderTokenAccount: senderTokenAccount.address,
               serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
             })
             .signers([authority])
             .rpc(),
@@ -274,8 +333,9 @@ describe("Service", () => {
       );
     });
 
-    it("fail - invalid token balance", async () => {
+    it("fail - invalid commission owner token account mint", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
 
       let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -292,6 +352,13 @@ describe("Service", () => {
         authority.publicKey
       );
 
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        newTestMint.token,
+        commission_owner.publicKey
+      );
+
       await expectThrowError(
         () =>
           program.program.methods
@@ -299,8 +366,98 @@ describe("Service", () => {
             .accounts({
               sender: authority.publicKey,
               service: serviceAccount,
+              state,
               senderTokenAccount: senderTokenAccount.address,
               serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
+            })
+            .signers([authority])
+            .rpc(),
+        programError("InvalidToken")
+      );
+    });
+
+    it("fail - invalid commission owner token account owner", async () => {
+      const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
+
+      let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        serviceAccount,
+        true
+      );
+
+      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        authority.publicKey
+      );
+
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        user.publicKey
+      );
+
+      await expectThrowError(
+        () =>
+          program.program.methods
+            .withdrawFromServiceStorage(amount)
+            .accounts({
+              sender: authority.publicKey,
+              service: serviceAccount,
+              state,
+              senderTokenAccount: senderTokenAccount.address,
+              serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
+            })
+            .signers([authority])
+            .rpc(),
+        programError("IllegalOwner")
+      );
+    });
+
+    it("fail - invalid token balance", async () => {
+      const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
+
+      let serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        serviceAccount,
+        true
+      );
+
+      let senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        authority.publicKey
+      );
+
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        commission_owner.publicKey
+      );
+
+      await expectThrowError(
+        () =>
+          program.program.methods
+            .withdrawFromServiceStorage(amount)
+            .accounts({
+              sender: authority.publicKey,
+              service: serviceAccount,
+              state,
+              senderTokenAccount: senderTokenAccount.address,
+              serviceTokenAccount: serviceTokenAccount.address,
+              commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
             })
             .signers([authority])
             .rpc(),
@@ -310,6 +467,7 @@ describe("Service", () => {
 
     it("success", async () => {
       const [serviceAccount] = program.findServiceAddress(id);
+      const [state] = program.findContractStateAddress();
 
       await testMint.transfer(null, serviceAccount, amount.toNumber(), true);
 
@@ -328,10 +486,20 @@ describe("Service", () => {
         authority.publicKey
       );
 
+      let commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        user,
+        testMint.token,
+        commission_owner.publicKey
+      );
+
       let senderBalanceBefore = await testMint.getBalance(authority.publicKey);
       let serviceBalanceBefore = await testMint.getBalance(
         serviceAccount,
         true
+      );
+      let commissionBalanceBefore = await testMint.getBalance(
+        commission_owner.publicKey
       );
 
       await program.program.methods
@@ -339,17 +507,27 @@ describe("Service", () => {
         .accounts({
           sender: authority.publicKey,
           service: serviceAccount,
+          state,
           senderTokenAccount: senderTokenAccount.address,
           serviceTokenAccount: serviceTokenAccount.address,
+          commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
         })
         .signers([authority])
         .rpc();
 
+      let fee = calculateFeeAmount(amount, commission);
+
       let senderBalanceAfter = await testMint.getBalance(authority.publicKey);
       let serviceBalanceAfter = await testMint.getBalance(serviceAccount, true);
+      let commissionBalancAfter = await testMint.getBalance(
+        commission_owner.publicKey
+      );
 
       expect(
-        senderBalanceAfter.eq(senderBalanceBefore.add(amount))
+        commissionBalancAfter.eq(commissionBalanceBefore.add(fee))
+      ).toBeTruthy();
+      expect(
+        senderBalanceAfter.eq(senderBalanceBefore.add(amount.sub(fee)))
       ).toBeTruthy();
       expect(
         serviceBalanceAfter.eq(serviceBalanceBefore.sub(amount))

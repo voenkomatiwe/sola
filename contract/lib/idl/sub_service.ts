@@ -37,7 +37,7 @@ export type SubService = {
           "type": "publicKey"
         },
         {
-          "name": "withdrawDelegate",
+          "name": "paymentDelegate",
           "type": "publicKey"
         },
         {
@@ -76,7 +76,7 @@ export type SubService = {
       ]
     },
     {
-      "name": "setStateWithdrawDelegate",
+      "name": "setStatePaymentDelegate",
       "accounts": [
         {
           "name": "authority",
@@ -91,7 +91,7 @@ export type SubService = {
       ],
       "args": [
         {
-          "name": "withdrawDelegate",
+          "name": "paymentDelegate",
           "type": "publicKey"
         }
       ]
@@ -387,12 +387,22 @@ export type SubService = {
           "isSigner": false
         },
         {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "senderTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "serviceTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "commissionOwnerTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -505,6 +515,11 @@ export type SubService = {
           "isSigner": false
         },
         {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "userTokenAccount",
           "isMut": true,
           "isSigner": false
@@ -551,7 +566,7 @@ export type SubService = {
             "type": "publicKey"
           },
           {
-            "name": "withdrawDelegate",
+            "name": "paymentDelegate",
             "docs": [
               "Public key of the delegate wallet that can be used for charging subscription payments"
             ],
@@ -830,7 +845,7 @@ export const IDL: SubService = {
           "type": "publicKey"
         },
         {
-          "name": "withdrawDelegate",
+          "name": "paymentDelegate",
           "type": "publicKey"
         },
         {
@@ -869,7 +884,7 @@ export const IDL: SubService = {
       ]
     },
     {
-      "name": "setStateWithdrawDelegate",
+      "name": "setStatePaymentDelegate",
       "accounts": [
         {
           "name": "authority",
@@ -884,7 +899,7 @@ export const IDL: SubService = {
       ],
       "args": [
         {
-          "name": "withdrawDelegate",
+          "name": "paymentDelegate",
           "type": "publicKey"
         }
       ]
@@ -1180,12 +1195,22 @@ export const IDL: SubService = {
           "isSigner": false
         },
         {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "senderTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "serviceTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "commissionOwnerTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1298,6 +1323,11 @@ export const IDL: SubService = {
           "isSigner": false
         },
         {
+          "name": "state",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "userTokenAccount",
           "isMut": true,
           "isSigner": false
@@ -1344,7 +1374,7 @@ export const IDL: SubService = {
             "type": "publicKey"
           },
           {
-            "name": "withdrawDelegate",
+            "name": "paymentDelegate",
             "docs": [
               "Public key of the delegate wallet that can be used for charging subscription payments"
             ],

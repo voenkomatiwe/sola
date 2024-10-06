@@ -13,7 +13,7 @@ pub struct State {
     pub authority: Pubkey,
 
     /// Public key of the delegate wallet that can be used for charging subscription payments
-    pub withdraw_delegate: Pubkey,
+    pub payment_delegate: Pubkey,
 
     /// Public key of the commission wallet
     pub commission_owner: Pubkey,
