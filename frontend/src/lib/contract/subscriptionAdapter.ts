@@ -9,7 +9,7 @@ import {
   getAssociatedTokenAddress,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { PublicKey, Signer, Transaction } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { parse as uuidParse } from "uuid";
 
 import { contractAddress } from "@/config";
@@ -165,13 +165,12 @@ export class SubscriptionAdapter extends ContractBase {
     if (!this.program.provider.sendAndConfirm) return;
     return await this.program.provider.sendAndConfirm(subscribeTransaction);
   }
-  /* eslint-disable @typescript-eslint/no-unused-vars */
 
-  public async deactivateSubscription(serviceId: string, wallet?: Signer) {}
+  // public async deactivateSubscription(serviceId: string, wallet?: Signer) {}
 
-  public async chargeSubscriptionPayment(
-    serviceId: string,
-    userWallet: PublicKey,
-    wallet?: Signer,
-  ) {}
+  // public async chargeSubscriptionPayment(
+  //   serviceId: string,
+  //   userWallet: PublicKey,
+  //   wallet?: Signer,
+  // ) {}
 }

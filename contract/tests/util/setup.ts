@@ -5,7 +5,7 @@ export const DEFAULT_SUBSCRIPTION_PERIOD = new BN(2_629_743);
 export const FULL_CAPACITY = new BN(10000);
 
 export const TEST_ID = new PublicKey(
-  "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz"
+  "AbTt5oYWeBDh6qkYN4YPgEkL3gom81CXMW73tDctr85K"
 );
 
 export async function airdrop(

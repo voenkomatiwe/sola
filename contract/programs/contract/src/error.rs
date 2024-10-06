@@ -26,4 +26,6 @@ pub enum ProgramError {
     SubscriptionInactive,
     #[msg("Invalid fee amount")]
     InvalidFee,
+    #[msg("Invalid Data")]
+    InvalidData,
 }

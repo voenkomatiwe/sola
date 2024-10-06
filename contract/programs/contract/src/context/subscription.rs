@@ -218,8 +218,9 @@ impl<'info> ChargeSubscriptionPayment<'info> {
         let now = Clock::get()?.unix_timestamp;
 
         require!(subscription.is_active, ProgramError::SubscriptionInactive);
+
         require!(
-            subscription.last_payment < now - service.subscription_period,
+            subscription.last_payment <= now - service.subscription_period,
             ProgramError::UntimelyPayment
         );
 

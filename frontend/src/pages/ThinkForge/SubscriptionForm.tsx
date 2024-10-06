@@ -2,14 +2,16 @@ import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import sola from "@/assets/icons/sola.svg";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { APP_ROUTES } from "@/routes/constants";
 
 export const SubscriptionForm = () => {
   const { connected, publicKey } = useWallet();
-
+  const navigate = useNavigate();
   const [period, setPeriod] = useState<string>("1");
   const pricePerMonth = "3.99";
   const [transactionSignature, setTransactionSignature] = useState<
@@ -50,7 +52,13 @@ export const SubscriptionForm = () => {
               View Transaction on Solana Explorer
             </Button>
             <p className="text-base mb-2">or</p>
-            <Button>Dashboard</Button>
+            <Button
+              onClick={() =>
+                navigate(APP_ROUTES.DASHBOARD.TO_HOME(":consumer"))
+              }
+            >
+              Dashboard
+            </Button>
           </div>
         </div>
       </form>

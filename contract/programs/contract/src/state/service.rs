@@ -12,6 +12,12 @@ pub struct Service {
     /// Service UUID
     pub id: u128,
 
+    /// Service name
+    pub name: [u8; 32],
+
+    /// Service url
+    pub url: [u8; 32],
+
     /// Service authority
     pub authority: Pubkey,
 
@@ -32,8 +38,9 @@ pub struct Service {
 }
 
 impl Service {
-    pub const LEN: usize =
-        DISCRIMINATOR_LENGTH + ACCOUNT_RESERVE_SPACE + (2 + 1 + 16 + 32 + 32 + 8 + 8 + 8 + 8);
+    pub const LEN: usize = DISCRIMINATOR_LENGTH
+        + ACCOUNT_RESERVE_SPACE
+        + (2 + 1 + 16 + 32 + 32 + 32 + 32 + 8 + 8 + 8 + 8);
     pub const VERSION: u16 = 1;
 
     pub fn get_seeds(&self) -> Vec<Vec<u8>> {

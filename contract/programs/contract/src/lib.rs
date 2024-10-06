@@ -5,7 +5,7 @@ mod context;
 mod error;
 mod state;
 
-declare_id!("2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz");
+declare_id!("AbTt5oYWeBDh6qkYN4YPgEkL3gom81CXMW73tDctr85K");
 
 #[program]
 pub mod sub_service {
@@ -68,13 +68,22 @@ pub mod sub_service {
     pub fn create_service(
         ctx: Context<CreateService>,
         service_id: u128,
+        name: [u8; 32],
+        url: [u8; 32],
         authority: Pubkey,
         subscription_period: Option<i64>,
         sub_price: u64,
         bump: u8,
     ) -> Result<()> {
-        ctx.accounts
-            .create_service(service_id, authority, subscription_period, sub_price, bump)
+        ctx.accounts.create_service(
+            service_id,
+            name,
+            url,
+            authority,
+            subscription_period,
+            sub_price,
+            bump,
+        )
     }
 
     pub fn remove_service(ctx: Context<RemoveService>) -> Result<()> {
@@ -83,6 +92,14 @@ pub mod sub_service {
 
     pub fn update_service_authority(ctx: Context<UpdateService>, authority: Pubkey) -> Result<()> {
         ctx.accounts.update_authority(authority)
+    }
+
+    pub fn update_service_name(ctx: Context<UpdateService>, name: [u8; 32]) -> Result<()> {
+        ctx.accounts.update_name(name)
+    }
+
+    pub fn update_service_url(ctx: Context<UpdateService>, url: [u8; 32]) -> Result<()> {
+        ctx.accounts.update_url(url)
     }
 
     pub fn update_service_subscription_period(

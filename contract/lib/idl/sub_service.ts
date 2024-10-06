@@ -249,6 +249,24 @@ export type SubService = {
           "type": "u128"
         },
         {
+          "name": "name",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "url",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
           "name": "authority",
           "type": "publicKey"
         },
@@ -307,6 +325,58 @@ export type SubService = {
         {
           "name": "authority",
           "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateServiceName",
+      "accounts": [
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateServiceUrl",
+      "accounts": [
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "url",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
         }
       ]
     },
@@ -623,6 +693,30 @@ export type SubService = {
             "type": "u128"
           },
           {
+            "name": "name",
+            "docs": [
+              "Service name"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "url",
+            "docs": [
+              "Service url"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
             "name": "authority",
             "docs": [
               "Service authority"
@@ -807,6 +901,11 @@ export type SubService = {
       "code": 6011,
       "name": "InvalidFee",
       "msg": "Invalid fee amount"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidData",
+      "msg": "Invalid Data"
     }
   ]
 };
@@ -1062,6 +1161,24 @@ export const IDL: SubService = {
           "type": "u128"
         },
         {
+          "name": "name",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "url",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
           "name": "authority",
           "type": "publicKey"
         },
@@ -1120,6 +1237,58 @@ export const IDL: SubService = {
         {
           "name": "authority",
           "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateServiceName",
+      "accounts": [
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateServiceUrl",
+      "accounts": [
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "url",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
         }
       ]
     },
@@ -1436,6 +1605,30 @@ export const IDL: SubService = {
             "type": "u128"
           },
           {
+            "name": "name",
+            "docs": [
+              "Service name"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "url",
+            "docs": [
+              "Service url"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
             "name": "authority",
             "docs": [
               "Service authority"
@@ -1620,6 +1813,11 @@ export const IDL: SubService = {
       "code": 6011,
       "name": "InvalidFee",
       "msg": "Invalid fee amount"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidData",
+      "msg": "Invalid Data"
     }
   ]
 };

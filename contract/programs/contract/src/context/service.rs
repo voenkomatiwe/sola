@@ -5,7 +5,8 @@ use {
 
 use crate::{
     context::utils::{
-        calculate_commission_amount, transfer_pda_tokens, DEFAULT_SUBSCRIPTION_PERIOD, UUID_VERSION,
+        bytes_to_string, calculate_commission_amount, transfer_pda_tokens,
+        DEFAULT_SUBSCRIPTION_PERIOD, UUID_VERSION,
     },
     error::ProgramError,
     id,
@@ -124,6 +125,8 @@ impl<'info> CreateService<'info> {
     pub fn create_service(
         &mut self,
         service_id: u128,
+        name: [u8; 32],
+        url: [u8; 32],
         authority: Pubkey,
         subscription_period: Option<i64>,
         sub_price: u64,
@@ -139,6 +142,8 @@ impl<'info> CreateService<'info> {
 
         service.bump = bump;
         service.id = service_id;
+        service.name = name;
+        service.url = url;
         service.authority = authority;
         service.subscription_period = subscription_period.unwrap_or(DEFAULT_SUBSCRIPTION_PERIOD);
         service.mint = self.mint.key();
@@ -177,6 +182,36 @@ impl<'info> UpdateService<'info> {
         service.updated_at = Clock::get()?.unix_timestamp;
 
         msg!("Service withdraw authority updated, id: {id}, authority: {authority}",);
+
+        Ok(())
+    }
+
+    pub fn update_name(&mut self, name: [u8; 32]) -> Result<()> {
+        let service = &mut self.service;
+        let id = uuid::Uuid::from_u128(service.id);
+
+        service.name = name;
+        service.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!(
+            "Service name updated, id: {id}, name: {}",
+            bytes_to_string(&name)?
+        );
+
+        Ok(())
+    }
+
+    pub fn update_url(&mut self, url: [u8; 32]) -> Result<()> {
+        let service = &mut self.service;
+        let id = uuid::Uuid::from_u128(service.id);
+
+        service.url = url;
+        service.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!(
+            "Service url updated, id: {id}, url: {}",
+            bytes_to_string(&url)?
+        );
 
         Ok(())
     }

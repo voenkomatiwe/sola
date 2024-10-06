@@ -1,5 +1,5 @@
 import { BN, Wallet, web3 } from "@coral-xyz/anchor";
-import { PublicKey, Signer, Transaction } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { parse } from "uuid";
 
 import { ContractBase } from "./baseAdapter";
@@ -56,27 +56,25 @@ export class ServiceAdapter extends ContractBase {
     }
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  // public async removeService(id: string, wallet?: Signer) {}
 
-  public async removeService(id: string, wallet?: Signer) {}
+  // public async updateServiceAuthority(
+  //   id: string,
+  //   authority: PublicKey,
+  //   wallet?: Signer,
+  // ) {}
 
-  public async updateServiceAuthority(
-    id: string,
-    authority: PublicKey,
-    wallet?: Signer,
-  ) {}
+  // public async updateServiceMint(
+  //   id: string,
+  //   mint: PublicKey,
+  //   wallet?: Signer,
+  // ) {}
 
-  public async updateServiceMint(
-    id: string,
-    mint: PublicKey,
-    wallet?: Signer,
-  ) {}
+  // public async updateServicePrice(id: string, price: BN, wallet?: Signer) {}
 
-  public async updateServicePrice(id: string, price: BN, wallet?: Signer) {}
-
-  public async withdrawFromServiceStorage(
-    id: string,
-    amount: BN,
-    wallet?: Signer,
-  ) {}
+  // public async withdrawFromServiceStorage(
+  //   id: string,
+  //   amount: BN,
+  //   wallet?: Signer,
+  // ) {}
 }

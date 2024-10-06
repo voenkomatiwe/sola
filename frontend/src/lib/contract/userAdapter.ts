@@ -9,7 +9,7 @@ import {
   getAssociatedTokenAddress,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { PublicKey, Signer, Transaction } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 
 import { ContractBase } from "./baseAdapter";
 import { bufferFromString } from "./utils";
@@ -156,11 +156,10 @@ export class UserAdapter extends ContractBase {
 
     return await this.program.provider.sendAndConfirm(transaction);
   }
-  /* eslint-disable @typescript-eslint/no-unused-vars */
 
-  public async withdrawFromUserStorage(
-    mint: PublicKey,
-    amount: BN,
-    wallet?: Signer,
-  ) {}
+  // public async withdrawFromUserStorage(
+  //   mint: PublicKey,
+  //   amount: BN,
+  //   wallet?: Signer,
+  // ) {}
 }
