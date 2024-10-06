@@ -13,7 +13,7 @@ const mainnet: IConfig = {
 };
 
 const devnet: IConfig = {
-  contractAddress: "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz",
+  contractAddress: "AbTt5oYWeBDh6qkYN4YPgEkL3gom81CXMW73tDctr85K",
   tokenAddress: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
   tokenAccount: "4r1YezyMmxBTG9gukMPzubVUZUAV4JYTutNVzChHSQZv",
 };

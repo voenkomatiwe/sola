@@ -25,21 +25,16 @@ export class ServiceAdapter extends ContractBase {
   public async createService(
     id: string,
     authority: PublicKey,
-    paymentDelegate: PublicKey,
     mint: PublicKey,
     subPrice: BN,
+    subscriptionPeriod?: BN,
   ) {
     const [service, bump] = this.findContractServiceAddress(id);
     const sender = this.program.provider.publicKey;
-    console.log(sender);
+
+    const period = subscriptionPeriod || null;
     const createServiceInstruction = await this.program.methods
-      .createService(
-        new BN(parse(id), "be"),
-        authority,
-        paymentDelegate,
-        subPrice,
-        bump,
-      )
+      .createService(new BN(parse(id), "be"), authority, period, subPrice, bump)
       .accounts({
         sender,
         service,
@@ -49,6 +44,11 @@ export class ServiceAdapter extends ContractBase {
       .instruction();
     const transferTransaction = new Transaction().add(createServiceInstruction);
     transferTransaction.feePayer = sender;
+    if (!this.program.provider.simulate) return;
+    const validate =
+      await this.connection.simulateTransaction(transferTransaction);
+
+    console.log("validate transferTransaction", validate);
     if (this.program.provider.sendAndConfirm) {
       const tx =
         await this.program.provider.sendAndConfirm(transferTransaction);

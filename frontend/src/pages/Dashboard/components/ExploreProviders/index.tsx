@@ -19,7 +19,7 @@ export const ExploreProviders = () => {
         const parsedServices = result.map((service) => ({
           id: service.account.id.toString(),
           authority: service.account.authority.toString(),
-          paymentDelegate: service.account.paymentDelegate.toString(),
+          subscriptionPeriod: service.account.subscriptionPeriod.toString(),
           mint: service.account.mint.toString(),
           subPrice: service.account.subPrice.toNumber(),
           updatedAt: service.account.updatedAt.toNumber(),

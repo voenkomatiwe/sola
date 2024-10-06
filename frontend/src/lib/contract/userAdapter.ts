@@ -9,12 +9,7 @@ import {
   getAssociatedTokenAddress,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import {
-  ComputeBudgetProgram,
-  PublicKey,
-  Signer,
-  Transaction,
-} from "@solana/web3.js";
+import { PublicKey, Signer, Transaction } from "@solana/web3.js";
 
 import { ContractBase } from "./baseAdapter";
 import { bufferFromString } from "./utils";
@@ -56,13 +51,12 @@ export class UserAdapter extends ContractBase {
       TOKEN_PROGRAM_ID,
       ASSOCIATED_TOKEN_PROGRAM_ID,
     );
-
-    const computeBudgetTx = ComputeBudgetProgram.setComputeUnitPrice({
-      microLamports: 100000000,
-    });
-
+    let account;
     try {
-      await getAccount(this.program.provider.connection, associatedToken);
+      account = await getAccount(
+        this.program.provider.connection,
+        associatedToken,
+      );
     } catch (error: unknown) {
       if (
         error instanceof TokenAccountNotFoundError ||
@@ -74,38 +68,71 @@ export class UserAdapter extends ContractBase {
         )
           return;
 
-        const transaction = new Transaction()
-          .add(computeBudgetTx)
-          .add(
-            createAssociatedTokenAccountInstruction(
-              this.program.provider.publicKey,
-              associatedToken,
-              owner,
-              mint,
-              TOKEN_PROGRAM_ID,
-              ASSOCIATED_TOKEN_PROGRAM_ID,
-            ),
-          );
+        const transaction = new Transaction().add(
+          createAssociatedTokenAccountInstruction(
+            this.program.provider.publicKey,
+            associatedToken,
+            owner,
+            mint,
+            TOKEN_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+          ),
+        );
 
         transaction.feePayer = this.program.provider.publicKey;
 
-        const txSignature =
-          await this.program.provider.sendAndConfirm(transaction);
-        return txSignature;
+        await this.program.provider.sendAndConfirm(transaction);
+
+        account = await getAccount(
+          this.program.provider.connection,
+          associatedToken,
+        );
       } else {
         throw error;
       }
     }
 
-    return associatedToken;
+    return account;
   }
+
+  //   export async function replenishUserStorage(
+  //   mint: PublicKey,
+  //   amount: BN,
+  //   wallet: Signer,
+  // ) {
+  //   const sender = wallet.publicKey;
+  //   const [user, bump] = this.findUserAddress(sender);
+
+  //   const userTokenAccount = await getOrCreateAssociatedTokenAccount(
+  //     this.program.provider.connection,
+  //     wallet,
+  //     mint,
+  //     user,
+  //     true,
+  //   );
+
+  //   const senderTokenAccount = await getAssociatedTokenAddress(mint, sender);
+
+  //   return await this.sendSigned(
+  //     this.program.methods.replenishUserStorage(amount, bump).accounts({
+  //       sender,
+  //       user,
+  //       senderTokenAccount,
+  //       userTokenAccount: userTokenAccount.address,
+  //       tokenProgram: TOKEN_PROGRAM_ID,
+  //       systemProgram: web3.SystemProgram.programId,
+  //     }),
+  //     wallet,
+  //   );
+  // }
 
   public async replenishUserStorage(mint: PublicKey, amount: BN) {
     const sender = this.program.provider.publicKey;
     if (!sender) return;
     const [user, bump] = this.findUserAddress(sender);
-
     const userTokenAccount = await this.checkOrCreateATA(mint, user, true);
+    console.log(userTokenAccount?.address);
+
     const senderTokenAccount = await getAssociatedTokenAddress(mint, sender);
 
     const transactionInstruction = await this.program.methods
@@ -114,7 +141,7 @@ export class UserAdapter extends ContractBase {
         sender,
         user,
         senderTokenAccount,
-        userTokenAccount,
+        userTokenAccount: userTokenAccount?.address,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: web3.SystemProgram.programId,
       })
@@ -122,6 +149,8 @@ export class UserAdapter extends ContractBase {
 
     const transaction = new Transaction().add(transactionInstruction);
     transaction.feePayer = sender;
+    const simulate = await this.connection.simulateTransaction(transaction);
+    console.log("replenishUserStorage", simulate);
 
     if (!this.program.provider.sendAndConfirm) return;
 

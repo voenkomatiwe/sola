@@ -13,7 +13,7 @@ import { InfoCard } from "@/components/InfoCard";
 import { Calendar } from "@/components/ui/calendar";
 import { contractAddress } from "@/config";
 import { useConsumer } from "@/hooks/store/useConsumer";
-import { ServiceAdapter, SubscriptionAdapter } from "@/lib/contract";
+import { SubscriptionAdapter } from "@/lib/contract";
 
 import { Chart } from "./chart";
 
@@ -31,31 +31,52 @@ export const Consumer = () => {
         programId: TOKEN_PROGRAM_ID,
       });
 
-      const serviceAdapter = new ServiceAdapter(
-        connection,
-        wallet as Wallet,
-        contractAddress,
-      );
-      const allServices = await serviceAdapter.getAllServices();
-
-      console.log(
-        "here we are",
-        new BN(allServices[0].account.id).toString(),
-        tokens,
-      );
-    }
-  };
-  const createSubscription = async () => {
-    if (publicKey && wallet) {
       const serviceAdapter = new SubscriptionAdapter(
         connection,
         wallet as Wallet,
         contractAddress,
       );
+      try {
+        const allServices = await serviceAdapter.getSubscriptionData(
+          publicKey,
+          v4({
+            random: new BN("153807357704477413592972126688430806559").toArray(
+              "be",
+            ),
+          }),
+        );
+        console.log("here we are", allServices, tokens);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  };
+  const createSubscription = async () => {
+    if (publicKey && wallet) {
+      // const tokenAccount = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
+      // const serviceAdapter = new ServiceAdapter(
+      //   connection,
+      //   wallet as Wallet,
+      //   contractAddress,
+      // );
 
-      const tx = await serviceAdapter.activateSubscription(
+      // const createServiceTx = await serviceAdapter.createService(
+      //   v4(),
+      //   publicKey,
+      //   new PublicKey(tokenAccount),
+      //   new BN("100"),
+      // );
+      // console.log(createServiceTx, "creating service");
+
+      const subscriptionAdapter = new SubscriptionAdapter(
+        connection,
+        wallet as Wallet,
+        contractAddress,
+      );
+
+      const tx = await subscriptionAdapter.activateSubscription(
         v4({
-          random: new BN("25678803394171214316969406190047143781").toArray(
+          random: new BN("153807357704477413592972126688430806559").toArray(
             "be",
           ),
         }),
