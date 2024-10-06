@@ -75,7 +75,7 @@ export class SubscriptionAdapter extends ContractBase {
     );
     const serviceTokenAccount = await getAssociatedTokenAddress(
       data.mint,
-      sender,
+      service,
       true,
     );
 

@@ -9,7 +9,12 @@ import {
   getAssociatedTokenAddress,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { PublicKey, Signer, Transaction } from "@solana/web3.js";
+import {
+  ComputeBudgetProgram,
+  PublicKey,
+  Signer,
+  Transaction,
+} from "@solana/web3.js";
 
 import { ContractBase } from "./baseAdapter";
 import { bufferFromString } from "./utils";
@@ -52,6 +57,10 @@ export class UserAdapter extends ContractBase {
       ASSOCIATED_TOKEN_PROGRAM_ID,
     );
 
+    const computeBudgetTx = ComputeBudgetProgram.setComputeUnitPrice({
+      microLamports: 100000000,
+    });
+
     try {
       await getAccount(this.program.provider.connection, associatedToken);
     } catch (error: unknown) {
@@ -59,21 +68,26 @@ export class UserAdapter extends ContractBase {
         error instanceof TokenAccountNotFoundError ||
         error instanceof TokenInvalidAccountOwnerError
       ) {
-        const transaction = new Transaction().add(
-          createAssociatedTokenAccountInstruction(
-            owner,
-            associatedToken,
-            owner,
-            mint,
-            TOKEN_PROGRAM_ID,
-            ASSOCIATED_TOKEN_PROGRAM_ID,
-          ),
-        );
+        if (
+          !this.program.provider.sendAndConfirm ||
+          !this.program.provider.publicKey
+        )
+          return;
 
-        if (!this.program.provider.sendAndConfirm) return;
+        const transaction = new Transaction()
+          .add(computeBudgetTx)
+          .add(
+            createAssociatedTokenAccountInstruction(
+              this.program.provider.publicKey,
+              associatedToken,
+              owner,
+              mint,
+              TOKEN_PROGRAM_ID,
+              ASSOCIATED_TOKEN_PROGRAM_ID,
+            ),
+          );
+
         transaction.feePayer = this.program.provider.publicKey;
-        const simulate = await this.connection.simulateTransaction(transaction);
-        console.log(simulate);
 
         const txSignature =
           await this.program.provider.sendAndConfirm(transaction);
