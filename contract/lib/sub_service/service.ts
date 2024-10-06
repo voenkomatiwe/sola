@@ -150,11 +150,13 @@ export async function withdrawFromServiceStorage(
     serviceData.mint,
     sender
   );
+
   const serviceTokenAccount = await getAssociatedTokenAddress(
     serviceData.mint,
     service,
     true
   );
+
   const commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
     this.program.provider.connection,
     wallet,

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { TEST_ID, airdrop, ignoreIfExist } from "./util/setup";
 import { TestToken } from "./util/token";
 import { SubServiceProgram } from "../lib";
+import { getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 
 describe("Sub Contract General Test", () => {
   const program = new SubServiceProgram(TEST_ID);
@@ -35,6 +36,13 @@ describe("Sub Contract General Test", () => {
     await airdrop(provider.connection, payment_delegate.publicKey);
 
     await testMint.transfer(null, user.publicKey, amount.muln(3).toNumber());
+
+    await getOrCreateAssociatedTokenAccount(
+      provider.connection,
+      user,
+      testMint.token,
+      commission_owner.publicKey
+    );
   });
 
   it("initialize contract state", async () => {
@@ -101,7 +109,7 @@ describe("Sub Contract General Test", () => {
     await program.deactivateSubscription(id, user);
   });
 
-  xit("withdraw from service storage", async () => {
+  it("withdraw from service storage", async () => {
     await program.withdrawFromServiceStorage(id, amount);
   });
 

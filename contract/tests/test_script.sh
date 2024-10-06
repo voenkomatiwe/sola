@@ -22,7 +22,8 @@ test() {
   (anchor deploy --program-keypair $KEYPAIR --program-name sub_service 1> /dev/null &&
    anchor test state --skip-local-validator --skip-build --skip-deploy &&
    anchor test user --skip-local-validator --skip-build --skip-deploy &&
-   anchor test service --skip-local-validator --skip-build --skip-deploy &&
+  #  anchor test service --skip-local-validator --skip-build --skip-deploy &&
+   anchor test subscription --skip-local-validator --skip-build --skip-deploy &&
    anchor test general --skip-local-validator --skip-build --skip-deploy)
 }
 

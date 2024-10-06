@@ -14,7 +14,7 @@ sub_service = "AbTt5oYWeBDh6qkYN4YPgEkL3gom81CXMW73tDctr85K"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+cluster = "Localnet"
 wallet = "/home/olha/.config/solana/id.json"
 
 [scripts]
