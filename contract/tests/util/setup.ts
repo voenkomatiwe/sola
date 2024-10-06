@@ -1,6 +1,12 @@
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import * as crypto from "crypto";
+
+export const DEFAULT_SUBSCRIPTION_PERIOD = new BN(2_629_743);
+export const FULL_CAPACITY = new BN(10000);
+
+export const TEST_ID = new PublicKey(
+  "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz"
+);
 
 export async function airdrop(
   connection: web3.Connection,
@@ -16,4 +22,20 @@ export async function airdrop(
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function calculateFeeAmount(amount: BN, fee: BN): BN {
+  return amount.mul(fee).div(FULL_CAPACITY);
+}
+
+export async function ignoreIfExist(fn: () => Promise<unknown>) {
+  try {
+    await fn();
+  } catch (error) {
+    const errorMessage = String(error);
+
+    if (!errorMessage.includes("custom program error: 0x0")) {
+      throw error;
+    }
+  }
 }

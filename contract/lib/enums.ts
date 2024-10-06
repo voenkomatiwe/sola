@@ -14,7 +14,8 @@ export const SubServiceAccountVariants = IDL.accounts.map((acc) => acc.name);
 export type SubServiceAccount = (typeof SubServiceAccountVariants)[number];
 
 export const ACCOUNT_SIZE: Readonly<Record<SubServiceAccount, number>> = {
-  service: 179,
+  service: 155,
   user: 75,
   subscription: 100,
+  state: 154,
 };

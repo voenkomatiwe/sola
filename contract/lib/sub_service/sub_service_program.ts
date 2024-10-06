@@ -17,6 +17,7 @@ import {
 } from "@solana/web3.js";
 
 import * as service from "./service";
+import * as state from "./state";
 import * as subscription from "./subscription";
 import * as user from "./user";
 import { IDL, SubService } from "../idl/sub_service";
@@ -27,24 +28,16 @@ export class SubServiceProgram {
   computeUnitPrice: number;
 
   constructor(
-    program?: Program<SubService>,
     subServiceProgramId?: string | PublicKey,
     provider?: AnchorProvider,
     computeUnitPrice?: number,
   ) {
-    if (program) {
-      this.program = program;
-      this.programId = program.programId;
-    } else if (subServiceProgramId) {
-      this.programId =
-        typeof subServiceProgramId === "string"
-          ? new PublicKey(subServiceProgramId)
-          : subServiceProgramId;
+    this.programId =
+      typeof subServiceProgramId === "string"
+        ? new PublicKey(subServiceProgramId)
+        : subServiceProgramId;
 
-      this.program = new Program(IDL, this.programId, provider);
-    } else {
-      throw new Error("Program ID or Program instance is required");
-    }
+    this.program = new Program(IDL, this.programId, provider);
 
     // Default compute unit price is 10,000 microlamports
     this.computeUnitPrice = computeUnitPrice || 10000;
@@ -52,15 +45,26 @@ export class SubServiceProgram {
   }
 
   setMethods() {
-    this.findContractServiceAddress =
-      service.findContractServiceAddress.bind(this);
-    this.getContractServiceData = service.getContractServiceData.bind(this);
+    this.findContractStateAddress = state.findContractStateAddress.bind(this);
+    this.getContractStateData = state.getContractStateData.bind(this);
+    this.initializeContractState = state.initializeContractState.bind(this);
+    this.updateStateAuthority = state.updateStateAuthority.bind(this);
+    this.updateStatePaymentDelegate =
+      state.updateStatePaymentDelegate.bind(this);
+    this.updateStateCommissionOwner =
+      state.updateStateCommissionOwner.bind(this);
+    this.updateStateCommission = state.updateStateCommission.bind(this);
+
+    this.findServiceAddress = service.findServiceAddress.bind(this);
+    this.getServiceData = service.getServiceData.bind(this);
     this.getAllServices = service.getAllServices.bind(this);
     this.createService = service.createService.bind(this);
     this.removeService = service.removeService.bind(this);
     this.updateServiceAuthority = service.updateServiceAuthority.bind(this);
     this.updateServiceMint = service.updateServiceMint.bind(this);
     this.updateServicePrice = service.updateServicePrice.bind(this);
+    this.updateServiceSubscriptionPeriod =
+      service.updateServiceSubscriptionPeriod.bind(this);
     this.withdrawFromServiceStorage =
       service.withdrawFromServiceStorage.bind(this);
 
@@ -81,9 +85,17 @@ export class SubServiceProgram {
       subscription.chargeSubscriptionPayment.bind(this);
   }
 
+  public findProgramDataAddress() {
+    return PublicKey.findProgramAddressSync(
+      [this.programId.toBytes()],
+      new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
+    );
+  }
+
   public async checkOrCreateATA(
     mint: PublicKey,
     owner: PublicKey,
+    wallet: Signer,
     allowOwnerOffCurve = false,
   ): Promise<PublicKey> {
     const associatedToken = getAssociatedTokenAddressSync(
@@ -109,7 +121,7 @@ export class SubServiceProgram {
           .add(computeBudgetTx)
           .add(
             createAssociatedTokenAccountInstruction(
-              owner,
+              wallet.publicKey,
               associatedToken,
               owner,
               mint,
@@ -118,8 +130,10 @@ export class SubServiceProgram {
             ),
           );
 
-        const txSignature =
-          await this.program.provider.sendAndConfirm(transaction);
+        const txSignature = await this.program.provider.sendAndConfirm(
+          transaction,
+          [wallet],
+        );
 
         await this.program.provider.connection.confirmTransaction(
           txSignature,
@@ -154,15 +168,41 @@ export class SubServiceProgram {
     );
   }
 
-  public findContractServiceAddress(id: string): any {}
-  public async getContractServiceData(id: string): Promise<any> {}
+  public findContractStateAddress(): any {}
+  public async getContractStateData(): Promise<any> {}
+  public async initializeContractState(
+    stateAuthority: PublicKey,
+    paymentDelegate: PublicKey,
+    commissionOwner: PublicKey,
+    commission: BN,
+    wallet?: Signer,
+  ): Promise<any> {}
+  public async updateStateAuthority(
+    stateAuthority: PublicKey,
+    wallet?: Signer,
+  ): Promise<any> {}
+  public async updateStatePaymentDelegate(
+    paymentDelegate: PublicKey,
+    wallet?: Signer,
+  ): Promise<any> {}
+  public async updateStateCommissionOwner(
+    commissionOwner: PublicKey,
+    wallet?: Signer,
+  ): Promise<any> {}
+  public async updateStateCommission(
+    commission: BN,
+    wallet?: Signer,
+  ): Promise<any> {}
+
+  public findServiceAddress(id: string): any {}
+  public async getServiceData(id: string): Promise<any> {}
   public async getAllServices(): Promise<any> {}
   public async createService(
     id: string,
     authority: PublicKey,
-    paymentDelegate: PublicKey,
     mint: PublicKey,
     sub_price: BN,
+    subscriptionPeriod?: BN,
     wallet?: Signer,
   ): Promise<any> {}
   public async removeService(id: string, wallet?: Signer): Promise<any> {}
@@ -174,6 +214,11 @@ export class SubServiceProgram {
   public async updateServiceMint(
     id: string,
     mint: PublicKey,
+    wallet?: Signer,
+  ): Promise<any> {}
+  public async updateServiceSubscriptionPeriod(
+    id: string,
+    period: BN,
     wallet?: Signer,
   ): Promise<any> {}
   public async updateServicePrice(
@@ -201,10 +246,10 @@ export class SubServiceProgram {
     wallet?: Signer,
   ): Promise<any> {}
 
-  public async findSubscriptionAddress(
+  public findSubscriptionAddress(
     user_address: PublicKey,
     service_id: string,
-  ): Promise<any> {}
+  ): any {}
   public async getSubscriptionData(
     user_address: PublicKey,
     service_id: string,
@@ -220,6 +265,7 @@ export class SubServiceProgram {
   ): Promise<any> {}
   public async chargeSubscriptionPayment(
     service_id: string,
+    userWallet: PublicKey,
     wallet?: Signer,
   ): Promise<any> {}
 }

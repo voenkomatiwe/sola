@@ -5,7 +5,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-sub_service = "ADU233uT8HgNtRrmn4twcHK6jbN8JpBA7oHuAeewVe8Z"
+sub_service = "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz"
+
+[programs.devnet]
+sub_service = "2wivZHNNjvwWgrQEkGvv1bH9HgaWxXmfogkB24z1tsJz"
 
 [registry]
 url = "https://api.apr.dev"

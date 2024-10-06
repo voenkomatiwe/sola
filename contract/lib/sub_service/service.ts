@@ -1,19 +1,23 @@
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey, Signer } from "@solana/web3.js";
-import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { parse as uuidParse } from "uuid";
 
 import { bufferFromString, uuidToBn } from "..";
 
-export function findContractServiceAddress(id: string): [PublicKey, number] {
+export function findServiceAddress(id: string): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("service"), uuidParse(id)],
     this.programId
   );
 }
 
-export async function getContractServiceData(id: string) {
-  const [service] = this.getContractServiceData(id);
+export async function getServiceData(id: string) {
+  const [service] = this.findServiceAddress(id);
 
   return await this.program.account.service.fetch(service);
 }
@@ -25,17 +29,18 @@ export async function getAllServices() {
 export async function createService(
   id: string,
   authority: PublicKey,
-  paymentDelegate: PublicKey,
   mint: PublicKey,
   sub_price: BN,
+  subscriptionPeriod?: BN,
   wallet?: Signer
 ) {
-  const [service, bump] = this.findContractServiceAddress(id);
+  const [service, bump] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
+  const period = subscriptionPeriod || null;
 
   return await this.sendSigned(
     this.program.methods
-      .createService(uuidToBn(id), authority, paymentDelegate, sub_price, bump)
+      .createService(uuidToBn(id), authority, period, sub_price, bump)
       .accounts({
         sender,
         service,
@@ -47,7 +52,7 @@ export async function createService(
 }
 
 export async function removeService(id: string, wallet?: Signer) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -65,7 +70,7 @@ export async function updateServiceAuthority(
   authority: PublicKey,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -77,16 +82,16 @@ export async function updateServiceAuthority(
   );
 }
 
-export async function updatePaymentDelegate(
+export async function updateServiceSubscriptionPeriod(
   id: string,
-  delegate: PublicKey,
+  period: BN,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
-    this.program.methods.updatePaymentDelegate(delegate).accounts({
+    this.program.methods.updateServiceSubscriptionPeriod(period).accounts({
       sender,
       service,
     }),
@@ -99,7 +104,7 @@ export async function updateServiceMint(
   mint: PublicKey,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -116,7 +121,7 @@ export async function updateServicePrice(
   price: BN,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
@@ -133,23 +138,38 @@ export async function withdrawFromServiceStorage(
   amount: BN,
   wallet?: Signer
 ) {
-  const [service] = this.findContractServiceAddress(id);
+  const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
-  const data = await this.getContractServiceData(id);
+  const [state] = this.findContractStateAddress();
+  const serviceData = await this.getServiceData(id);
+  const stateData = await this.getContractStateData();
 
-  const senderTokenAccount = await this.checkOrCreateATA(data.mint, sender);
+  const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
+    serviceData.mint,
+    sender
+  );
   const serviceTokenAccount = await getAssociatedTokenAddress(
-    data.mint,
+    serviceData.mint,
     service,
     true
+  );
+  const commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
+    serviceData.mint,
+    stateData.commissionOwner
   );
 
   return await this.sendSigned(
     this.program.methods.withdrawFromServiceStorage(amount).accounts({
       sender,
       service,
-      senderTokenAccount,
-      serviceTokenAccount,
+      state,
+      senderTokenAccount: senderTokenAccount.address,
+      serviceTokenAccount: serviceTokenAccount,
+      commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
       tokenProgram: TOKEN_PROGRAM_ID,
     }),
     wallet

@@ -1,11 +1,4 @@
-import {
-  AnchorProvider,
-  BN,
-  Program,
-  setProvider,
-  web3,
-  workspace,
-} from "@coral-xyz/anchor";
+import { AnchorProvider, BN, setProvider, web3 } from "@coral-xyz/anchor";
 import {
   TOKEN_PROGRAM_ID,
   createAssociatedTokenAccount,
@@ -13,19 +6,17 @@ import {
 } from "@solana/spl-token";
 
 import { ACCOUNT_SIZE, SubServiceProgram } from "../lib";
+import { ACCOUNT_SIZE, SubServiceProgram } from "../lib";
 import { expectThrowError } from "./util/console";
 import { programError } from "./util/error";
-import { airdrop } from "./util/setup";
+import { TEST_ID, airdrop } from "./util/setup";
 import { TestToken } from "./util/token";
-import { SubService } from "../lib/idl/sub_service";
 
-describe("User attestation", () => {
+describe("User", () => {
   const provider = AnchorProvider.env();
   setProvider(provider);
 
-  const program = new SubServiceProgram(
-    workspace.SubService as Program<SubService>,
-  );
+  const program = new SubServiceProgram(TEST_ID);
 
   const authority = web3.Keypair.generate();
   const user = web3.Keypair.generate();
@@ -42,20 +33,6 @@ describe("User attestation", () => {
     await airdrop(provider.connection, authority.publicKey);
     await airdrop(provider.connection, user.publicKey);
     await airdrop(provider.connection, nobody.publicKey);
-
-    await createAssociatedTokenAccount(
-      provider.connection,
-      authority,
-      testMint.token,
-      authority.publicKey,
-    );
-
-    await createAssociatedTokenAccount(
-      provider.connection,
-      user,
-      testMint.token,
-      user.publicKey,
-    );
   });
 
   describe("replenish_user_storage", () => {

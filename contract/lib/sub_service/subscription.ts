@@ -1,6 +1,10 @@
 import { web3 } from "@coral-xyz/anchor";
 import { PublicKey, Signer } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
+import {
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
+} from "@solana/spl-token";
 import { parse as uuidParse } from "uuid";
 
 import { bufferFromString } from "..";
@@ -10,7 +14,11 @@ export function findSubscriptionAddress(
   service_id: string
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [bufferFromString("user"), user_address.toBytes(), uuidParse(service_id)],
+    [
+      bufferFromString("subscription"),
+      user_address.toBytes(),
+      uuidParse(service_id),
+    ],
     this.programId
   );
 }
@@ -21,7 +29,7 @@ export async function getSubscriptionData(
 ) {
   const [subscription] = this.findSubscriptionAddress(user_address, service_id);
 
-  return await this.program.account.user.fetch(subscription);
+  return await this.program.account.subscription.fetch(subscription);
 }
 
 export async function getAllSubscriptions() {
@@ -35,17 +43,20 @@ export async function activateSubscription(
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [subscription, bump] = this.findSubscriptionAddress(sender, service_id);
   const [user] = this.findUserAddress(sender);
-  const [service] = this.findContractServiceAddress(service_id);
-  const data = await this.getContractServiceData(service_id);
+  const [service] = this.findServiceAddress(service_id);
+  const data = await this.getServiceData(service_id);
 
   const userTokenAccount = await getAssociatedTokenAddress(
     data.mint,
     user,
     true
   );
-  const serviceTokenAccount = await getAssociatedTokenAddress(
+
+  const serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
     data.mint,
-    sender,
+    service,
     true
   );
 
@@ -55,7 +66,7 @@ export async function activateSubscription(
       subscription,
       user,
       service,
-      serviceTokenAccount,
+      serviceTokenAccount: serviceTokenAccount.address,
       userTokenAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: web3.SystemProgram.programId,
@@ -70,7 +81,7 @@ export async function deactivateSubscription(
 ) {
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [subscription] = this.findSubscriptionAddress(sender, service_id);
-  const [service] = this.findContractServiceAddress(service_id);
+  const [service] = this.findServiceAddress(service_id);
 
   return await this.sendSigned(
     this.program.methods.deactivateSubscription().accounts({
@@ -88,10 +99,11 @@ export async function chargeSubscriptionPayment(
   wallet?: Signer
 ) {
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
+  const [state] = this.findContractStateAddress();
   const [subscription] = this.findSubscriptionAddress(userWallet, service_id);
   const [user] = this.findUserAddress(userWallet);
-  const [service] = this.findContractServiceAddress(service_id);
-  const data = await this.getContractServiceData(service_id);
+  const [service] = this.findServiceAddress(service_id);
+  const data = await this.getServiceData(service_id);
 
   const userTokenAccount = await getAssociatedTokenAddress(
     data.mint,
@@ -100,7 +112,7 @@ export async function chargeSubscriptionPayment(
   );
   const serviceTokenAccount = await getAssociatedTokenAddress(
     data.mint,
-    sender,
+    service,
     true
   );
 
@@ -110,6 +122,7 @@ export async function chargeSubscriptionPayment(
       subscription,
       user,
       service,
+      state,
       serviceTokenAccount,
       userTokenAccount,
       tokenProgram: TOKEN_PROGRAM_ID,

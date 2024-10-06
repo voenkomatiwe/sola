@@ -1,0 +1,130 @@
+use anchor_lang::prelude::*;
+
+use crate::{
+    context::utils::FULL_CAPACITY, error::ProgramError, id, program::SubService,
+    state::contract_state::State,
+};
+
+// --------------------------- Context ----------------------------- //
+
+#[derive(Accounts)]
+#[instruction(
+    bump: u8,
+)]
+pub struct InitializeContractState<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        init,
+        payer = authority,
+        owner = id(),
+        seeds = [b"state".as_ref()],
+        bump,
+        space = State::LEN
+    )]
+    pub state: Account<'info, State>,
+
+    #[account(
+        constraint = program_account.key() == id() @ ProgramError::InvalidProgramAccount,
+        constraint = program_account.programdata_address()? == Some(program_data.key()) @ ProgramError::InvalidProgramData,
+    )]
+    pub program_account: Program<'info, SubService>,
+
+    #[account(
+        constraint = program_data.upgrade_authority_address == Some(authority.key()) @ ProgramError::AuthorityMismatch,
+    )]
+    pub program_data: Account<'info, ProgramData>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateContractState<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [b"state".as_ref()],
+        constraint = state.authority == authority.key() @ ProgramError::AuthorityMismatch,
+        bump = state.bump,
+    )]
+    pub state: Account<'info, State>,
+}
+
+// ------------------------ Implementation ------------------------- //
+
+impl<'info> InitializeContractState<'info> {
+    pub fn initialize_contract_state(
+        &mut self,
+        authority: Pubkey,
+        payment_delegate: Pubkey,
+        commission_owner: Pubkey,
+        commission: u64,
+        bump: u8,
+    ) -> Result<()> {
+        let state = &mut self.state;
+
+        require!(commission <= FULL_CAPACITY, ProgramError::InvalidFee);
+
+        state.bump = bump;
+        state.authority = authority;
+        state.payment_delegate = payment_delegate;
+        state.commission_owner = commission_owner;
+        state.commission = commission;
+        state.version = State::VERSION;
+
+        msg!("Contract state initialized");
+
+        Ok(())
+    }
+}
+
+impl<'info> UpdateContractState<'info> {
+    pub fn set_authority(&mut self, authority: Pubkey) -> Result<()> {
+        let state = &mut self.state;
+
+        state.authority = authority;
+        state.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!("Contract state updated: authority set to {authority}",);
+
+        Ok(())
+    }
+
+    pub fn set_payment_delegate(&mut self, payment_delegate: Pubkey) -> Result<()> {
+        let state = &mut self.state;
+
+        state.payment_delegate = payment_delegate;
+        state.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!("Contract state updated: withdraw delegate set to {payment_delegate}",);
+
+        Ok(())
+    }
+
+    pub fn set_commission_owner(&mut self, commission_owner: Pubkey) -> Result<()> {
+        let state = &mut self.state;
+
+        state.commission_owner = commission_owner;
+        state.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!("Contract state updated: commission owner set to {commission_owner}",);
+
+        Ok(())
+    }
+
+    pub fn set_commission(&mut self, commission: u64) -> Result<()> {
+        let state = &mut self.state;
+
+        require!(commission <= FULL_CAPACITY, ProgramError::InvalidFee);
+
+        state.commission = commission;
+        state.updated_at = Clock::get()?.unix_timestamp;
+
+        msg!("Contract state updated: chain ID set to {commission}",);
+
+        Ok(())
+    }
+}

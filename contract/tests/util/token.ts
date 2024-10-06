@@ -93,7 +93,8 @@ export class TestToken {
   async transfer(
     from: web3.Keypair | web3.Signer | null,
     to: web3.PublicKey,
-    amount: number | bigint
+    amount: number | bigint,
+    allowOwnerOffCurve?: boolean
   ): Promise<void> {
     if (from === null) {
       from = this.payer;
@@ -110,7 +111,8 @@ export class TestToken {
       this.provider.connection,
       this.payer,
       this.token,
-      to
+      to,
+      allowOwnerOffCurve
     );
 
     await Token.transfer(
