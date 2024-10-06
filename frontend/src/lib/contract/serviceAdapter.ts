@@ -1,6 +1,6 @@
 import { BN, Wallet, web3 } from "@coral-xyz/anchor";
-import { PublicKey, Signer } from "@solana/web3.js";
-import { parse as uuidParse } from "uuid";
+import { PublicKey, Signer, Transaction } from "@solana/web3.js";
+import { parse, parse as uuidParse } from "uuid";
 
 import { ContractBase } from "./baseAdapter";
 import { bufferFromString } from "./utils";
@@ -30,15 +30,41 @@ export class ServiceAdapter extends ContractBase {
     return await this.program.account.service.all();
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   public async createService(
     id: string,
     authority: PublicKey,
     paymentDelegate: PublicKey,
     mint: PublicKey,
     subPrice: BN,
-    wallet?: Signer,
-  ) {}
+  ) {
+    const [service, bump] = this.findContractServiceAddress(id);
+    const sender = this.program.provider.publicKey;
+    console.log(sender);
+    const createServiceInstruction = await this.program.methods
+      .createService(
+        new BN(parse(id), "be"),
+        authority,
+        paymentDelegate,
+        subPrice,
+        bump,
+      )
+      .accounts({
+        sender,
+        service,
+        mint,
+        systemProgram: web3.SystemProgram.programId,
+      })
+      .instruction();
+    const transferTransaction = new Transaction().add(createServiceInstruction);
+    transferTransaction.feePayer = sender;
+    if (this.program.provider.sendAndConfirm) {
+      const tx =
+        await this.program.provider.sendAndConfirm(transferTransaction);
+      return tx;
+    }
+  }
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
 
   public async removeService(id: string, wallet?: Signer) {}
 
