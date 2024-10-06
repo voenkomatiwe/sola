@@ -802,6 +802,11 @@ export type SubService = {
       "code": 6010,
       "name": "SubscriptionInactive",
       "msg": "Subscription already inactive"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidFee",
+      "msg": "Invalid fee amount"
     }
   ]
 };
@@ -1610,6 +1615,11 @@ export const IDL: SubService = {
       "code": 6010,
       "name": "SubscriptionInactive",
       "msg": "Subscription already inactive"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidFee",
+      "msg": "Invalid fee amount"
     }
   ]
 };

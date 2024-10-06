@@ -1,6 +1,10 @@
 import { BN, web3 } from "@coral-xyz/anchor";
 import { PublicKey, Signer } from "@solana/web3.js";
-import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { parse as uuidParse } from "uuid";
 
 import { bufferFromString, uuidToBn } from "..";
@@ -32,16 +36,11 @@ export async function createService(
 ) {
   const [service, bump] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
+  const period = subscriptionPeriod || null;
 
   return await this.sendSigned(
     this.program.methods
-      .createService(
-        uuidToBn(id),
-        authority,
-        subscriptionPeriod,
-        sub_price,
-        bump
-      )
+      .createService(uuidToBn(id), authority, period, sub_price, bump)
       .accounts({
         sender,
         service,
@@ -141,21 +140,36 @@ export async function withdrawFromServiceStorage(
 ) {
   const [service] = this.findServiceAddress(id);
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
-  const data = await this.getServiceData(id);
+  const [state] = this.findContractStateAddress();
+  const serviceData = await this.getServiceData(id);
+  const stateData = await this.getContractStateData();
 
-  const senderTokenAccount = await this.checkOrCreateATA(data.mint, sender);
+  const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
+    serviceData.mint,
+    sender
+  );
   const serviceTokenAccount = await getAssociatedTokenAddress(
-    data.mint,
+    serviceData.mint,
     service,
     true
+  );
+  const commissionOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
+    serviceData.mint,
+    stateData.commissionOwner
   );
 
   return await this.sendSigned(
     this.program.methods.withdrawFromServiceStorage(amount).accounts({
       sender,
       service,
-      senderTokenAccount,
-      serviceTokenAccount,
+      state,
+      senderTokenAccount: senderTokenAccount.address,
+      serviceTokenAccount: serviceTokenAccount,
+      commissionOwnerTokenAccount: commissionOwnerTokenAccount.address,
       tokenProgram: TOKEN_PROGRAM_ID,
     }),
     wallet

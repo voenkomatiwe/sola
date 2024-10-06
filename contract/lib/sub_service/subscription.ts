@@ -1,6 +1,10 @@
 import { web3 } from "@coral-xyz/anchor";
 import { PublicKey, Signer } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
+import {
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
+  getOrCreateAssociatedTokenAccount,
+} from "@solana/spl-token";
 import { parse as uuidParse } from "uuid";
 
 import { bufferFromString } from "..";
@@ -47,7 +51,10 @@ export async function activateSubscription(
     user,
     true
   );
-  const serviceTokenAccount = await getAssociatedTokenAddress(
+
+  const serviceTokenAccount = await getOrCreateAssociatedTokenAccount(
+    this.program.provider.connection,
+    wallet,
     data.mint,
     service,
     true
@@ -59,7 +66,7 @@ export async function activateSubscription(
       subscription,
       user,
       service,
-      serviceTokenAccount,
+      serviceTokenAccount: serviceTokenAccount.address,
       userTokenAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: web3.SystemProgram.programId,
@@ -105,7 +112,7 @@ export async function chargeSubscriptionPayment(
   );
   const serviceTokenAccount = await getAssociatedTokenAddress(
     data.mint,
-    sender,
+    service,
     true
   );
 

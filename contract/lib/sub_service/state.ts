@@ -55,7 +55,7 @@ export async function updateStateAuthority(
   const authority = wallet ? wallet.publicKey : this.program.provider.publicKey;
 
   return await this.sendSigned(
-    this.program.methods.setServiceAuthority(stateAuthority).accounts({
+    this.program.methods.setStateAuthority(stateAuthority).accounts({
       authority,
       state,
       programAccount: this.program.programId,

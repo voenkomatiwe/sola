@@ -266,6 +266,7 @@ export class SubServiceProgram {
   ): Promise<any> {}
   public async chargeSubscriptionPayment(
     service_id: string,
+    userWallet: PublicKey,
     wallet?: Signer
   ): Promise<any> {}
 }

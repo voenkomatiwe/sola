@@ -95,14 +95,14 @@ pub struct ChargeSubscriptionPayment<'info> {
 
     #[account(
         mut,
-        seeds = [b"subscription".as_ref(), sender.key.as_ref(), &service.id.to_be_bytes()],
+        seeds = [b"subscription".as_ref(), user.address.as_ref(), &service.id.to_be_bytes()],
         bump = subscription.bump,
     )]
     pub subscription: Account<'info, Subscription>,
 
     #[account(
         mut,
-        seeds = [b"user".as_ref(), sender.key.as_ref()],
+        seeds = [b"user".as_ref(), user.address.as_ref()],
         bump = user.bump,
     )]
     pub user: Account<'info, User>,

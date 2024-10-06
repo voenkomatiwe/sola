@@ -64,7 +64,7 @@ export async function withdrawFromUserStorage(
   const sender = wallet ? wallet.publicKey : this.program.provider.publicKey;
   const [user] = this.findUserAddress(sender);
 
-  const userTokenAccount = await this.checkOrCreateATA(mint, user, true);
+  const userTokenAccount = await getAssociatedTokenAddress(mint, user, true);
   const senderTokenAccount = await getAssociatedTokenAddress(mint, sender);
 
   return await this.sendSigned(
@@ -74,7 +74,6 @@ export async function withdrawFromUserStorage(
       senderTokenAccount,
       userTokenAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
-      systemProgram: web3.SystemProgram.programId,
     }),
     wallet
   );

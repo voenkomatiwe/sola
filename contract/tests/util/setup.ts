@@ -27,3 +27,15 @@ export function sleep(ms: number): Promise<void> {
 export function calculateFeeAmount(amount: BN, fee: BN): BN {
   return amount.mul(fee).div(FULL_CAPACITY);
 }
+
+export async function ignoreIfExist(fn: () => Promise<unknown>) {
+  try {
+    await fn();
+  } catch (error) {
+    const errorMessage = String(error);
+
+    if (!errorMessage.includes("custom program error: 0x0")) {
+      throw error;
+    }
+  }
+}
