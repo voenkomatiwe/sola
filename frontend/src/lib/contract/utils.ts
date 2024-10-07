@@ -28,3 +28,8 @@ export function bufferFromString(str: string, bufferSize?: number) {
 
   return padBuffer(utf, bufferSize);
 }
+
+export const bufferToString = (arr: number[]) => {
+  const buffer = Buffer.from(arr);
+  return buffer.toString("utf8").replace(/\0/g, "");
+};

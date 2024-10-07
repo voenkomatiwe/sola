@@ -16,7 +16,7 @@ export const ExploreProviders = () => {
   useEffect(() => {
     const func = async () => {
       try {
-        if (!service) return;
+        if (!service || providers.length) return;
         const result = await service.getAllServices();
 
         const parsedServices = result.map((service) => {

@@ -1,5 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
+import { formatTokenAmount } from "@/utils";
+
 import { tokens } from "./tokens";
 
 export type ProvidersType = {
@@ -13,8 +15,6 @@ export type ProvidersType = {
   name: string;
   url: string;
 };
-
-export type GroupedProviders = Record<string, ProvidersType[]>;
 
 export const columns: ColumnDef<ProvidersType>[] = [
   {
@@ -43,18 +43,13 @@ export const columns: ColumnDef<ProvidersType>[] = [
     accessorKey: "tokens",
     header: "Tokens (payment for one month)",
     cell: ({ row }) => {
-      const { symbol, logoURI } = tokens[row.original.mint]
-        ? tokens[row.original.mint]
-        : {
-            symbol: "USDC",
-            logoURI:
-              "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
-          };
+      const { symbol, logoURI, decimals } = tokens[row.original.mint];
       const amount = row.original.subPrice;
+
       return (
         <div>
-          <p key={symbol || "NEW"} className="flex gap-2">
-            {amount}
+          <p key={symbol} className="flex gap-2">
+            {formatTokenAmount(amount, decimals).toString()}
             <span className="flex gap-1">
               <strong>{symbol}</strong>
               <img

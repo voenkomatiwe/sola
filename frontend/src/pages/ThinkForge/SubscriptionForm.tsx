@@ -6,16 +6,19 @@ import {
   useWallet,
 } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { v4 } from "uuid";
 
 import sola from "@/assets/icons/sola.svg";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { contractAddress } from "@/config";
-import { SubscriptionAdapter } from "@/lib/contract";
+import { contractAddress, customServiceId } from "@/config";
+import { ProvidersType } from "@/constants/columns/explore";
+import { tokens } from "@/constants/columns/tokens";
+import { ServiceAdapter, SubscriptionAdapter } from "@/lib/contract";
+import { bufferToString } from "@/lib/contract/utils";
 import { APP_ROUTES } from "@/routes/constants";
+import { formatTokenAmount } from "@/utils";
 
 export const SubscriptionForm = () => {
   const { connection } = useConnection();
@@ -24,10 +27,42 @@ export const SubscriptionForm = () => {
 
   const navigate = useNavigate();
   const [period, setPeriod] = useState<string>("1");
-  const pricePerMonth = "3.99";
+  const [service, setService] = useState<ProvidersType | null>(null);
+
+  const token = service && tokens[service.mint];
+
   const [transactionSignature, setTransactionSignature] = useState<
     string | null
   >(null);
+
+  useEffect(() => {
+    const func = async () => {
+      try {
+        const serviceAdapters = new ServiceAdapter(
+          connection,
+          wallet as Wallet,
+          contractAddress,
+        );
+        const retrievedService =
+          await serviceAdapters.getContractServiceData(customServiceId);
+        setService({
+          id: retrievedService.id.toString(),
+          authority: retrievedService.authority.toString(),
+          subscriptionPeriod: retrievedService.subscriptionPeriod.toString(),
+          mint: retrievedService.mint.toString(),
+          subPrice: retrievedService.subPrice.toString(),
+          updatedAt: retrievedService.updatedAt.toNumber(),
+          name: bufferToString(retrievedService.name),
+          url: bufferToString(retrievedService.url),
+          version: retrievedService.version.toString(),
+        });
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+
+    func();
+  }, [connection, wallet]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +77,11 @@ export const SubscriptionForm = () => {
       contractAddress,
     );
 
-    //TODO: ?????????????
-    const trx = await subscriptionAdapter.activateSubscription(
-      v4({
-        random: new BN("153807357704477413592972126688430806559").toArray("be"),
-      }),
-    );
+    const trx = await subscriptionAdapter.activateSubscription(customServiceId);
 
     setTransactionSignature(trx || null);
   };
+
   if (transactionSignature) {
     return (
       <form onSubmit={handleSubmit} className="space-y-4 w-full text-white">
@@ -89,6 +120,9 @@ export const SubscriptionForm = () => {
     );
   }
 
+  if (!token || !service) return null;
+  const price = new BN(service.subPrice).mul(new BN(period)).toString();
+  const readablePrice = formatTokenAmount(price, token.decimals);
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full text-white">
       <div className="flex flex-col dashboard p-4 rounded-2xl items-center justify-between">
@@ -124,7 +158,7 @@ export const SubscriptionForm = () => {
         <div>
           {connected ? (
             <Button type="submit">
-              Subscribe for {Number(pricePerMonth) * Number(period)} SOL
+              Subscribe for {readablePrice} {token.symbol}
             </Button>
           ) : (
             <div className="flex flex-col items-center">
