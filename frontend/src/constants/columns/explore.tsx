@@ -55,7 +55,7 @@ export const columns: ColumnDef<ProvidersType>[] = [
             <span className="flex gap-1">
               <strong>{symbol}</strong>
               <img
-                src={logoURI}
+                src={logoURI || ""}
                 alt={symbol}
                 className="w-5 h-5 rounded-full"
               />

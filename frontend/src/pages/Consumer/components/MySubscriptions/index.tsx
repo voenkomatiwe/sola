@@ -1,3 +1,4 @@
+import { utils } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
 import BN from "bn.js";
 import { useEffect } from "react";
@@ -7,7 +8,7 @@ import { DataTable } from "@/components/DataTable";
 import { columns } from "@/constants/columns/mySubscriptions";
 import { useAdapters } from "@/hooks/store/useAdapters";
 import { useConsumer } from "@/hooks/store/useConsumer";
-import { bufferToString } from "@/lib/contract/utils";
+import { bufferFromString } from "@/lib/contract/utils";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const MySubscriptions = () => {
@@ -33,7 +34,7 @@ export const MySubscriptions = () => {
         )
           return;
         const result = await subscriptionAdapters.getAllSubscriptions();
-
+        console.log(publicKey.toString(), result);
         const parsedServices = await Promise.all(
           result
             //TODO: fix filter
@@ -45,6 +46,11 @@ export const MySubscriptions = () => {
                 ).toArray("be"),
               });
               const service = await serviceAdapters.getContractServiceData(id);
+              const here = "Service name";
+              const buf = Array.from(bufferFromString(here, 32));
+              const buff = Buffer.from(buf);
+
+              console.log("hehhe", service, utils.bytes.utf8.decode(buff));
 
               return {
                 id: service.id.toString(),
@@ -53,8 +59,8 @@ export const MySubscriptions = () => {
                 mint: service.mint.toString(),
                 subPrice: service.subPrice.toString(),
                 updatedAt: service.updatedAt.toNumber(),
-                name: bufferToString(service.name),
-                url: bufferToString(service.url),
+                name: Buffer.from(service.name).toString(),
+                url: Buffer.from(service.url).toString(),
 
                 isActive: subscription.account.isActive,
                 serviceId: subscription.account.serviceId.toString(),

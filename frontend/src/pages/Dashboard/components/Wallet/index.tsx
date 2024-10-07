@@ -13,7 +13,7 @@ const ConsumerWallet = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center">
-        <h2 className="mb-4">List tokens</h2>
+        <h2 className="mb-4 text-left text-3xl w-full">List tokens</h2>
         <div className="flex flex-col gap-4 w-full">
           {Object.values(tokens).map((token) => (
             <Card
@@ -36,8 +36,7 @@ const ConsumerWallet = () => {
             </Card>
           ))}
         </div>
-      </div>
-      last activity(soon)
+      </div>{" "}
     </div>
   );
 };
