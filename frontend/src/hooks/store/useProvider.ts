@@ -1,12 +1,14 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
+import { ProvidersType } from "@/constants/columns/explore";
+
 interface Store {
-  myServices: Array<{ name: string }>;
+  myServices: Array<ProvidersType>;
 }
 
 interface Actions {
-  setMyServices: (services: Array<{ name: string }>) => void;
+  setMyServices: (services: Array<ProvidersType>) => void;
 }
 
 export const useProvider = create<Store & Actions>()(

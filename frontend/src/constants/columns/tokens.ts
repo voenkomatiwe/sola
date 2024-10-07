@@ -2,6 +2,7 @@ import { toMap } from "@/utils";
 
 export const TOKEN_ADDRESSES = {
   SOL: "11111111111111111111111111111111",
+  WRAPPED_SOL: "So11111111111111111111111111111111111111112",
   USDC: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
 };
 
@@ -9,6 +10,21 @@ const tokensArray = [
   {
     chainId: 101,
     address: TOKEN_ADDRESSES.SOL,
+    symbol: "SOL",
+    name: "SOL",
+    decimals: 9,
+    logoURI:
+      "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+    extensions: {
+      coingeckoId: "solana",
+      serumV3Usdc: "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+      serumV3Usdt: "HWHvQhFmJB3NUcu1aihKmrKegfVxBEHzwVX6yZCKEsi1",
+      website: "https://solana.com/",
+    },
+  },
+  {
+    chainId: 101,
+    address: TOKEN_ADDRESSES.WRAPPED_SOL,
     symbol: "SOL",
     name: "Wrapped SOL",
     decimals: 9,

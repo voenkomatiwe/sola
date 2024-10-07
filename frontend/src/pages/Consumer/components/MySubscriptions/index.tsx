@@ -7,6 +7,7 @@ import { DataTable } from "@/components/DataTable";
 import { columns } from "@/constants/columns/mySubscriptions";
 import { useAdapters } from "@/hooks/store/useAdapters";
 import { useConsumer } from "@/hooks/store/useConsumer";
+import { bufferToString } from "@/lib/contract/utils";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const MySubscriptions = () => {
@@ -52,8 +53,8 @@ export const MySubscriptions = () => {
                 mint: service.mint.toString(),
                 subPrice: service.subPrice.toString(),
                 updatedAt: service.updatedAt.toNumber(),
-                name: service.name.toString(),
-                url: service.url.toString(),
+                name: bufferToString(service.name),
+                url: bufferToString(service.url),
 
                 isActive: subscription.account.isActive,
                 serviceId: subscription.account.serviceId.toString(),

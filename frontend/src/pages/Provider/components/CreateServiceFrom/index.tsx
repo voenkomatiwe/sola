@@ -3,7 +3,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { useForm } from "react-hook-form";
-import { v4 } from "uuid";
+// import { v4 } from "uuid";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -32,9 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { customServiceId } from "@/config";
 import { tokens } from "@/constants/columns/tokens";
 import { useAdapters } from "@/hooks/store/useAdapters";
 import { useToast } from "@/hooks/use-toast";
+import { parseTokenAmount } from "@/utils";
 
 const formSchema = z.object({
   mint: z.string().min(1, { message: "Please select a token." }),
@@ -71,12 +73,17 @@ export default function SubscriptionFormModal() {
   const onSubmit = async (values: FormData) => {
     if (!serviceAdapter || !publicKey) return;
 
+    const decimals = tokens[values.mint].decimals;
+    console.log("parse", values.subPrice);
+    console.log(parseTokenAmount(values.subPrice, decimals));
+
     const createServiceTx = await serviceAdapter.createService({
-      id: v4(),
+      //TODO: uncomment
+      // id: v4(),
+      id: customServiceId,
       authority: publicKey,
       mint: new PublicKey(values.mint),
-      //TODO: float or parse???
-      subPrice: new BN(values.subPrice),
+      subPrice: parseTokenAmount(values.subPrice, decimals),
       subscriptionPeriod: values.subscriptionPeriod
         ? new BN(values.subscriptionPeriod)
         : undefined,

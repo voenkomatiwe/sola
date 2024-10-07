@@ -1,3 +1,5 @@
+import { BN } from "bn.js";
+
 type KeyType = string | number | symbol;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toMap = <T extends Record<KeyType, any>, K extends keyof T>(
@@ -18,4 +20,41 @@ export const calculatePeriodInMonths = (startDate: string, endDate: string) => {
   const yearDiff = end.getFullYear() - start.getFullYear();
   const monthDiff = end.getMonth() - start.getMonth();
   return yearDiff * 12 + monthDiff;
+};
+
+const BASE = 10;
+
+type ValueType = string | number;
+
+export const removeTrailingZeros = (amount: string) => {
+  if (amount.includes(".") || amount.includes(",")) {
+    return amount.replace(/\.?0*$/, "");
+  }
+  return amount;
+};
+
+export const parseTokenAmount = (value: ValueType, decimals: number) => {
+  const [integerPart, fractionalPart = ""] = value.toString().split(".");
+  const fractionalPartPadded = fractionalPart
+    .padEnd(decimals, "0")
+    .slice(0, decimals);
+
+  const fullValue = integerPart + fractionalPartPadded;
+
+  return new BN(fullValue, 10);
+};
+
+export const formatTokenAmount = (value: ValueType, decimals = 18) => {
+  const bnValue = new BN(value);
+  const divisor = new BN(BASE).pow(new BN(decimals));
+
+  const integerPart = bnValue.div(divisor);
+  const fractionalPart = bnValue
+    .mod(divisor)
+    .toString()
+    .padStart(decimals, "0");
+
+  const formattedAmount = `${integerPart}.${fractionalPart}`;
+
+  return removeTrailingZeros(formattedAmount);
 };

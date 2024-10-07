@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
+import { formatTokenAmount } from "@/utils";
 
 import { tokens } from "./tokens";
 
@@ -33,11 +34,11 @@ export const columns: ColumnDef<MySubscription>[] = [
     accessorKey: "token",
     header: "Tokens (payment for one month)",
     cell: ({ row }) => {
-      const { symbol, logoURI } = tokens[row.original.mint];
+      const { symbol, logoURI, decimals } = tokens[row.original.mint];
       return (
         <div>
           <p key={symbol} className="flex gap-2">
-            {row.original.subPrice}
+            {formatTokenAmount(row.original.subPrice, decimals).toString()}
             <span className="flex gap-1">
               <strong>{symbol}</strong>
               <img

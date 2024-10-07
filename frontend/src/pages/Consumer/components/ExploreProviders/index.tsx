@@ -4,6 +4,7 @@ import { DataTable } from "@/components/DataTable";
 import { columns } from "@/constants/columns/explore";
 import { useAdapters } from "@/hooks/store/useAdapters";
 import { useConsumer } from "@/hooks/store/useConsumer";
+import { bufferToString } from "@/lib/contract/utils";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const ExploreProviders = () => {
@@ -16,7 +17,7 @@ export const ExploreProviders = () => {
   useEffect(() => {
     const func = async () => {
       try {
-        if (!service) return;
+        if (!service || providers.length) return;
         const result = await service.getAllServices();
 
         const parsedServices = result.map((service) => ({
@@ -27,8 +28,8 @@ export const ExploreProviders = () => {
           subPrice: service.account.subPrice.toString(),
           updatedAt: service.account.updatedAt.toNumber(),
           version: service.account.version.toString(),
-          name: service.account.name.toString(),
-          url: service.account.url.toString(),
+          name: bufferToString(service.account.name),
+          url: bufferToString(service.account.url),
         }));
 
         setProviders(parsedServices);
