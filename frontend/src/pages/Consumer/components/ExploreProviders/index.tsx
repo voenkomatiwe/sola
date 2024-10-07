@@ -7,7 +7,10 @@ import { useConsumer } from "@/hooks/store/useConsumer";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const ExploreProviders = () => {
-  const providers = useConsumer((store) => store.providers);
+  const { providers, setProviders } = useConsumer((store) => ({
+    providers: store.providers,
+    setProviders: store.setProviders,
+  }));
   const service = useAdapters((store) => store.service);
 
   useEffect(() => {
@@ -21,13 +24,14 @@ export const ExploreProviders = () => {
           authority: service.account.authority.toString(),
           subscriptionPeriod: service.account.subscriptionPeriod.toString(),
           mint: service.account.mint.toString(),
-          subPrice: service.account.subPrice.toNumber(),
+          subPrice: service.account.subPrice.toString(),
           updatedAt: service.account.updatedAt.toNumber(),
           version: service.account.version.toString(),
           name: service.account.name.toString(),
           url: service.account.url.toString(),
         }));
-        console.log("result", parsedServices);
+
+        setProviders(parsedServices);
       } catch (error) {
         console.error("Error fetching services:", error);
       }

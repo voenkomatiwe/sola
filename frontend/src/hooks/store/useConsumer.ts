@@ -3,7 +3,6 @@ import { immer } from "zustand/middleware/immer";
 
 import { ProvidersType } from "@/constants/columns/explore";
 import { MySubscription } from "@/constants/columns/mySubscriptions";
-import { TOKEN_ADDRESSES } from "@/constants/columns/tokens";
 
 interface Store {
   totalSpent: string;
@@ -14,57 +13,8 @@ interface Store {
 
 interface Actions {
   setMySubscriptions: (subscriptions: Array<MySubscription>) => void;
+  setProviders: (subscriptions: Array<ProvidersType>) => void;
 }
-
-const mySubscriptions: Array<MySubscription> = [
-  {
-    id: 1,
-    name: "Rozetka",
-    amount: "999",
-    token: TOKEN_ADDRESSES.SOL,
-    startDate: new Date().toLocaleString(),
-    endDate: new Date().toLocaleString(),
-    status: "processing",
-  },
-  {
-    id: 2,
-    name: "Youtube",
-    amount: "2.99",
-    token: TOKEN_ADDRESSES.USDC,
-    startDate: new Date().toLocaleString(),
-    endDate: new Date().toLocaleString(),
-    status: "processing",
-  },
-];
-
-const providers: Array<ProvidersType> = [
-  {
-    id: 1,
-    name: "Rozetka",
-    tokens: [
-      {
-        amount: "2",
-        token: TOKEN_ADDRESSES.SOL,
-      },
-    ],
-    periods: [1, 3],
-  },
-  {
-    id: 2,
-    name: "Youtube",
-    tokens: [
-      {
-        amount: "2.99",
-        token: TOKEN_ADDRESSES.USDC,
-      },
-      {
-        amount: "2.99",
-        token: TOKEN_ADDRESSES.SOL,
-      },
-    ],
-    periods: [1, 3, 12],
-  },
-];
 
 const totalExpenses = [
   { provider: "Rozetka", value: 186 },
@@ -80,13 +30,19 @@ export const useConsumer = create<Store & Actions>()(
       (acc, { value }) => (Number(acc) + value).toString(),
       "0",
     ),
-    mySubscriptions: mySubscriptions,
-    providers: providers,
+    mySubscriptions: [],
+    providers: [],
     totalExpenses: totalExpenses,
 
     setMySubscriptions: (subscriptions) => {
       set((state) => {
         state.mySubscriptions = subscriptions;
+      });
+    },
+
+    setProviders: (providers) => {
+      set((state) => {
+        state.providers = providers;
       });
     },
   })),

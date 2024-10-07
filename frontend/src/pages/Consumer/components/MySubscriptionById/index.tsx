@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { statusColors } from "@/constants/columns/mySubscriptions";
 import { tokens } from "@/constants/columns/tokens";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { Role } from "@/interfaces";
@@ -25,34 +24,23 @@ export const MySubscriptionById = () => {
   const { providerId, role } = useParams<{ providerId: string; role: Role }>();
 
   const subscription = mySubscriptions.find(
-    (el) => providerId && el.id === Number(providerId),
+    (el) => providerId && el.serviceId === providerId,
   );
   if (!subscription || !role) return null;
-  const token = tokens[subscription.token];
-  const handleAction = () => {
-    switch (subscription.status) {
-      case "pending":
-      case "processing":
-        console.log(`Unsubscribe from ID ${subscription.id}`);
-        break;
-      case "cancelled":
-      case "ended":
-        console.log(`Renew your subscription with ID ${subscription.id}`);
-        break;
-      default:
-        break;
-    }
-  };
+  const token = tokens[subscription.mint];
+  const handleAction = () =>
+    subscription.isActive
+      ? console.log(`Unsubscribe from ID ${subscription.serviceId}`)
+      : console.log(
+          `Renew your subscription with ID ${subscription.serviceId}`,
+        );
 
   // const period = calculatePeriodInMonths(
   //   subscription.startDate,
   //   subscription.endDate,
   // );
 
-  const actionText =
-    subscription.status === "pending" || subscription.status === "processing"
-      ? "Cancel"
-      : "Resume";
+  const actionText = subscription.isActive ? "Cancel" : "Resume";
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -76,19 +64,22 @@ export const MySubscriptionById = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-secondary-foreground" />
           <BreadcrumbItem>
-            <BreadcrumbPage>{subscription.name}</BreadcrumbPage>
+            <BreadcrumbPage className="max-w-28 truncate">
+              {subscription.name}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <Card className="flex flex-col justify-between p-4 rounded-xl">
         <div className="flex flex-row justify-between">
-          <h2 className="text-lg font-bold flex flex-row justify-center items-center">
+          <h2 className="text-lg font-bold flex flex-row justify-center items-center max-w-28 truncate">
             {subscription.name} <ExternalLinkIcon className="h-4" />
           </h2>
-          <Badge className={statusColors[subscription.status]}>
-            {subscription.status.charAt(0).toUpperCase() +
-              subscription.status.slice(1)}
+          <Badge
+            className={subscription.isActive ? "bg-green-500" : "bg-red-500"}
+          >
+            {subscription.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
         <div className="pt-2 gap-3">
@@ -106,37 +97,50 @@ export const MySubscriptionById = () => {
             </div>
           </div>
           <div className="mb-2 flex justify-between items-center">
-            <h3 className="text-base font-medium">Contract ID</h3>
-            <p className="text-gray-500 text-base">{subscription.token}</p>
-          </div>
-          <div className="mb-2 flex justify-between items-center">
-            <h3 className="text-base font-medium">Amount</h3>
+            <h4 className="text-base font-medium">Contract ID</h4>
             <p className="text-gray-500 text-base font-medium">
-              <span>{subscription.amount}</span> {token.symbol}
+              {subscription.mint}
             </p>
           </div>
           <div className="mb-2 flex justify-between items-center">
-            <h3 className="text-base font-medium">Start</h3>
+            <h4 className="text-base font-medium">Subscription Period</h4>
             <p className="text-gray-500 text-base font-medium">
-              {subscription.startDate}
+              {subscription.subscriptionPeriod}
+            </p>
+          </div>
+
+          <div className="mb-2 flex justify-between items-center">
+            <h4 className="text-base font-medium">Price</h4>
+            <p className="text-gray-500 text-base font-medium">
+              <span>{subscription.subPrice}</span> {token.symbol}
+            </p>
+          </div>
+          <div className="mb-2 flex justify-between items-center">
+            <h4 className="text-base font-medium">Last Payment</h4>
+            <p className="text-gray-500 text-base font-medium">
+              {new Date(subscription.lastPayment * 1000).toLocaleDateString()}
             </p>
           </div>
           <div className="mb-4 flex justify-between items-center">
-            <h3 className="text-base font-medium">End</h3>
+            <h4 className="text-base font-medium">Authority</h4>
             <p className="text-gray-500 text-base font-medium">
-              {subscription.endDate}
+              {subscription.authority}
             </p>
+          </div>
+          <div className="mb-4 flex justify-between items-center">
+            <h4 className="text-base font-medium">URL</h4>
+            <a
+              href={subscription.url}
+              className="text-gray-500 text-base font-medium max-w-28 truncate"
+            >
+              {subscription.url}
+            </a>
           </div>
         </div>
         <Separator className="mb-4" />
         <Button
           onClick={handleAction}
-          variant={
-            subscription.status === "pending" ||
-            subscription.status === "processing"
-              ? "destructive"
-              : "default"
-          }
+          variant={subscription.isActive ? "default" : "destructive"}
         >
           {actionText}
         </Button>

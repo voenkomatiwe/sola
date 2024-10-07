@@ -45,7 +45,7 @@ const formSchema = z.object({
 });
 
 export function ExploreProviderById() {
-  const subscriptions = useConsumer((store) => store.providers);
+  const providers = useConsumer((store) => store.providers);
   const { providerId, role } = useParams<{ providerId: string; role: Role }>();
 
   const { toast } = useToast();
@@ -59,35 +59,17 @@ export function ExploreProviderById() {
     },
   });
 
-  const provider = subscriptions.find(
-    (el) => providerId && el.id === Number(providerId),
-  );
+  const provider = providers.find((el) => providerId && el.id === providerId);
 
-  const paymentTokens = provider?.tokens.map((el) => {
-    const { symbol, logoURI, name } = tokens[el.token];
-    return {
-      amount: el.amount,
-      symbol,
-      icon: logoURI,
-      name,
-      address: el.token,
-    };
-  });
+  const paymentToken = provider?.mint ? tokens[provider.mint] : null;
 
   useEffect(() => {
-    const subscriptionToken = paymentTokens?.find(
-      (token) => token.address === form.getValues("token"),
-    );
-    const subscriptionPeriod = provider?.periods.find(
-      (period) => period.toString() === form.getValues("period"),
-    );
-
-    if (subscriptionToken && subscriptionPeriod) {
-      const calculatedAmount =
-        Number(subscriptionToken.amount || 0) * +subscriptionPeriod;
+    if (paymentToken && provider?.subscriptionPeriod) {
+      const calculatedAmount = Number(provider.subPrice || 0);
       form.setValue("amount", calculatedAmount);
+      form.setValue("period", provider.subscriptionPeriod);
     }
-  }, [form.watch("token"), form.watch("period")]);
+  }, [paymentToken, provider?.subscriptionPeriod]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     toast({
@@ -95,7 +77,8 @@ export function ExploreProviderById() {
       description: `You have subscribed with ${values.amount} for ${values.period} month(s) using ${values.token}.`,
     });
   }
-  if (!provider || !role || !paymentTokens) return null;
+
+  if (!provider || !role || !paymentToken) return null;
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -119,12 +102,16 @@ export function ExploreProviderById() {
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-secondary-foreground" />
           <BreadcrumbItem>
-            <BreadcrumbPage>{provider.name}</BreadcrumbPage>
+            <BreadcrumbPage className="max-w-28 truncate">
+              {provider.name}
+            </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       <Card className="p-6 shadow-md rounded-lg border border-gray-200">
-        <h2 className="text-xl font-semibold text-center">{provider.name}</h2>
+        <h2 className="text-xl font-semibold text-center max-w-28 truncate">
+          {provider.name}
+        </h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="flex flex-col gap-6">
@@ -142,20 +129,18 @@ export function ExploreProviderById() {
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          {paymentTokens.map((token) => (
-                            <ToggleGroupItem
-                              key={token.address}
-                              value={token.address}
-                              className="flex gap-2"
-                            >
-                              <img
-                                src={token.icon}
-                                alt={token.name}
-                                className="w-5 h-5 rounded-full"
-                              />
-                              {token.name}
-                            </ToggleGroupItem>
-                          ))}
+                          <ToggleGroupItem
+                            key={paymentToken.address}
+                            value={paymentToken.address}
+                            className="flex gap-2"
+                          >
+                            <img
+                              src={paymentToken.logoURI}
+                              alt={paymentToken.name}
+                              className="w-5 h-5 rounded-full"
+                            />
+                            {paymentToken.name}
+                          </ToggleGroupItem>
                         </ToggleGroup>
                       </FormControl>
                     </div>
@@ -169,7 +154,7 @@ export function ExploreProviderById() {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex items-center justify-between">
-                      <FormLabel>Choose Period</FormLabel>
+                      <FormLabel>Subscription Period</FormLabel>
                       <FormControl>
                         <ToggleGroup
                           variant="outline"
@@ -177,14 +162,12 @@ export function ExploreProviderById() {
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          {provider.periods.map((period) => (
-                            <ToggleGroupItem
-                              key={period}
-                              value={period.toString()}
-                            >
-                              {period} month(s)
-                            </ToggleGroupItem>
-                          ))}
+                          <ToggleGroupItem
+                            key={provider.subscriptionPeriod}
+                            value={provider.subscriptionPeriod}
+                          >
+                            {provider.subscriptionPeriod} month(s)
+                          </ToggleGroupItem>
                         </ToggleGroup>
                       </FormControl>
                     </div>
@@ -208,8 +191,8 @@ export function ExploreProviderById() {
                     />
                   </FormControl>
                   <FormDescription>
-                    The amount will be calculated based on your token and
-                    subscription period.
+                    The amount will be calculated based on your subscription
+                    period and price.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -222,8 +205,9 @@ export function ExploreProviderById() {
         </Form>
       </Card>
       <div className="flex justify-between items-end mt-auto">
-        <a className="flex gap-2 items-end text-blue-600 hover:underline">
-          {provider.name} <ExternalLinkIcon />
+        <a className="flex gap-2 items-end text-blue-600 hover:underline ">
+          <span className="max-w-28 truncate">{provider.name}</span>
+          <ExternalLinkIcon />
         </a>
       </div>
     </div>

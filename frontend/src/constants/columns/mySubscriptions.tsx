@@ -4,38 +4,40 @@ import { Badge } from "@/components/ui/badge";
 
 import { tokens } from "./tokens";
 
-export const statusColors = {
-  pending: "bg-yellow-200 text-yellow-800",
-  processing: "bg-blue-200 text-blue-800",
-  cancelled: "bg-red-200 text-red-800",
-  ended: "bg-gray-200 text-gray-800",
-};
-
 export type MySubscription = {
-  id: number;
+  id: string;
+  isActive: boolean;
+  serviceId: string;
+  lastPayment: number;
+  // user: string;
+
+  authority: string;
+  subscriptionPeriod: string;
+  mint: string;
+  subPrice: string;
+  updatedAt: number;
   name: string;
-  amount: string;
-  token: string;
-  startDate: string;
-  endDate: string;
-  status: "pending" | "processing" | "cancelled" | "ended";
+  url: string;
 };
 
 export const columns: ColumnDef<MySubscription>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell({ row }) {
+      return <div className="max-w-28 truncate">{row.original.name}</div>;
+    },
   },
 
   {
     accessorKey: "token",
     header: "Tokens (payment for one month)",
     cell: ({ row }) => {
-      const { symbol, logoURI } = tokens[row.original.token];
+      const { symbol, logoURI } = tokens[row.original.mint];
       return (
         <div>
           <p key={symbol} className="flex gap-2">
-            {row.original.amount}
+            {row.original.subPrice}
             <span className="flex gap-1">
               <strong>{symbol}</strong>
               <img
@@ -50,19 +52,22 @@ export const columns: ColumnDef<MySubscription>[] = [
     },
   },
   {
-    accessorKey: "startDate",
-    header: "Start Date",
-  },
-  {
-    accessorKey: "endDate",
-    header: "End Date",
+    accessorKey: "lastPayment",
+    header: "Last Payment",
+    cell: ({ row }) => {
+      return new Date(row.original.lastPayment * 1000).toLocaleString();
+    },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status;
-      return <Badge className={statusColors[status]}>{status}</Badge>;
+      const isActive = row.original.isActive;
+      return (
+        <Badge className={isActive ? "bg-green-500" : "bg-red-500"}>
+          {isActive ? "active" : "ended"}
+        </Badge>
+      );
     },
   },
 ];

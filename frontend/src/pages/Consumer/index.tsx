@@ -19,9 +19,7 @@ import { Chart } from "./chart";
 
 export const Consumer = () => {
   const { totalSpent, mySubscriptions } = useConsumer.getState();
-  const activeSubscriptions = mySubscriptions.filter(
-    (el) => el.status === "processing",
-  );
+  const activeSubscriptions = mySubscriptions.filter((el) => el.isActive);
   const { publicKey } = useWallet();
   const { connection } = useConnection();
   const wallet = useAnchorWallet();

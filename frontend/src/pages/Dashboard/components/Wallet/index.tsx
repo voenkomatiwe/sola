@@ -14,7 +14,7 @@ const ConsumerWallet = () => {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center">
         <h2 className="mb-4">List tokens</h2>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-full">
           {Object.values(tokens).map((token) => (
             <Card
               key={token.address}

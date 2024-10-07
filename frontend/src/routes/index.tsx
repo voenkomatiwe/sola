@@ -19,7 +19,6 @@ import { ServicesById } from "@/pages/Provider/components/ServicesById";
 import { ThinkForge } from "@/pages/ThinkForge";
 import { Providers } from "@/providers";
 import { APP_ROUTES } from "@/routes/constants";
-console.log("router");
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
