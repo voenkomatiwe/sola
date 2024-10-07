@@ -43,16 +43,22 @@ export const columns: ColumnDef<ProvidersType>[] = [
     accessorKey: "tokens",
     header: "Tokens (payment for one month)",
     cell: ({ row }) => {
-      const { symbol, logoURI } = tokens[row.original.mint];
+      const { symbol, logoURI } = tokens[row.original.mint]
+        ? tokens[row.original.mint]
+        : {
+            symbol: "USDC",
+            logoURI:
+              "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+          };
       const amount = row.original.subPrice;
       return (
         <div>
-          <p key={symbol} className="flex gap-2">
+          <p key={symbol || "NEW"} className="flex gap-2">
             {amount}
             <span className="flex gap-1">
               <strong>{symbol}</strong>
               <img
-                src={logoURI}
+                src={logoURI || ""}
                 alt={symbol}
                 className="w-5 h-5 rounded-full"
               />

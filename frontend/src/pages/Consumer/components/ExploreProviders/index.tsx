@@ -19,17 +19,19 @@ export const ExploreProviders = () => {
         if (!service) return;
         const result = await service.getAllServices();
 
-        const parsedServices = result.map((service) => ({
-          id: service.account.id.toString(),
-          authority: service.account.authority.toString(),
-          subscriptionPeriod: service.account.subscriptionPeriod.toString(),
-          mint: service.account.mint.toString(),
-          subPrice: service.account.subPrice.toString(),
-          updatedAt: service.account.updatedAt.toNumber(),
-          version: service.account.version.toString(),
-          name: service.account.name.toString(),
-          url: service.account.url.toString(),
-        }));
+        const parsedServices = result.map((service) => {
+          return {
+            id: service.account.id.toString(),
+            authority: service.account.authority.toString(),
+            subscriptionPeriod: service.account.subscriptionPeriod.toString(),
+            mint: service.account.mint.toString(),
+            subPrice: service.account.subPrice.toString(),
+            updatedAt: service.account.updatedAt.toNumber(),
+            version: service.account.version.toString(),
+            name: Buffer.from(service.account.name).toString(),
+            url: Buffer.from(service.account.url).toString(),
+          };
+        });
 
         setProviders(parsedServices);
       } catch (error) {
