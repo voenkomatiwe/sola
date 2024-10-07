@@ -36,6 +36,7 @@ export const MySubscriptions = () => {
         const parsedServices = await Promise.all(
           result
             //TODO: fix filter
+            .filter((el) => el.account.user.toString() === publicKey.toString())
             .map(async (subscription) => {
               const id = v4({
                 random: new BN(
