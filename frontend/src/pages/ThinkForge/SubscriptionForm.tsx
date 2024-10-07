@@ -1,16 +1,27 @@
+import { BN, Wallet } from "@coral-xyz/anchor";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { useWallet } from "@solana/wallet-adapter-react";
+import {
+  useAnchorWallet,
+  useConnection,
+  useWallet,
+} from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { v4 } from "uuid";
 
 import sola from "@/assets/icons/sola.svg";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { contractAddress } from "@/config";
+import { SubscriptionAdapter } from "@/lib/contract";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const SubscriptionForm = () => {
+  const { connection } = useConnection();
   const { connected, publicKey } = useWallet();
+  const wallet = useAnchorWallet();
+
   const navigate = useNavigate();
   const [period, setPeriod] = useState<string>("1");
   const pricePerMonth = "3.99";
@@ -18,14 +29,27 @@ export const SubscriptionForm = () => {
     string | null
   >(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!connected) {
       console.log("Please connect your wallet");
       return;
     }
 
-    setTransactionSignature("sola");
+    const subscriptionAdapter = new SubscriptionAdapter(
+      connection,
+      wallet as Wallet,
+      contractAddress,
+    );
+
+    //TODO: ?????????????
+    const trx = await subscriptionAdapter.activateSubscription(
+      v4({
+        random: new BN("153807357704477413592972126688430806559").toArray("be"),
+      }),
+    );
+
+    setTransactionSignature(trx || null);
   };
   if (transactionSignature) {
     return (

@@ -5,17 +5,17 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 
+import { ExploreProviderById } from "@/pages/Consumer/components/ExploreProviderById";
+import { ExploreProviders } from "@/pages/Consumer/components/ExploreProviders";
+import { MySubscriptionById } from "@/pages/Consumer/components/MySubscriptionById";
+import { MySubscriptions } from "@/pages/Consumer/components/MySubscriptions";
 import { Dashboard, DashboardByRole } from "@/pages/Dashboard";
-import { ExploreProviderById } from "@/pages/Dashboard/components/ExploreProviderById";
-import { ExploreProviders } from "@/pages/Dashboard/components/ExploreProviders";
-import { Followers } from "@/pages/Dashboard/components/Followers";
-import { FollowersById } from "@/pages/Dashboard/components/FollowersById";
-import { MySubscriptionById } from "@/pages/Dashboard/components/MySubscriptionById";
-import { MySubscriptions } from "@/pages/Dashboard/components/MySubscriptions";
 import ProtectedRoute from "@/pages/Dashboard/components/ProtectedRoute";
 import { Wallet } from "@/pages/Dashboard/components/Wallet";
 import { loaderDashboard } from "@/pages/Dashboard/loaders";
 import { Home } from "@/pages/Home";
+import { Services } from "@/pages/Provider/components/Services";
+import { ServicesById } from "@/pages/Provider/components/ServicesById";
 import { ThinkForge } from "@/pages/ThinkForge";
 import { Providers } from "@/providers";
 import { APP_ROUTES } from "@/routes/constants";
@@ -55,10 +55,10 @@ export const router = createBrowserRouter(
           element={<ExploreProviderById />}
         />
 
-        <Route path={APP_ROUTES.DASHBOARD.FOLLOWERS} element={<Followers />} />
+        <Route path={APP_ROUTES.DASHBOARD.SERVICES} element={<Services />} />
         <Route
-          path={APP_ROUTES.DASHBOARD.FOLLOWER(":follower")}
-          element={<FollowersById />}
+          path={APP_ROUTES.DASHBOARD.SERVICE(":service")}
+          element={<ServicesById />}
         />
       </Route>
 

@@ -14,7 +14,7 @@ interface Actions {
   setAdaptors: (props: Partial<Store>) => void;
 }
 
-export const useAdaptors = create<Partial<Store> & Actions>()(
+export const useAdapters = create<Partial<Store> & Actions>()(
   immer((set) => ({
     user: undefined,
     service: undefined,

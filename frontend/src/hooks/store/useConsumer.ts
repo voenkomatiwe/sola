@@ -21,7 +21,7 @@ const mySubscriptions: Array<MySubscription> = [
     id: 1,
     name: "Rozetka",
     amount: "999",
-    token: TOKEN_ADDRESSES.HAPI,
+    token: TOKEN_ADDRESSES.SOL,
     startDate: new Date().toLocaleString(),
     endDate: new Date().toLocaleString(),
     status: "processing",
@@ -35,33 +35,6 @@ const mySubscriptions: Array<MySubscription> = [
     endDate: new Date().toLocaleString(),
     status: "processing",
   },
-  {
-    id: 3,
-    name: "Apple Music",
-    amount: "0.002",
-    token: TOKEN_ADDRESSES.SOL,
-    startDate: new Date().toLocaleString(),
-    endDate: new Date().toLocaleString(),
-    status: "cancelled",
-  },
-  {
-    id: 4,
-    name: "Discord",
-    amount: "3.99",
-    token: TOKEN_ADDRESSES.USDT,
-    startDate: new Date().toLocaleString(),
-    endDate: new Date().toLocaleString(),
-    status: "ended",
-  },
-  {
-    id: 5,
-    name: "Chat GPT",
-    amount: "1",
-    token: TOKEN_ADDRESSES.SOL,
-    startDate: new Date().toLocaleString(),
-    endDate: new Date().toLocaleString(),
-    status: "ended",
-  },
 ];
 
 const providers: Array<ProvidersType> = [
@@ -72,10 +45,6 @@ const providers: Array<ProvidersType> = [
       {
         amount: "2",
         token: TOKEN_ADDRESSES.SOL,
-      },
-      {
-        amount: "999",
-        token: TOKEN_ADDRESSES.HAPI,
       },
     ],
     periods: [1, 3],
@@ -90,43 +59,10 @@ const providers: Array<ProvidersType> = [
       },
       {
         amount: "2.99",
-        token: TOKEN_ADDRESSES.USDT,
+        token: TOKEN_ADDRESSES.SOL,
       },
     ],
     periods: [1, 3, 12],
-  },
-  {
-    id: 3,
-    name: "Apple Music",
-    tokens: [
-      {
-        amount: "0.002",
-        token: TOKEN_ADDRESSES.SOL,
-      },
-    ],
-    periods: [1, 3, 6, 9, 12],
-  },
-  {
-    id: 4,
-    name: "Discord",
-    tokens: [
-      {
-        amount: "3.99",
-        token: TOKEN_ADDRESSES.USDT,
-      },
-    ],
-    periods: [1],
-  },
-  {
-    id: 5,
-    name: "Chat GPT",
-    tokens: [
-      {
-        amount: "1",
-        token: TOKEN_ADDRESSES.SOL,
-      },
-    ],
-    periods: [1, 3, 6, 9, 12],
   },
 ];
 

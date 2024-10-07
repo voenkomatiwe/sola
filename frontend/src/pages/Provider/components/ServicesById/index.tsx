@@ -1,10 +1,10 @@
-import { Pencil1Icon, PlusCircledIcon } from "@radix-ui/react-icons"; // Radix icons
+import { Pencil1Icon, PlusCircledIcon } from "@radix-ui/react-icons";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 
-export const Provider = () => {
+export const ServicesById = () => {
   const providerName = "Youtube";
   const followersCount = 124;
   const tokensCount = 5;

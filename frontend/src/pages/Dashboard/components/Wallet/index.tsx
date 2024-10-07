@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { tokens } from "@/constants/columns/tokens";
 import { Role } from "@/interfaces";
 
 const ProviderWallet = () => {
@@ -9,26 +10,34 @@ const ProviderWallet = () => {
 };
 
 const ConsumerWallet = () => {
-  const balance = 133;
-  const lockedTokens = 100;
-
   return (
-    <div>
-      <Card className="flex flex-col gap-4 p-4 shadow border rounded-lg bg-card">
-        <h2 className="text-lg font-semibold">Balance</h2>
-        <div className="">
-          <p className="text-gray-700">
-            <strong>Balance on Contract:</strong> {balance} SOL
-          </p>
-          <p className="text-gray-700">
-            <strong>Locked Tokens:</strong> {lockedTokens} tokens
-          </p>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col items-center">
+        <h2 className="mb-4">List tokens</h2>
+        <div className="flex flex-col gap-4">
+          {Object.values(tokens).map((token) => (
+            <Card
+              key={token.address}
+              className="p-4 flex gap-3 justify-between items-center bg-white shadow-lg"
+            >
+              <img
+                src={token.logoURI}
+                alt={token.name}
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="flex flex-col flex-1">
+                <span className="font-medium">{token.name}</span>
+                <span className="text-sm text-gray-500">Locked: 15</span>
+              </div>
+              <div className="flex space-x-2">
+                <Button>Deposit</Button>
+                <Button variant="destructive">Withdraw</Button>
+              </div>
+            </Card>
+          ))}
         </div>
-        <div className="flex justify-between flex-1 items-end">
-          <Button>Deposit</Button>
-          <Button variant="destructive">Withdraw</Button>
-        </div>
-      </Card>
+      </div>
+      last activity(soon)
     </div>
   );
 };

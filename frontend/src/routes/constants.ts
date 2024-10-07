@@ -10,9 +10,9 @@ export const CONSUMER_PAGE = {
 } as const;
 
 export const PROVIDER_PAGE = {
-  FOLLOWERS: "followers",
-  get FOLLOWER() {
-    return (followerId: string) => this.FOLLOWERS + `/${followerId}`;
+  SERVICES: "services",
+  get SERVICE() {
+    return (services: string) => this.SERVICES + `/${services}`;
   },
 };
 

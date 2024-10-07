@@ -11,7 +11,7 @@ export const InfoCard = ({
 }) => {
   return (
     <div
-      className={`p-6 rounded-xl flex flex-row border bg-card text-card-foreground items-center justify-between shadow ${className}`}
+      className={`p-6 rounded-xl flex flex-row border bg-card text-card-foreground items-center justify-between shadow-xl ${className}`}
     >
       <div className="flex flex-col justify-between space-y-0">
         <div className="text-2xl text-slate-700">{value}</div>

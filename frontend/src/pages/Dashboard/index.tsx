@@ -4,15 +4,15 @@ import { useEffect } from "react";
 import { Outlet, useParams } from "react-router-dom";
 
 import { contractAddress } from "@/config";
-import { useAdaptors } from "@/hooks/store/useAdaptors";
+import { useAdapters } from "@/hooks/store/useAdapters";
 import { Role } from "@/interfaces";
 import {
   ServiceAdapter,
   SubscriptionAdapter,
   UserAdapter,
 } from "@/lib/contract";
-import { Consumer } from "@/pages/Dashboard/components/Consumer";
-import { Provider } from "@/pages/Dashboard/components/Provider";
+import { Consumer } from "@/pages/Consumer";
+import { Provider } from "@/pages/Provider";
 
 import { Sidebar } from "./components/Sidebar";
 
@@ -24,7 +24,7 @@ export const DashboardByRole = () => {
 export const Dashboard = () => {
   const wallet = useAnchorWallet();
   const { connection } = useConnection();
-  const setAdaptors = useAdaptors((store) => store.setAdaptors);
+  const setAdaptors = useAdapters((store) => store.setAdaptors);
 
   useEffect(() => {
     if (!wallet) return;

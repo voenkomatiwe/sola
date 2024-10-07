@@ -10,7 +10,7 @@ import {
 import sola from "@/assets/icons/sola.svg";
 import { Button } from "@/components/ui/button";
 import { Role } from "@/interfaces";
-import { APP_ROUTES } from "@/routes/constants";
+import { APP_ROUTES, CONSUMER_PAGE, PROVIDER_PAGE } from "@/routes/constants";
 
 const NavLink = (props: NavLinkProps & { title: string }) => {
   return (
@@ -74,16 +74,20 @@ export const Sidebar = () => {
           title="Dashboard"
         />
         <NavLink to={APP_ROUTES.DASHBOARD.WALLET} title="Wallet" />
-        {role === "consumer" && (
+        {role === "consumer" ? (
           <>
             <NavLink
-              to={APP_ROUTES.DASHBOARD.MY_SUBSCRIPTIONS}
+              to={CONSUMER_PAGE.MY_SUBSCRIPTIONS}
               title="My Subscriptions"
             />
             <NavLink
-              to={APP_ROUTES.DASHBOARD.EXPLORE_PROVIDERS}
+              to={CONSUMER_PAGE.EXPLORE_PROVIDERS}
               title="Explore Providers"
             />
+          </>
+        ) : (
+          <>
+            <NavLink to={PROVIDER_PAGE.SERVICES} title="Services" />
           </>
         )}
       </div>

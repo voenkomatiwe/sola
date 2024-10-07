@@ -3,6 +3,7 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import { parse } from "uuid";
 
 import { ContractBase } from "./baseAdapter";
+import { bufferFromString } from "./utils";
 
 export class ServiceAdapter extends ContractBase {
   constructor(
@@ -22,19 +23,39 @@ export class ServiceAdapter extends ContractBase {
     return await this.program.account.service.all();
   }
 
-  public async createService(
-    id: string,
-    authority: PublicKey,
-    mint: PublicKey,
-    subPrice: BN,
-    subscriptionPeriod?: BN,
-  ) {
+  public async createService({
+    id,
+    authority,
+    mint,
+    subPrice,
+    subscriptionPeriod,
+    name,
+    url,
+  }: {
+    id: string;
+    authority: PublicKey;
+    mint: PublicKey;
+    name: string;
+    url: string;
+    subPrice: BN;
+    subscriptionPeriod?: BN;
+  }) {
     const [service, bump] = this.findContractServiceAddress(id);
     const sender = this.program.provider.publicKey;
 
+    const nameBuffer = Array.from(bufferFromString(name, 32));
+    const urlBuffer = Array.from(bufferFromString(url, 32));
     const period = subscriptionPeriod || null;
     const createServiceInstruction = await this.program.methods
-      .createService(new BN(parse(id), "be"), authority, period, subPrice, bump)
+      .createService(
+        new BN(parse(id), "be"),
+        nameBuffer,
+        urlBuffer,
+        authority,
+        period,
+        subPrice,
+        bump,
+      )
       .accounts({
         sender,
         service,

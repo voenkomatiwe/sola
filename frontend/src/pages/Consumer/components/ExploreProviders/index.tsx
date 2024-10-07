@@ -2,13 +2,13 @@ import { useEffect } from "react";
 
 import { DataTable } from "@/components/DataTable";
 import { columns } from "@/constants/columns/explore";
-import { useAdaptors } from "@/hooks/store/useAdaptors";
+import { useAdapters } from "@/hooks/store/useAdapters";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { APP_ROUTES } from "@/routes/constants";
 
 export const ExploreProviders = () => {
   const providers = useConsumer((store) => store.providers);
-  const service = useAdaptors((store) => store.service);
+  const service = useAdapters((store) => store.service);
 
   useEffect(() => {
     const func = async () => {
@@ -24,6 +24,8 @@ export const ExploreProviders = () => {
           subPrice: service.account.subPrice.toNumber(),
           updatedAt: service.account.updatedAt.toNumber(),
           version: service.account.version.toString(),
+          name: service.account.name.toString(),
+          url: service.account.url.toString(),
         }));
         console.log("result", parsedServices);
       } catch (error) {

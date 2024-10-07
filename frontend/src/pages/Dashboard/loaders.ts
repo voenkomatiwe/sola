@@ -1,7 +1,7 @@
 import { LoaderFunction, redirect } from "react-router-dom";
 
 import { Role } from "@/interfaces";
-import { APP_ROUTES } from "@/routes/constants";
+import { APP_ROUTES, CONSUMER_PAGE, PROVIDER_PAGE } from "@/routes/constants";
 
 const getUserRoleFromUrl = (url: URL): Role | null => {
   const pathParts = url.pathname.split("/");
@@ -20,7 +20,7 @@ export const loaderDashboard = (async ({ request }) => {
   const role = getUserRoleFromUrl(url);
   if (role === "consumer") {
     const isTryingToAccessProviderPage = url.pathname.includes(
-      APP_ROUTES.DASHBOARD.FOLLOWERS,
+      PROVIDER_PAGE.SERVICES,
     );
     if (isTryingToAccessProviderPage) {
       return redirect(APP_ROUTES.DASHBOARD.TO_HOME("consumer"));
@@ -28,8 +28,8 @@ export const loaderDashboard = (async ({ request }) => {
     return null;
   } else if (role === "provider") {
     const isTryingToAccessConsumerPage =
-      url.pathname.includes(APP_ROUTES.DASHBOARD.MY_SUBSCRIPTIONS) ||
-      url.pathname.includes(APP_ROUTES.DASHBOARD.EXPLORE_PROVIDERS);
+      url.pathname.includes(CONSUMER_PAGE.MY_SUBSCRIPTIONS) ||
+      url.pathname.includes(CONSUMER_PAGE.EXPLORE_PROVIDERS);
     if (isTryingToAccessConsumerPage) {
       return redirect(APP_ROUTES.DASHBOARD.TO_HOME("provider"));
     }
