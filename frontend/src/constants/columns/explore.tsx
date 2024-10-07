@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-import { formatTokenAmount } from "@/utils";
+import { formatTokenAmount, getHostNameFromRegex } from "@/utils";
 
 import { tokens } from "./tokens";
 
@@ -21,7 +21,7 @@ export const columns: ColumnDef<ProvidersType>[] = [
     accessorKey: "name",
     header: "Name",
     cell({ row }) {
-      return <div className="max-w-28 truncate">{row.original.name}</div>;
+      return <div className="max-w-56 truncate">{row.original.name}</div>;
     },
   },
   {
@@ -32,9 +32,9 @@ export const columns: ColumnDef<ProvidersType>[] = [
         <a
           href={row.original.url}
           target="_blank"
-          className="block max-w-28 truncate"
+          className="block max-w-56 truncate"
         >
-          {row.original.url}
+          {getHostNameFromRegex(row.original.url)}
         </a>
       );
     },

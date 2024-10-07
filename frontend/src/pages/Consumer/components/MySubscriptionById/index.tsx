@@ -17,7 +17,11 @@ import { tokens } from "@/constants/columns/tokens";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { Role } from "@/interfaces";
 import { APP_ROUTES } from "@/routes/constants";
-import { formatTokenAmount, secondsToDays } from "@/utils";
+import {
+  formatTokenAmount,
+  getHostNameFromRegex,
+  secondsToDays,
+} from "@/utils";
 // import { calculatePeriodInMonths } from "@/utils";
 
 export const MySubscriptionById = () => {
@@ -65,7 +69,7 @@ export const MySubscriptionById = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-secondary-foreground" />
           <BreadcrumbItem>
-            <BreadcrumbPage className="max-w-28 truncate">
+            <BreadcrumbPage className="max-w-56 truncate">
               {subscription.name}
             </BreadcrumbPage>
           </BreadcrumbItem>
@@ -74,7 +78,7 @@ export const MySubscriptionById = () => {
 
       <Card className="flex flex-col justify-between p-4 rounded-xl">
         <div className="flex flex-row justify-between">
-          <h2 className="text-lg font-bold flex flex-row justify-center items-center max-w-28 truncate">
+          <h2 className="text-lg font-bold flex flex-row justify-center items-center max-w-56 truncate">
             {subscription.name} <ExternalLinkIcon className="h-4" />
           </h2>
           <Badge
@@ -138,9 +142,9 @@ export const MySubscriptionById = () => {
             <h4 className="text-base font-medium">URL</h4>
             <a
               href={subscription.url}
-              className="text-gray-500 text-base font-medium max-w-28 truncate"
+              className="text-gray-500 text-base font-medium max-w-56 truncate"
             >
-              {subscription.url}
+              {getHostNameFromRegex(subscription.url)}
             </a>
           </div>
         </div>

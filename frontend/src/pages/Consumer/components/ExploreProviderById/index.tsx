@@ -105,14 +105,14 @@ export function ExploreProviderById() {
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-secondary-foreground" />
           <BreadcrumbItem>
-            <BreadcrumbPage className="max-w-28 truncate">
+            <BreadcrumbPage className="max-w-56 truncate">
               {provider.name}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       <Card className="p-6 shadow-md rounded-lg border border-gray-200">
-        <h2 className="text-xl font-semibold text-center max-w-28 truncate">
+        <h2 className="text-xl font-semibold text-center max-w-56 truncate">
           {provider.name}
         </h2>
         <Form {...form}>
@@ -187,7 +187,7 @@ export function ExploreProviderById() {
       </Card>
       <div className="flex justify-between items-end mt-auto">
         <a className="flex gap-2 items-end text-blue-600 hover:underline ">
-          <span className="max-w-28 truncate">{provider.name}</span>
+          <span className="max-w-56 truncate">{provider.name}</span>
           <ExternalLinkIcon />
         </a>
       </div>

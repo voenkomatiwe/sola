@@ -26,7 +26,7 @@ export const columns: ColumnDef<MySubscription>[] = [
     accessorKey: "name",
     header: "Name",
     cell({ row }) {
-      return <div className="max-w-28 truncate">{row.original.name}</div>;
+      return <div className="max-w-56 truncate">{row.original.name}</div>;
     },
   },
 

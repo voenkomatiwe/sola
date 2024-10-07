@@ -63,3 +63,9 @@ export const secondsToDays = (seconds: string) => {
   const secondsInADay = 24 * 60 * 60;
   return (Number(seconds) / secondsInADay).toFixed(0);
 };
+
+export const getHostNameFromRegex = (url: string): string | null => {
+  const regex = /^(?:https?:\/\/)?(?:www\.)?([^\/]+)/i;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+};
