@@ -58,3 +58,8 @@ export const formatTokenAmount = (value: ValueType, decimals = 18) => {
 
   return removeTrailingZeros(formattedAmount);
 };
+
+export const secondsToDays = (seconds: string) => {
+  const secondsInADay = 24 * 60 * 60;
+  return (Number(seconds) / secondsInADay).toFixed(0);
+};

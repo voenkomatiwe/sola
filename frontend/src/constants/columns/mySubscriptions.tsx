@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
-import { formatTokenAmount } from "@/utils";
+import { formatTokenAmount, secondsToDays } from "@/utils";
 
 import { tokens } from "./tokens";
 
@@ -50,6 +50,13 @@ export const columns: ColumnDef<MySubscription>[] = [
           </p>
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "subscriptionPeriod",
+    header: "Subscription Period",
+    cell: ({ row }) => {
+      return <span>{secondsToDays(row.original.subscriptionPeriod)} days</span>;
     },
   },
   {

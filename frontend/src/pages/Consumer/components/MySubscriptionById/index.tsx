@@ -17,7 +17,7 @@ import { tokens } from "@/constants/columns/tokens";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { Role } from "@/interfaces";
 import { APP_ROUTES } from "@/routes/constants";
-import { formatTokenAmount } from "@/utils";
+import { formatTokenAmount, secondsToDays } from "@/utils";
 // import { calculatePeriodInMonths } from "@/utils";
 
 export const MySubscriptionById = () => {
@@ -106,7 +106,7 @@ export const MySubscriptionById = () => {
           <div className="mb-2 flex justify-between items-center">
             <h4 className="text-base font-medium">Subscription Period</h4>
             <p className="text-gray-500 text-base font-medium">
-              {subscription.subscriptionPeriod}
+              {secondsToDays(subscription.subscriptionPeriod)} days
             </p>
           </div>
 

@@ -8,6 +8,7 @@ import {
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { v4 } from "uuid";
 
 import sola from "@/assets/icons/sola.svg";
 import { Button } from "@/components/ui/button";
@@ -64,12 +65,17 @@ export const SubscriptionForm = () => {
     func();
   }, [connection, wallet]);
 
+  if (!token || !service) return null;
+  const price = new BN(service.subPrice).mul(new BN(period)).toString();
+  const readablePrice = formatTokenAmount(price, token.decimals);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!connected) {
       console.log("Please connect your wallet");
       return;
     }
+    if (!service) return;
 
     const subscriptionAdapter = new SubscriptionAdapter(
       connection,
@@ -77,7 +83,12 @@ export const SubscriptionForm = () => {
       contractAddress,
     );
 
-    const trx = await subscriptionAdapter.activateSubscription(customServiceId);
+    const trx = await subscriptionAdapter.activateSubscription(
+      v4({
+        random: new BN(service.id).toArray("be"),
+      }),
+      new BN(price),
+    );
 
     setTransactionSignature(trx || null);
   };
@@ -120,9 +131,6 @@ export const SubscriptionForm = () => {
     );
   }
 
-  if (!token || !service) return null;
-  const price = new BN(service.subPrice).mul(new BN(period)).toString();
-  const readablePrice = formatTokenAmount(price, token.decimals);
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full text-white">
       <div className="flex flex-col dashboard p-4 rounded-2xl items-center justify-between">

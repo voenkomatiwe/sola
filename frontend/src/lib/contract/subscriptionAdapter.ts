@@ -106,7 +106,7 @@ export class SubscriptionAdapter extends ContractBase {
     return await this.program.account.subscription.all();
   }
 
-  public async activateSubscription(serviceId: string) {
+  public async activateSubscription(serviceId: string, amount: BN) {
     const sender = this.program.provider.publicKey;
     if (!sender) return;
 
@@ -125,8 +125,6 @@ export class SubscriptionAdapter extends ContractBase {
       contractAddress,
     );
     const data = await serviceAdapter.getContractServiceData(serviceId);
-
-    const amount = new BN(100);
 
     await userAdapter.replenishUserStorage(data.mint, amount);
     const [user] = this.findUserAddress(sender);
