@@ -36,7 +36,7 @@ export const Chart = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="provider"
+              dataKey="token"
               tickLine={false}
               tickMargin={10}
               axisLine={false}

@@ -18,7 +18,7 @@ const devnet: IConfig = {
   contractAddress: "AbTt5oYWeBDh6qkYN4YPgEkL3gom81CXMW73tDctr85K",
   tokenAddress: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
   tokenAccount: "4r1YezyMmxBTG9gukMPzubVUZUAV4JYTutNVzChHSQZv",
-  customServiceId: "c722d2b3-6545-4cfa-af1e-15ba7816838f",
+  customServiceId: "34894228-d670-420a-916e-4fafc6ca6131",
 };
 
 const environments: Record<Environment, IConfig> = {

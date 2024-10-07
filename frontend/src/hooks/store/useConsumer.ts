@@ -8,31 +8,23 @@ interface Store {
   totalSpent: string;
   mySubscriptions: Array<MySubscription>;
   providers: Array<ProvidersType>;
-  totalExpenses: Array<{ provider: string; value: number }>;
+  totalExpenses: Array<{ token: string; value: string }>;
 }
 
 interface Actions {
   setMySubscriptions: (subscriptions: Array<MySubscription>) => void;
   setProviders: (subscriptions: Array<ProvidersType>) => void;
+  setTotalExpenses: (
+    totalExpenses: Array<{ token: string; value: string }>,
+  ) => void;
 }
-
-const totalExpenses = [
-  { provider: "Rozetka", value: 186 },
-  { provider: "Youtube", value: 305 },
-  { provider: "Apple Music", value: 237 },
-  { provider: "Discord", value: 73 },
-  { provider: "Chat GPT", value: 4 },
-];
 
 export const useConsumer = create<Store & Actions>()(
   immer((set) => ({
-    totalSpent: totalExpenses.reduce(
-      (acc, { value }) => (Number(acc) + value).toString(),
-      "0",
-    ),
+    totalSpent: "0",
     mySubscriptions: [],
     providers: [],
-    totalExpenses: totalExpenses,
+    totalExpenses: [],
 
     setMySubscriptions: (subscriptions) => {
       set((state) => {
@@ -43,6 +35,16 @@ export const useConsumer = create<Store & Actions>()(
     setProviders: (providers) => {
       set((state) => {
         state.providers = providers;
+      });
+    },
+
+    setTotalExpenses: (totalExpenses) => {
+      set((state) => {
+        state.totalExpenses = totalExpenses;
+        state.totalSpent = totalExpenses.reduce(
+          (acc, { value }) => (Number(acc) + value).toString(),
+          "0",
+        );
       });
     },
   })),
