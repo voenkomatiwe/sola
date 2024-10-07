@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import BN from "bn.js";
 import { ExternalLinkIcon } from "lucide-react";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Link, generatePath, useParams } from "react-router-dom";
 import { z } from "zod";
 
@@ -18,19 +19,18 @@ import { Card } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { tokens } from "@/constants/columns/tokens";
 import { useConsumer } from "@/hooks/store/useConsumer";
 import { useToast } from "@/hooks/use-toast";
 import { Role } from "@/interfaces";
 import { APP_ROUTES } from "@/routes/constants";
+import { formatTokenAmount } from "@/utils";
 
 const formSchema = z.object({
   token: z.string().min(1, {
@@ -39,7 +39,7 @@ const formSchema = z.object({
   period: z.string().min(1, {
     message: "Please select a period.",
   }),
-  amount: z.number().positive({
+  amount: z.string().min(1, {
     message: "Amount must be positive.",
   }),
 });
@@ -55,7 +55,7 @@ export function ExploreProviderById() {
     defaultValues: {
       token: "",
       period: "",
-      amount: 0,
+      amount: "0",
     },
   });
 
@@ -63,13 +63,16 @@ export function ExploreProviderById() {
 
   const paymentToken = provider?.mint ? tokens[provider.mint] : null;
 
+  const value = useWatch({ control: form.control });
+
   useEffect(() => {
-    if (paymentToken && provider?.subscriptionPeriod) {
-      const calculatedAmount = Number(provider.subPrice || 0);
-      form.setValue("amount", calculatedAmount);
-      form.setValue("period", provider.subscriptionPeriod);
-    }
-  }, [paymentToken, provider?.subscriptionPeriod]);
+    if (!provider || !paymentToken) return;
+    const price = new BN(provider.subPrice)
+      .mul(new BN(value.period || "0"))
+      .toString();
+    const readablePrice = formatTokenAmount(price, paymentToken.decimals);
+    form.setValue("amount", readablePrice);
+  }, [form, paymentToken, provider, value.period]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     toast({
@@ -162,11 +165,11 @@ export function ExploreProviderById() {
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <ToggleGroupItem
-                            key={provider.subscriptionPeriod}
-                            value={provider.subscriptionPeriod}
-                          >
-                            {provider.subscriptionPeriod} month(s)
+                          <ToggleGroupItem value="1">1 month</ToggleGroupItem>
+                          <ToggleGroupItem value="3">3 months</ToggleGroupItem>
+                          <ToggleGroupItem value="6">6 months</ToggleGroupItem>
+                          <ToggleGroupItem value="12">
+                            12 months
                           </ToggleGroupItem>
                         </ToggleGroup>
                       </FormControl>
@@ -176,30 +179,8 @@ export function ExploreProviderById() {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Enter Amount</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Amount"
-                      {...field}
-                      value={field.value}
-                      readOnly
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The amount will be calculated based on your subscription
-                    period and price.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <Button type="submit" className="w-full">
-              Subscribe
+              Subscribe {value.amount} {paymentToken.symbol}
             </Button>
           </form>
         </Form>

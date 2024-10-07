@@ -16,8 +16,6 @@ export type ProvidersType = {
   url: string;
 };
 
-export type GroupedProviders = Record<string, ProvidersType[]>;
-
 export const columns: ColumnDef<ProvidersType>[] = [
   {
     accessorKey: "name",
